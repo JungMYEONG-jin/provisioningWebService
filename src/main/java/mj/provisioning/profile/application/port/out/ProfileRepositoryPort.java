@@ -13,5 +13,5 @@ public interface ProfileRepositoryPort {
     Optional<Profile> findByProfileId(String profileId);
     Optional<Profile> findByName(String name);
     List<Profile> findByNames(List<String> names);
-    List<Profile> searchCondition(ProfileSearchCondition condition); // 메인에서 조회 조건
+    List<ProfileSearchCondition> searchCondition(ProfileSearchCondition condition); // 메인에서 조회 조건
 }

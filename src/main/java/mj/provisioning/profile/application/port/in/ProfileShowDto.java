@@ -3,6 +3,7 @@ package mj.provisioning.profile.application.port.in;
 import lombok.*;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfilePlatform;
+import mj.provisioning.profile.domain.ProfileType;
 
 @Getter
 @Setter
@@ -11,15 +12,15 @@ import mj.provisioning.profile.domain.ProfilePlatform;
 @Builder
 public class ProfileShowDto {
     private String name;
-    private String platform;
-    private String profileType;
+    private ProfilePlatform platform;
+    private ProfileType profileType;
     private String expirationDate;
 
     public static ProfileShowDto of(Profile profile){
         return ProfileShowDto.builder().expirationDate(profile.getExpirationDate())
                 .name(profile.getName())
-                .platform(profile.getPlatform().name())
-                .profileType(profile.getProfileType().name()).build();
+                .platform(profile.getPlatform())
+                .profileType(profile.getProfileType()).build();
     }
 }
 
