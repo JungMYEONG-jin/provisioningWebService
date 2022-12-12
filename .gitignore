@@ -77,9 +77,6 @@ cmake-build-*/
 # key file
 *.p8
 
-# lock
-*.lock
-
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
