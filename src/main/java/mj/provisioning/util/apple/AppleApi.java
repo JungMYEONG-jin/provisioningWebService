@@ -5,7 +5,6 @@ import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import mj.provisioning.exception.AppleAPIException;
-import mj.provisioning.util.crawler.Crawler;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -43,7 +42,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
-public class AppleApi implements Crawler {
+public class AppleApi{
 
     private static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
     private static final String keyId = "7JL62P566N";
@@ -485,17 +484,6 @@ public class AppleApi implements Crawler {
         return null;
     }
 
-    @Override
-    public List<JSONObject> getReview(String packageName) {
-        try {
-            return getAllReviews(packageName);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * profileId - 프로비저닝 id
