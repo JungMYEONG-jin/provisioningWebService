@@ -29,7 +29,7 @@ public class DeviceService implements DeviceUseCase{
      */
     @Override
     public void saveDevices() {
-        String allDevices = appleApi.getAllDevices(appleApi.createJWT());
+        String allDevices = appleApi.getAllRegisteredDevices();
         JsonParser parser = new JsonParser();
         JsonObject deviceJson = parser.parse(allDevices).getAsJsonObject();
         JsonArray dataArray = deviceJson.get("data").getAsJsonArray();

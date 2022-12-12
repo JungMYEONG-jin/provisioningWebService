@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +49,11 @@ class AppleApiTest {
         }
     }
 
+    /**
+     * udid 매치로 찾아서 등록해주자
+     * device table을 만들자 우선
+     * id, device_id, type, name, udid, deviceClass
+     */
     @Test
     void getAllRegisteredDevice() throws MalformedURLException, NoSuchAlgorithmException, ParseException {
         String allDevices = api.getAllDevices(api.createJWT());
@@ -69,13 +75,12 @@ class AppleApiTest {
             System.out.print(" deviceId = " + deviceId);
             System.out.println(" name = " + name);
         }
-
         System.out.println("allDevices = " + allDevices);
     }
 
-    /**
-     * udid 매치로 찾아서 등록해주자
-     * device table을 만들자 우선
-     * id, device_id, type, name, udid, deviceClass
-     */
+    @Test
+    void getAllProfileTest() throws MalformedURLException, NoSuchAlgorithmException {
+        String simpleProfileInfo = api.getSimpleProfileInfo(api.createJWT());
+        System.out.println("simpleProfileInfo = " + simpleProfileInfo);
+    }
 }
