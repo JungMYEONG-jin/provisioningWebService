@@ -13,6 +13,9 @@ import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfilePlatform;
 import mj.provisioning.profile.domain.ProfileState;
 import mj.provisioning.profile.domain.ProfileType;
+import mj.provisioning.profiledevice.adapter.out.repository.ProfileDeviceRepository;
+import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
+import mj.provisioning.profiledevice.domain.ProfileDevice;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +43,7 @@ public class ProfileService implements ProfileUseCase {
         JsonObject parse = parser.parse(response).getAsJsonObject();
         JsonArray data = parse.get("data").getAsJsonArray();
         List<Profile> profiles = new ArrayList<>();
+        List<ProfileDevice> profileDevices = new ArrayList<>();
         for (JsonElement datum : data) {
             JsonObject dd = datum.getAsJsonObject();
             JsonObject attributes = dd.getAsJsonObject("attributes");
@@ -51,7 +55,10 @@ public class ProfileService implements ProfileUseCase {
             String profileType = attributes.get("profileType").toString().replaceAll("\"", "");
             String profileContent = attributes.get("profileContent").toString().replaceAll("\"", "");
             String uuid = attributes.get("uuid").toString().replaceAll("\"", "");
-
+            /**
+             * 빌더 패턴 사용시 기본 생성자 전략 무시함!!
+             * 따라서 nullpointer 조심하자~
+             */
             Profile build = Profile.builder().profileId(profileId)
                     .name(profileName)
                     .profileState(ProfileState.get(profileState))
@@ -59,7 +66,10 @@ public class ProfileService implements ProfileUseCase {
                     .expirationDate(expirationDate)
                     .platform(ProfilePlatform.get(platform))
                     .profileContent(profileContent)
-                    .uuid(uuid).build();
+                    .uuid(uuid)
+                    .deviceList(new ArrayList<>())
+                    .build();
+            // 개발용만 device가 존재
             profiles.add(build);
         }
         profileRepositoryPort.saveAll(profiles);
@@ -72,7 +82,33 @@ public class ProfileService implements ProfileUseCase {
 
     @Override
     public void updateProfile(String profileId) {
+        // 새 이름으로 업데이트? 생성느낌
+        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
 
+//        String id = profile.getProfileId(); // 올드 id
+//        JSONObject bundleIdFromProfile = getBundleIdFromProfile(jwt, id);
+//        System.out.println("bundleIdFromProfile = " + bundleIdFromProfile);
+//        JSONObject certificateFromProfile = getCertificateFromProfile(jwt, id);
+//        System.out.println("certificateFromProfile = " + certificateFromProfile);
+//        JSONArray devices = getDeviceInfoFromProfile(jwt, id);
+//        System.out.println("devices = " + devices);
+//        String profile = createProfile(jwt, obj.get("name").toString(), obj.get("type").toString(),
+//                bundleIdFromProfile.get("id").toString(), certificateFromProfile.get("id").toString(), devices);
+//        JSONParser parser = new JSONParser();
+//        try {
+//            JSONObject parse = (JSONObject)parser.parse(profile);
+//            JSONObject data = (JSONObject)parse.get("data");
+//            String newId = data.get("id").toString();
+//            int code = deleteProfile(jwt, id);// 기존 삭제
+//            return code;
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return -1; // error
+
+        // 기존꺼 삭제
+        appleApi.deleteProfile(profileId);
+        profileRepositoryPort.deleteProfile(profileId);
     }
 
     /**
@@ -88,6 +124,11 @@ public class ProfileService implements ProfileUseCase {
     @Override
     public List<ProfileShowDto> searchByCondition(ProfileSearchCondition condition) {
         return profileRepositoryPort.searchCondition(condition);
+    }
+
+    @Override
+    public List<Profile> findAll() {
+        return profileRepositoryPort.findAll();
     }
 
 }

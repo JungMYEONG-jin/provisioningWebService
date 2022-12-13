@@ -56,6 +56,11 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     @Override
+    public List<Profile> findAll() {
+        return profileRepository.findAll();
+    }
+
+    @Override
     public boolean isExist(String profileId) {
         return profileRepository.existsByProfileId(profileId);
     }

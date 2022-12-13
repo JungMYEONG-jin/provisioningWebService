@@ -15,5 +15,6 @@ public interface ProfileRepositoryPort {
     Optional<Profile> findByName(String name);
     List<ProfileShowDto> searchCondition(ProfileSearchCondition condition); // 메인에서 조회 조건
     Long deleteProfile(String profileId);
+    List<Profile> findAll();
     boolean isExist(String profileId);
 }

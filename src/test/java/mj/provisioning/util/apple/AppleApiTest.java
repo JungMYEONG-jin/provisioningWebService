@@ -29,11 +29,11 @@ class AppleApiTest {
      */
     @Test
     void getDeviceInfoFromCurrentProfile() throws MalformedURLException, NoSuchAlgorithmException {
-        String id = "L2S6C3JMLN";
-        JSONArray deviceInfoFromProfile = api.getDeviceInfoFromProfile(api.createJWT(), id);
-        for (Object o : deviceInfoFromProfile) {
-            JSONObject it = (JSONObject) o;
-            System.out.println("it = " + it);
+        String id = "Z26MK4GYYD";
+        JsonArray deviceInfoFromProfile = api.getDeviceInfoFromProfile(id);
+        for (JsonElement jsonElement : deviceInfoFromProfile) {
+            JsonObject asJsonObject = jsonElement.getAsJsonObject();
+            System.out.println("asJsonObject = " + asJsonObject);
         }
     }
 
@@ -65,5 +65,7 @@ class AppleApiTest {
         }
         System.out.println("allDevices = " + allDevices);
     }
+
+
 
 }

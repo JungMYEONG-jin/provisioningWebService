@@ -10,4 +10,5 @@ public interface ProfileUseCase {
     void updateProfile(String profileId);
     void deleteProfile(String profileId);
     List<ProfileShowDto> searchByCondition(ProfileSearchCondition condition);
+    List<Profile> findAll();
 }

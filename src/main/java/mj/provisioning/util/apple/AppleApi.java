@@ -125,7 +125,7 @@ public class AppleApi{
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
-        return -1; // error
+       return -1; // error
     }
 
     /**
@@ -303,32 +303,42 @@ public class AppleApi{
         return null;
     }
 
-    public JSONArray getDeviceInfoFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/devices?limit=100");
-        String response =  getConnectResultByX509(jwt, id, url);
-        JSONParser parser = new JSONParser();
-        JSONObject parse = null;
-        JSONArray res = new JSONArray();
+    public JsonArray getDeviceInfoFromProfile(String profileId){
+        return getDeviceInfo(createJWT(), profileId);
+    }
+
+
+    private JsonArray getDeviceInfo(String jwt, String id) {
+        URL url = null;
         try {
-            parse = (JSONObject)parser.parse(response);
-            JSONArray data = (JSONArray)parse.get("data");
-            if (data!=null) {
-                for (Object datum : data) {
-                    JSONObject dd = (JSONObject) datum;
-                    JSONObject temp = new JSONObject();
-                    String deviceId = dd.get("id").toString();
-                    String type = dd.get("type").toString();
-                    temp.put("id", deviceId);
-                    temp.put("type", type);
-                    res.add(temp);
-                }
-            }
-            return res;
-        } catch (ParseException e) {
+            url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/devices?limit=100");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Wrong URL!! Visit Appstore Connect API...");
+        }
+        String response = null;
+        try {
+            response = getConnectResultByX509(jwt, id, url);
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        JsonParser parser = new JsonParser();
+        JsonObject parse = null;
+        JsonArray res = new JsonArray();
 
-        return res; // 빈값
+        parse = parser.parse(response).getAsJsonObject();
+        JsonArray data = parse.getAsJsonArray("data");
+        if (data!=null) {
+            for (JsonElement datum : data) {
+                JsonObject dd = datum.getAsJsonObject();
+                JsonObject temp = new JsonObject();
+                String deviceId = dd.get("id").toString().replaceAll("\"","");
+                String type = dd.get("type").toString().replaceAll("\"","");
+                temp.addProperty("id", deviceId);
+                temp.addProperty("type", type);
+                res.add(temp);
+            }
+        }
+        return res;
     }
 
     public JSONObject getBundleIdFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
@@ -568,6 +578,5 @@ public class AppleApi{
         }
         return result;
     }
-
 
 }
