@@ -21,18 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AppleApiTest {
 
     AppleApi api = new AppleApi();
-
-    @Test
-    void getProfileTest() throws MalformedURLException, NoSuchAlgorithmException {
-
-        String jwt = api.createJWT();
-        JSONArray profileInfo = api.getProfileInfo(jwt);
-        for (Object o : profileInfo) {
-            JSONObject it = (JSONObject) o;
-            System.out.println("it = " + it);
-        }
-    }
-
     /**
      * Type IOS_APP_STORE는 디바이스가 없음
      * IOS_APP_DEVELOPMENT만 존재
@@ -78,9 +66,4 @@ class AppleApiTest {
         System.out.println("allDevices = " + allDevices);
     }
 
-    @Test
-    void getAllProfileTest() throws MalformedURLException, NoSuchAlgorithmException {
-        String simpleProfileInfo = api.getSimpleProfileInfo(api.createJWT());
-        System.out.println("simpleProfileInfo = " + simpleProfileInfo);
-    }
 }

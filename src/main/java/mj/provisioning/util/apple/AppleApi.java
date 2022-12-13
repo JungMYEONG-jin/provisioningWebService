@@ -1,5 +1,9 @@
 package mj.provisioning.util.apple;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -86,39 +90,39 @@ public class AppleApi{
     }
 
     public int updateProfile(String jwt, String profileName) throws IOException, NoSuchAlgorithmException {
-        JSONArray profileInfo = getProfileInfo(jwt);
-        JSONObject obj = null;
-
-        for (Object o : profileInfo) {
-            JSONObject temp = (JSONObject) o;
-            if (temp.get("prevName").equals(profileName))
-            {
-                obj = temp;
-                break;
-            }
-        }
-        if (obj==null)
-            return -1;
-
-        String id = obj.get("id").toString(); // 올드 id
-        JSONObject bundleIdFromProfile = getBundleIdFromProfile(jwt, id);
-        System.out.println("bundleIdFromProfile = " + bundleIdFromProfile);
-        JSONObject certificateFromProfile = getCertificateFromProfile(jwt, id);
-        System.out.println("certificateFromProfile = " + certificateFromProfile);
-        JSONArray devices = getDeviceInfoFromProfile(jwt, id);
-        System.out.println("devices = " + devices);
-        String profile = createProfile(jwt, obj.get("name").toString(), obj.get("type").toString(),
-                bundleIdFromProfile.get("id").toString(), certificateFromProfile.get("id").toString(), devices);
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject parse = (JSONObject)parser.parse(profile);
-            JSONObject data = (JSONObject)parse.get("data");
-            String newId = data.get("id").toString();
-            int code = deleteProfile(jwt, id);// 기존 삭제
-            return code;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        String profileInfo = getProfileInfo();
+//        JSONObject obj = null;
+//
+//        for (Object o : profileInfo) {
+//            JSONObject temp = (JSONObject) o;
+//            if (temp.get("prevName").equals(profileName))
+//            {
+//                obj = temp;
+//                break;
+//            }
+//        }
+//        if (obj==null)
+//            return -1;
+//
+//        String id = obj.get("id").toString(); // 올드 id
+//        JSONObject bundleIdFromProfile = getBundleIdFromProfile(jwt, id);
+//        System.out.println("bundleIdFromProfile = " + bundleIdFromProfile);
+//        JSONObject certificateFromProfile = getCertificateFromProfile(jwt, id);
+//        System.out.println("certificateFromProfile = " + certificateFromProfile);
+//        JSONArray devices = getDeviceInfoFromProfile(jwt, id);
+//        System.out.println("devices = " + devices);
+//        String profile = createProfile(jwt, obj.get("name").toString(), obj.get("type").toString(),
+//                bundleIdFromProfile.get("id").toString(), certificateFromProfile.get("id").toString(), devices);
+//        JSONParser parser = new JSONParser();
+//        try {
+//            JSONObject parse = (JSONObject)parser.parse(profile);
+//            JSONObject data = (JSONObject)parse.get("data");
+//            String newId = data.get("id").toString();
+//            int code = deleteProfile(jwt, id);// 기존 삭제
+//            return code;
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
         return -1; // error
     }
 
@@ -128,51 +132,25 @@ public class AppleApi{
      * type - 프로비저닝 타입
      * prevName - 기존 이름
      * content - 프로비저닝 정보
-     * @param jwt
      * @return
      * @throws NoSuchAlgorithmException
      * @throws MalformedURLException
      */
-    public JSONArray getProfileInfo(String jwt) throws NoSuchAlgorithmException, MalformedURLException{
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles?limit=200");
-        String response = getConnectResultByX509(jwt, "", url);
-
-        JSONParser parser = new JSONParser();
-        JSONObject parse = null;
+    public String getProfileInfo(){
+        URL url = null;
+        String jwt = createJWT();
         try {
-            parse = (JSONObject)parser.parse(response);
-            JSONArray data = (JSONArray)parse.get("data");
-            System.out.println("data.size() = " + data.size());
-            JSONArray arr = new JSONArray();
-            for (Object datum : data) {
-                JSONObject dd = (JSONObject) datum;
-                JSONObject attributes = (JSONObject)dd.get("attributes");
-                JSONObject obj = new JSONObject();
-                String profileName = attributes.get("name").toString();
-                String profileType = attributes.get("profileType").toString();
-                String profileContent = attributes.get("profileContent").toString(); // base64 인코딩된거를 디코드하고 .mobileprovision 형식으로 저장하면 됨.
-                String profileId = dd.get("id").toString();
-
-                obj.put("id", profileId);
-                obj.put("type", profileType);
-                obj.put("name", profileName); // 기존 이름
-                obj.put("content", profileContent);
-                arr.add(obj);
-            }
-            return arr;
-        } catch (ParseException e) {
+            url = new URL("https://api.appstoreconnect.apple.com/v1/profiles?limit=200");
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        return null;
+        try {
+            return getConnectResultByX509(jwt, "", url);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
-
-    public String getSimpleProfileInfo(String jwt) throws NoSuchAlgorithmException, MalformedURLException{
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles?limit=200");
-        String response = getConnectResultByX509(jwt, "", url);
-        return response;
-    }
-
-
 
     /**
      * 테더링 없이 사용 가능.

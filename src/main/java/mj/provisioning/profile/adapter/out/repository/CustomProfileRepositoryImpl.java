@@ -8,14 +8,12 @@ import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.domain.ProfilePlatform;
 import mj.provisioning.profile.domain.ProfileType;
-import mj.provisioning.profile.domain.QProfile;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-import static mj.provisioning.profile.domain.QProfile.*;
-import static org.springframework.util.StringUtils.*;
+import static mj.provisioning.profile.domain.QProfile.profile;
+import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 @RequiredArgsConstructor
