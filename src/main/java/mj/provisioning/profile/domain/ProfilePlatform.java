@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Getter
 public enum ProfilePlatform {
     IOS("iOS"), MAC("macOS");
@@ -27,7 +29,7 @@ public enum ProfilePlatform {
     }
 
     public static ProfilePlatform get(String name){
-        return PROFILE_PLATFORM_MAP.get(name);
+        return hasText(name)?PROFILE_PLATFORM_MAP.get(name):null;
     }
 
 

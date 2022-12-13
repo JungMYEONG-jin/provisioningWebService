@@ -45,4 +45,9 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     public List<ProfileShowDto> searchCondition(ProfileSearchCondition condition) {
         return profileRepository.getSearchByCondition(condition);
     }
+
+    @Override
+    public Long deleteProfile(String profileId) {
+        return profileRepository.deleteByProfileId(profileId);
+    }
 }

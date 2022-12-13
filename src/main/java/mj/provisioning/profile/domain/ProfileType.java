@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Getter
 public enum ProfileType {
     IOS_APP_STORE("App Store"), IOS_APP_DEVELOPMENT("Development"), IOS_APP_ADHOC("Ad hoc");
@@ -29,7 +31,7 @@ public enum ProfileType {
     }
 
     public static ProfileType get (String name) {
-        return ENUM_MAP.get(name);
+        return hasText(name)?ENUM_MAP.get(name):null;
     }
 
 }

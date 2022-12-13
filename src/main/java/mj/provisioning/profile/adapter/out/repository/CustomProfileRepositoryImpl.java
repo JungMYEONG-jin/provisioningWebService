@@ -25,8 +25,8 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
      *  ProfilePlatform profilePlatform;
      *  ProfileType profileType;
      */
-    private BooleanExpression nameEq(String name){
-        return hasText(name)?profile.name.eq(name):null;
+    private BooleanExpression nameLike(String name){
+        return hasText(name)?profile.name.like("%"+name+"%"):null;
     }
 
     private BooleanExpression profilePlatformEq(ProfilePlatform profilePlatform){
@@ -44,14 +44,15 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
      */
     @Override
     public List<ProfileShowDto> getSearchByCondition(ProfileSearchCondition condition) {
+
         return jpaQueryFactory.select(Projections.fields(ProfileShowDto.class, profile.name,
                         profile.platform,
                         profile.profileType,
                         profile.expirationDate))
                 .from(profile)
-                .where(nameEq(condition.getName()),
-                        profilePlatformEq(condition.getProfilePlatform()),
-                        profileTypeEq(condition.getProfileType()))
+                .where(nameLike(condition.getName()),
+                        profilePlatformEq(ProfilePlatform.get(condition.getProfilePlatform())),
+                        profileTypeEq(ProfileType.get(condition.getProfileType())))
                 .fetch();
     }
 }

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Getter
 public enum ProfileState {
     ACTIVE("active"), INVALID("invalid");
@@ -27,7 +29,7 @@ public enum ProfileState {
     }
 
     public static ProfileState get(String name){
-        return profileStateMap.get(name);
+        return hasText(name)?profileStateMap.get(name):null;
     }
 
 }

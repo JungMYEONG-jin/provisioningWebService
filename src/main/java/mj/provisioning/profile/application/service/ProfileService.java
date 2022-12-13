@@ -31,6 +31,7 @@ public class ProfileService implements ProfileUseCase {
     /**
      *  base64 인코딩된거를 디코드하고 .mobileprovision 형식으로 저장하면 됨.
      *  추후 요청시 profile 업데이트하고 content 가져와서 파일로 저장후 svn에 올리자
+     *  스프링 배치 돌려서 새벽에 돌도록 나중에 설정하자.
      */
     @Override
     public void saveProfiles() {
@@ -74,13 +75,18 @@ public class ProfileService implements ProfileUseCase {
 
     }
 
+    /**
+     * profileId는 고유하기 때문에 문제 없음.
+     * @param profileId
+     */
     @Override
     public void deleteProfile(String profileId) {
-
+        profileRepositoryPort.deleteProfile(profileId);
     }
 
     @Override
     public List<ProfileShowDto> searchByCondition(ProfileSearchCondition condition) {
         return profileRepositoryPort.searchCondition(condition);
     }
+
 }

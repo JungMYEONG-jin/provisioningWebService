@@ -7,7 +7,7 @@ import mj.provisioning.profile.domain.ProfileType;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
 public class ProfileShowDto {
