@@ -9,4 +9,5 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, CustomP
     Optional<Profile> findByName(String name);
     Optional<Profile> findByProfileId(String profileId);
     Long deleteByProfileId(String profileId);
+    boolean existsByProfileId(String profileId);
 }

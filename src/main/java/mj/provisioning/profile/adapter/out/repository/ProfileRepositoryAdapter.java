@@ -1,6 +1,7 @@
 package mj.provisioning.profile.adapter.out.repository;
 
 import lombok.RequiredArgsConstructor;
+import mj.provisioning.device.domain.Device;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,7 +25,9 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
 
     @Override
     public List<Profile> saveAll(List<Profile> profiles) {
-        return profileRepository.saveAll(profiles);
+        // 동일 데이터 중복 제거
+        List<Profile> notContained = profiles.stream().filter(profile -> !profileRepository.existsByProfileId(profile.getProfileId())).collect(Collectors.toList());
+        return profileRepository.saveAll(notContained);
     }
 
     @Override
@@ -49,5 +53,10 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     @Override
     public Long deleteProfile(String profileId) {
         return profileRepository.deleteByProfileId(profileId);
+    }
+
+    @Override
+    public boolean isExist(String profileId) {
+        return profileRepository.existsByProfileId(profileId);
     }
 }

@@ -4,14 +4,13 @@ import mj.provisioning.profile.adapter.out.repository.ProfileRepository;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.domain.Profile;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class ProfileServiceTest {
@@ -31,7 +30,7 @@ class ProfileServiceTest {
         ProfileSearchCondition a = new ProfileSearchCondition();
         List<ProfileShowDto> profileShowDtos = profileService.searchByCondition(a);
         List<Profile> all = profileRepository.findAll();
-        Assertions.assertThat(profileShowDtos.size()).isEqualTo(all.size());
+        assertThat(profileShowDtos.size()).isEqualTo(all.size());
     }
 
     @Test
@@ -39,14 +38,31 @@ class ProfileServiceTest {
         ProfileSearchCondition a = new ProfileSearchCondition();
         a.setName("sbiz");
         List<ProfileShowDto> profileShowDtos = profileService.searchByCondition(a);
-        Assertions.assertThat(profileShowDtos.size()).isEqualTo(5);
+        assertThat(profileShowDtos.size()).isEqualTo(5);
     }
 
     @Test
     void searchByPlatformTest() {
+        ProfileSearchCondition a = new ProfileSearchCondition();
+        a.setProfilePlatform("IOS");
+        List<ProfileShowDto> profileShowDtos = profileService.searchByCondition(a);
+        assertThat(profileShowDtos.size()).isEqualTo(112);
     }
 
     @Test
     void searchByTypeTest() {
+        ProfileSearchCondition a = new ProfileSearchCondition();
+        a.setProfileType("IOS_APP_STORE");
+        List<ProfileShowDto> profileShowDtos = profileService.searchByCondition(a);
+        assertThat(profileShowDtos.size()).isEqualTo(50);
+    }
+
+    @Test
+    void searchByNameAndTypeTest() {
+        ProfileSearchCondition a = new ProfileSearchCondition();
+        a.setProfileType("IOS_APP_DEVELOPMENT");
+        a.setName("sbiz");
+        List<ProfileShowDto> profileShowDtos = profileService.searchByCondition(a);
+        assertThat(profileShowDtos.size()).isEqualTo(2);
     }
 }
