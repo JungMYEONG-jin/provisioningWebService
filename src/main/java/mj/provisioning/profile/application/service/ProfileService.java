@@ -11,14 +11,14 @@ import mj.provisioning.profile.application.port.in.ProfileUseCase;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfilePlatform;
+import mj.provisioning.profile.domain.ProfileState;
+import mj.provisioning.profile.domain.ProfileType;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @Service
@@ -38,7 +38,6 @@ public class ProfileService implements ProfileUseCase {
         JsonParser parser = new JsonParser();
         JsonObject parse = parser.parse(response).getAsJsonObject();
         JsonArray data = parse.get("data").getAsJsonArray();
-        System.out.println("data.size() = " + data.size());
         List<Profile> profiles = new ArrayList<>();
         for (JsonElement datum : data) {
             JsonObject dd = datum.getAsJsonObject();
@@ -52,14 +51,22 @@ public class ProfileService implements ProfileUseCase {
             String profileContent = attributes.get("profileContent").toString().replaceAll("\"", "");
             String uuid = attributes.get("uuid").toString().replaceAll("\"", "");
 
-
+            Profile build = Profile.builder().profileId(profileId)
+                    .name(profileName)
+                    .profileState(ProfileState.get(profileState))
+                    .profileType(ProfileType.get(profileType))
+                    .expirationDate(expirationDate)
+                    .platform(ProfilePlatform.get(platform))
+                    .profileContent(profileContent)
+                    .uuid(uuid).build();
+            profiles.add(build);
         }
-
+        profileRepositoryPort.saveAll(profiles);
     }
 
     @Override
     public void saveProfile(Profile profile) {
-
+        profileRepositoryPort.save(profile);
     }
 
     @Override
@@ -74,6 +81,6 @@ public class ProfileService implements ProfileUseCase {
 
     @Override
     public List<ProfileShowDto> searchByCondition(ProfileSearchCondition condition) {
-        return null;
+        return profileRepositoryPort.searchCondition(condition);
     }
 }

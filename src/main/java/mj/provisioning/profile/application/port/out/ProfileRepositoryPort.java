@@ -1,6 +1,7 @@
 package mj.provisioning.profile.application.port.out;
 
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
+import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.domain.Profile;
 
 import java.util.List;
@@ -12,6 +13,5 @@ public interface ProfileRepositoryPort {
     Optional<Profile> findById(Long id);
     Optional<Profile> findByProfileId(String profileId);
     Optional<Profile> findByName(String name);
-    List<Profile> findByNames(List<String> names);
-    List<ProfileSearchCondition> searchCondition(ProfileSearchCondition condition); // 메인에서 조회 조건
+    List<ProfileShowDto> searchCondition(ProfileSearchCondition condition); // 메인에서 조회 조건
 }

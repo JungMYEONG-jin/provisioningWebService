@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -52,6 +53,7 @@ public class DeviceService implements DeviceUseCase{
 
     @Override
     public List<DeviceDto> getAllDeviceList() {
-        return null;
+        List<Device> all = deviceRepositoryPort.findAll();
+        return all.stream().map(DeviceDto::to).collect(Collectors.toList());
     }
 }

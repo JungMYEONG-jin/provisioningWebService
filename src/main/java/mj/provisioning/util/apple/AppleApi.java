@@ -77,7 +77,7 @@ public class AppleApi{
     public String getAllDevices(String jwt) {
         URL url = null;
         try {
-            url = new URL("https://api.appstoreconnect.apple.com/v1/devices");
+            url = new URL("https://api.appstoreconnect.apple.com/v1/devices?limit=200");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

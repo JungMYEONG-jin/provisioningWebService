@@ -10,7 +10,6 @@ import mj.provisioning.device.domain.Device;
 @Builder
 public class DeviceDto {
     private String name;
-
     public static DeviceDto to(Device device){
         return DeviceDto.builder().name(device.getName()).build();
     }

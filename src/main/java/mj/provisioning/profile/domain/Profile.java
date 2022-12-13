@@ -22,6 +22,7 @@ public class Profile {
     private ProfileState profileState;
     @Enumerated(EnumType.STRING)
     private ProfileType profileType;
+    @Column(columnDefinition = "TEXT")
     private String profileContent;
     private String uuid;
 

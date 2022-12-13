@@ -12,4 +12,5 @@ public interface DeviceRepositoryPort {
     Optional<Device> findByUdId(String udId);
     Optional<Device> findByName(String name);
     List<Device> findByNames(List<String> names);
+    List<Device> findAll();
 }

@@ -2,6 +2,7 @@ package mj.provisioning.profile.adapter.out.repository;
 
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
+import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import org.springframework.stereotype.Repository;
@@ -17,36 +18,31 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
 
     @Override
     public Profile save(Profile profile) {
-        return null;
+        return profileRepository.save(profile);
     }
 
     @Override
     public List<Profile> saveAll(List<Profile> profiles) {
-        return null;
+        return profileRepository.saveAll(profiles);
     }
 
     @Override
     public Optional<Profile> findById(Long id) {
-        return Optional.empty();
+        return profileRepository.findById(id);
     }
 
     @Override
     public Optional<Profile> findByProfileId(String profileId) {
-        return Optional.empty();
+        return profileRepository.findByProfileId(profileId);
     }
 
     @Override
     public Optional<Profile> findByName(String name) {
-        return Optional.empty();
+        return profileRepository.findByName(name);
     }
 
     @Override
-    public List<Profile> findByNames(List<String> names) {
-        return null;
-    }
-
-    @Override
-    public List<ProfileSearchCondition> searchCondition(ProfileSearchCondition condition) {
-        return null;
+    public List<ProfileShowDto> searchCondition(ProfileSearchCondition condition) {
+        return profileRepository.getSearchByCondition(condition);
     }
 }

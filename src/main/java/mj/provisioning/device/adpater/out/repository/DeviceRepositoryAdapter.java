@@ -46,4 +46,9 @@ public class DeviceRepositoryAdapter implements DeviceRepositoryPort {
     public List<Device> findByNames(List<String> names) {
         return deviceRepository.findByNames(names);
     }
+
+    @Override
+    public List<Device> findAll() {
+        return deviceRepository.findAll();
+    }
 }
