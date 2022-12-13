@@ -81,6 +81,7 @@ public class ProfileService implements ProfileUseCase {
      */
     @Override
     public void deleteProfile(String profileId) {
+        appleApi.deleteProfile(profileId);
         profileRepositoryPort.deleteProfile(profileId);
     }
 

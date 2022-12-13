@@ -12,6 +12,8 @@ import mj.provisioning.exception.AppleAPIException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -226,8 +228,6 @@ public class AppleApi{
             httpClient.getConnectionManager().shutdown();
         }
         return result;
-
-
     }
 
     /**
@@ -461,11 +461,6 @@ public class AppleApi{
     }
 
     /**
-     *
-     * @param token
-     * @param id
-     * @return
-     * @throws IOException
      * Response Codes
      * 204 No Content
      * 400 Bad Request
@@ -473,31 +468,106 @@ public class AppleApi{
      * 404 Not Found Resource not found.
      * 409 Conflict The provided resource data is not valid.
      */
-    public int deleteProfile(String token, String id) throws IOException {
-        HttpURLConnection con = null;
-        BufferedReader br = null;
-        StringBuffer sb = null;
-        String result = "";
-
-        try{
-            URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id);
-            con = (HttpURLConnection) url.openConnection();
-            // post
-            con.setRequestMethod("DELETE");
-            con.setRequestProperty("Authorization", "Bearer "+ token);
-            // post by json
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true); // outputstream 사용해서 post body 데이터 전송
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return con.getResponseCode();
+    public int deleteProfile(String profileId){
+        return deleteOldProfile(createJWT(), profileId);
     }
 
-    // file svn에 올리는거 까지
+//    private int deleteOldProfile(String token, String id){
+//        HttpURLConnection con = null;
+//        try{
+//            URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id);
+//            con = (HttpURLConnection) url.openConnection();
+//            // post
+//            con.setRequestMethod("DELETE");
+//            con.setRequestProperty("Authorization", "Bearer "+ token);
+//            // post by json
+//            con.setRequestProperty("Content-Type", "application/json");
+//            con.setRequestProperty("Accept", "application/json");
+//            con.setDoOutput(true); // outputstream 사용해서 post body 데이터 전송
+//        } catch (IOException e) {
+//            throw new RuntimeException("연결 실패...");
+//        }
+//
+//        try {
+//            return con.getResponseCode();
+//        } catch (IOException e) {
+//            throw new RuntimeException("연결 실패...");
+//        }
+//    }
+
+//    public int deleteProfileOld(String profileId){
+//        return deleteOldProfileByX509(createJWT(), profileId);
+//    }
+
+    private int deleteOldProfile(String token, String id){
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        SSLContext sslContext = null;
+        int result;
+        try {
+            sslContext = SSLContext.getInstance("SSL");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        try {
+            X509TrustManager trustManager = new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+
+                }
+
+                @Override
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+                }
+
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+
+                    return null;
+                }
+            };
+
+            sslContext.init(null, new TrustManager[] { trustManager },
+                    new SecureRandom());
+            SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext,
+                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            Scheme sch = new Scheme("https", 443, socketFactory);
+            httpClient.getConnectionManager().getSchemeRegistry().register(sch);
+
+            HttpParams httpParam = httpClient.getParams();
+            org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
+            org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
+
+            HttpRequestBase http = null;
+            URL url = null;
+            try {
+                url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id);
+                http = new HttpDelete(url.toURI());
+                http.setHeader("Authorization", "Bearer "+ token);
+                // post by json
+                http.setHeader("Content-Type", "application/json");
+                http.setHeader("Accept", "application/json");
+            } catch (Exception e) {
+                http = new HttpPost(url.toURI());
+            }
+
+            HttpResponse response = null;
+            response = httpClient.execute(http);
+            int statusCode = response.getStatusLine().getStatusCode();
+            result = statusCode;
+            System.out.println("statusCode = " + statusCode);
+
+        } catch (Exception e) {
+            throw new AppleAPIException(e);
+        } finally {
+            httpClient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
 
 
 }

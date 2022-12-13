@@ -65,4 +65,10 @@ class ProfileServiceTest {
         List<ProfileShowDto> profileShowDtos = profileService.searchByCondition(a);
         assertThat(profileShowDtos.size()).isEqualTo(2);
     }
+
+    @Test
+    void deleteTest() {
+        Profile sol_development_widget_test = profileRepository.findByName("sol_development_widget_test_2023231").orElseThrow(() -> new RuntimeException("일차하는 프로비저닝이 없습니다."));
+        profileService.deleteProfile(sol_development_widget_test.getProfileId());
+    }
 }
