@@ -15,7 +15,7 @@ plugins {
 
 group = 'mj'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '8'
+sourceCompatibility = '11'
 
 configurations {
 	compileOnly {
@@ -33,9 +33,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 //	 https://mvnrepository.com/artifact/com.google.code.gson/gson
 	implementation 'com.google.code.gson:gson:2.7'
-
+	implementation 'mysql:mysql-connector-java'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
+	implementation 'com.h2database:h2:1.4.200'
 
 
 	implementation 'org.apache.httpcomponents:httpmime:4.2.4'

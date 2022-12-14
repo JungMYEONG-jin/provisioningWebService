@@ -12,7 +12,6 @@ import mj.provisioning.exception.AppleAPIException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -29,12 +28,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
-import sun.security.ec.ECPrivateKeyImpl;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,9 +42,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.interfaces.ECPrivateKey;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Date;
 
 @Component
 public class AppleApi{
@@ -234,16 +231,15 @@ public class AppleApi{
         SignedJWT jwt = new SignedJWT(header,claimsSet);
 
         try{
-            ECPrivateKey ecPrivateKey = new ECPrivateKeyImpl(readPrivateKey(keyPath));
+            ECPrivateKey ecPrivateKey = new CustomECPrivateKeyImpl(readPrivateKey(keyPath));
             JWSSigner jwsSigner = new ECDSASigner(ecPrivateKey.getS());
             jwt.sign(jwsSigner);
 
-        }catch(InvalidKeyException e)
-        {
-            throw new RuntimeException("JWT Private Key read Failed... " + e);
-        }catch (JOSEException e)
+        } catch (JOSEException e)
         {
             throw new RuntimeException("JWT Transformation failed! "+e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException("InvalidKeyException "+e);
         }
 
         return jwt.serialize();
