@@ -28,6 +28,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
+import sun.security.ec.ECPrivateKeyImpl;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -231,7 +233,7 @@ public class AppleApi{
         SignedJWT jwt = new SignedJWT(header,claimsSet);
 
         try{
-            ECPrivateKey ecPrivateKey = new CustomECPrivateKeyImpl(readPrivateKey(keyPath));
+            ECPrivateKey ecPrivateKey = new ECPrivateKeyImpl(readPrivateKey(keyPath));
             JWSSigner jwsSigner = new ECDSASigner(ecPrivateKey.getS());
             jwt.sign(jwsSigner);
 
