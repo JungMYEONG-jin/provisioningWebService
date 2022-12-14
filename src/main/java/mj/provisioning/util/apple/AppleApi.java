@@ -56,20 +56,6 @@ public class AppleApi{
 
 
     private int CONN_TIME_OUT = 1000 * 30;
-    public String getAppVersions(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException {
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+ id +"/appStoreVersions"+"?limit=1"); // 버전 업데이트날짜
-        return getConnectResultByX509(jwt, id, url);
-    }
-
-    public String getAppTitle(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException {
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id); // 이름
-        return getConnectResultByX509(jwt, id, url);
-    }
-
-    public String getReviewDetails(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException{
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/customerReviews"+"?include=response&sort=-createdDate&limit=200");
-        return getConnectResultByX509(jwt, id, url);
-    }
 
     public String getAllRegisteredDevices(){
         String jwt = createJWT();
@@ -84,7 +70,7 @@ public class AppleApi{
             e.printStackTrace();
         }
         try {
-            return getConnectResultByX509(jwt, "", url);
+            return getConnectResultByX509(jwt,  url);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -147,7 +133,7 @@ public class AppleApi{
             e.printStackTrace();
         }
         try {
-            return getConnectResultByX509(jwt, "", url);
+            return getConnectResultByX509(jwt,  url);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -157,12 +143,11 @@ public class AppleApi{
     /**
      * 테더링 없이 사용 가능.
      * @param jwt
-     * @param id
      * @param url
      * @return
      * @throws NoSuchAlgorithmException
      */
-    private String getConnectResultByX509(String jwt, String id, URL url) throws NoSuchAlgorithmException {
+    private String getConnectResultByX509(String jwt, URL url) throws NoSuchAlgorithmException {
 
         String result = "";
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -317,7 +302,7 @@ public class AppleApi{
         }
         String response = null;
         try {
-            response = getConnectResultByX509(jwt, id, url);
+            response = getConnectResultByX509(jwt, url);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -343,7 +328,7 @@ public class AppleApi{
 
     public JSONObject getBundleIdFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/bundleId");
-        String response = getConnectResultByX509(jwt, id, url);
+        String response = getConnectResultByX509(jwt, url);
         JSONParser parser = new JSONParser();
         JSONObject parse = null;
         try {
@@ -361,9 +346,28 @@ public class AppleApi{
         return null;
     }
 
+    /**
+     * 모든 인증서를 가져오는 기능 필요함
+     * @return
+     * @throws MalformedURLException
+     * @throws NoSuchAlgorithmException
+     */
+    public String getAllCertificates(){
+        try {
+            URL url = new URL("https://api.appstoreconnect.apple.com/v1/certificates");
+            return getConnectResultByX509(createJWT(),  url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
     public JSONObject getCertificateFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/certificates");
-        String response = getConnectResultByX509(jwt, id, url);
+        String response = getConnectResultByX509(jwt, url);
         JSONParser parser = new JSONParser();
         try {
             JSONObject parse = (JSONObject)parser.parse(response);

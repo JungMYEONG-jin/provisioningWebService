@@ -25,9 +25,9 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
 
     @Override
     public List<Profile> saveAll(List<Profile> profiles) {
-        // 동일 데이터 중복 제거
-        List<Profile> notContained = profiles.stream().filter(profile -> !profileRepository.existsByProfileId(profile.getProfileId())).collect(Collectors.toList());
-        return profileRepository.saveAll(notContained);
+        // id가 이미 존재하기 때문에 기존에 있다면 update 할것임.
+//        List<Profile> notContained = profiles.stream().filter(profile -> !profileRepository.existsByProfileId(profile.getProfileId())).collect(Collectors.toList());
+        return profileRepository.saveAll(profiles);
     }
 
     @Override
@@ -53,6 +53,11 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     @Override
     public Long deleteProfile(String profileId) {
         return profileRepository.deleteByProfileId(profileId);
+    }
+
+    @Override
+    public void deleteAll() {
+        profileRepository.deleteAll();
     }
 
     @Override

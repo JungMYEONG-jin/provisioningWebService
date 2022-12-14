@@ -23,8 +23,8 @@ public class DeviceRepositoryAdapter implements DeviceRepositoryPort {
 
     @Override
     public List<Device> saveAll(List<Device> devices) {
-        List<Device> notContained = devices.stream().filter(device -> !deviceRepository.existsByUdId(device.getUdId())).collect(Collectors.toList());
-        return deviceRepository.saveAll(notContained);
+//        List<Device> notContained = devices.stream().filter(device -> !deviceRepository.existsByUdId(device.getUdId())).collect(Collectors.toList());
+        return deviceRepository.saveAll(devices);
     }
 
     @Override
@@ -50,5 +50,10 @@ public class DeviceRepositoryAdapter implements DeviceRepositoryPort {
     @Override
     public List<Device> findAll() {
         return deviceRepository.findAll();
+    }
+
+    @Override
+    public void deleteAll() {
+        deviceRepository.deleteAll();
     }
 }

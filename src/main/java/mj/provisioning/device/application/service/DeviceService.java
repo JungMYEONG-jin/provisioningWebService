@@ -31,6 +31,7 @@ public class DeviceService implements DeviceUseCase{
     @Override
     public void saveDevices() {
         String allDevices = appleApi.getAllRegisteredDevices();
+        deviceRepositoryPort.deleteAll(); // 기존꺼 삭제
         JsonParser parser = new JsonParser();
         JsonObject deviceJson = parser.parse(allDevices).getAsJsonObject();
         JsonArray dataArray = deviceJson.get("data").getAsJsonArray();
@@ -47,7 +48,7 @@ public class DeviceService implements DeviceUseCase{
             Device build = Device.builder().type(type).udId(udid).deviceClass(deviceClass).deviceId(deviceId).name(name).build();
             devices.add(build);
         }
-        deviceRepositoryPort.saveAll(devices);
+        deviceRepositoryPort.saveAll(devices); // 최신 동기화
     }
 
 

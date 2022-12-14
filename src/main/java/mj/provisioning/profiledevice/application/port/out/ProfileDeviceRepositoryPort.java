@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ProfileDeviceRepositoryPort {
     List<ProfileDevice> saveAll(List<ProfileDevice> profileDeviceList);
+    Long deleteByProfileId(String profileId);
 }

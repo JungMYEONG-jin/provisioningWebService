@@ -13,4 +13,5 @@ public interface DeviceRepositoryPort {
     Optional<Device> findByName(String name);
     List<Device> findByNames(List<String> names);
     List<Device> findAll();
+    void deleteAll();
 }

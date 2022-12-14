@@ -20,7 +20,7 @@ public class ProfileDevice {
     private Long id;
     private String deviceId;
     private String type;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     private Profile profile;
 

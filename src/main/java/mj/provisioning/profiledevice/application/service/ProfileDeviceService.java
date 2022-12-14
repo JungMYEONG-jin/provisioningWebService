@@ -29,6 +29,8 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     @Override
     public void saveProfileDevice(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        // 기존 삭제
+        profileDeviceRepositoryPort.deleteByProfileId(profileId);
         List<ProfileDevice> profileDevices = new ArrayList<>();
         if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) {
             JsonArray deviceInfoFromProfile = appleApi.getDeviceInfoFromProfile(profileId);

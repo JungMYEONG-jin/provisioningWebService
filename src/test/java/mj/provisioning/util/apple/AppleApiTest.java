@@ -66,6 +66,13 @@ class AppleApiTest {
         System.out.println("allDevices = " + allDevices);
     }
 
-
-
+    @Test
+    void getAllCertificatesTest() {
+        String allCertificates = api.getAllCertificates();
+        System.out.println("allCertificates = " + allCertificates);
+        JsonParser jsonParser = new JsonParser();
+        JsonObject asJsonObject = jsonParser.parse(allCertificates).getAsJsonObject();
+        JsonArray data = asJsonObject.getAsJsonArray("data");
+        System.out.println("data.size() = " + data.size());
+    }
 }

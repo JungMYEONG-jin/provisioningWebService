@@ -15,9 +15,10 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Profile {
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String profileId;
     private String name;
     private String expirationDate;
@@ -36,7 +37,7 @@ public class Profile {
      * 새벽에 매번 리스트를 업데이트하자.
      *
      */
-    @OneToMany(mappedBy = "profile")
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.REMOVE) // profile 삭제시 자식도 삭제
     private List<ProfileDevice> deviceList = new ArrayList<>();
 
     public void insertDevice(ProfileDevice profileDevice){

@@ -16,7 +16,12 @@ public class ProfileDeviceRepositoryAdapter implements ProfileDeviceRepositoryPo
 
     @Override
     public List<ProfileDevice> saveAll(List<ProfileDevice> profileDeviceList) {
-        List<ProfileDevice> notContained = profileDeviceList.stream().filter(profileDevice -> !profileDeviceRepository.existsByDeviceIdAndProfile(profileDevice.getDeviceId(), profileDevice.getProfile())).collect(Collectors.toList());
-        return profileDeviceRepository.saveAll(notContained);
+//        List<ProfileDevice> notContained = profileDeviceList.stream().filter(profileDevice -> !profileDeviceRepository.existsByDeviceIdAndProfile(profileDevice.getDeviceId(), profileDevice.getProfile())).collect(Collectors.toList());
+        return profileDeviceRepository.saveAll(profileDeviceList);
+    }
+
+    @Override
+    public Long deleteByProfileId(String profileId) {
+        return profileDeviceRepository.deleteByProfile_ProfileId(profileId);
     }
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,5 +71,13 @@ class ProfileServiceTest {
     void deleteTest() {
         Profile sol_development_widget_test = profileRepository.findByName("sol_development_widget_test_2023231").orElseThrow(() -> new RuntimeException("일차하는 프로비저닝이 없습니다."));
         profileService.deleteProfile(sol_development_widget_test.getProfileId());
+    }
+
+    @Test
+    void dataFormatting() {
+        List<Profile> all = profileService.findAll();
+        Profile profile = all.get(0);
+        String expirationDate = profile.getExpirationDate().replaceAll("[^0-9]", "");
+        System.out.println("expirationDate = " + expirationDate);
     }
 }

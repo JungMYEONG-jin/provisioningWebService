@@ -38,18 +38,22 @@ public class ProfileService implements ProfileUseCase {
      */
     @Override
     public void saveProfiles() {
+        // profile 생성 전략이
+        // 수정을 해도 모든값이 변경되어 저장이된다.
+        // 어차피 값도 작으니 그냥 싹 삭제후 다시 받아오는게 최선인듯
+        profileRepositoryPort.deleteAll();
         String response = appleApi.getProfileInfo();
         JsonParser parser = new JsonParser();
         JsonObject parse = parser.parse(response).getAsJsonObject();
         JsonArray data = parse.get("data").getAsJsonArray();
         List<Profile> profiles = new ArrayList<>();
-        List<ProfileDevice> profileDevices = new ArrayList<>();
         for (JsonElement datum : data) {
             JsonObject dd = datum.getAsJsonObject();
             JsonObject attributes = dd.getAsJsonObject("attributes");
             String profileId = dd.get("id").toString().replaceAll("\"", "");
             String profileName = attributes.get("name").toString().replaceAll("\"", "");
-            String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "");
+            String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
+            expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
             String platform = attributes.get("platform").toString().replaceAll("\"", "");
             String profileState = attributes.get("profileState").toString().replaceAll("\"", "");
             String profileType = attributes.get("profileType").toString().replaceAll("\"", "");
@@ -109,6 +113,13 @@ public class ProfileService implements ProfileUseCase {
         // 기존꺼 삭제
         appleApi.deleteProfile(profileId);
         profileRepositoryPort.deleteProfile(profileId);
+        // prfoileDevice에서도 삭제
+
+        //profileCertificate에서도 삭제
+
+        // bundle에서도 삭제
+
+
     }
 
     /**

@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProfileDeviceRepository extends JpaRepository<ProfileDevice, Long> {
     boolean existsByDeviceIdAndProfile(String deviceId, Profile profile);
+    Long deleteByProfile_ProfileId(String profileId);
 }
