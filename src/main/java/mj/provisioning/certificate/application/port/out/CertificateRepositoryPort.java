@@ -6,7 +6,8 @@ import java.util.List;
 
 public interface CertificateRepositoryPort {
     void deleteAll();
-    List<Certificate> saveAll();
-    Certificate save();
+    List<Certificate> saveAll(List<Certificate> certificates);
+    Certificate save(Certificate certificate);
     void deleteByCertificateId(String certificateId);
+    List<Certificate> findAll();
 }
