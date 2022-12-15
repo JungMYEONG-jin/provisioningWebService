@@ -18,21 +18,6 @@ public class ProvisioningApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ProvisioningApplication.class, args);
 	}
-
-	@Bean
-	public WebMvcConfigurer CORSConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedOrigins("*")
-						.allowedHeaders("*")
-						.allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
-						.maxAge(-1)   // add maxAge
-						.allowCredentials(false);
-			}
-		};
-	}
 	/**
 	 * for test data insert
 	 * @param profileUseCase
