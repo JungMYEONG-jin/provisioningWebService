@@ -9,10 +9,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "Devices")
 public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
     private String udId; // 유일함
     private String deviceId;
