@@ -19,7 +19,7 @@ public class ProfileDevice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String deviceId;
-    @Column(name = "device_type")
+    @Column(name = "real_type")
     private String type;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
