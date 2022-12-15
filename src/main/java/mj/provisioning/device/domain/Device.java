@@ -9,12 +9,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "Devices")
 public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String udId; // 유일함
+    @Column(name = "device_real_id")
     private String deviceId;
     private String type;
     private String name;
