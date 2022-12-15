@@ -17,6 +17,7 @@ public class Device {
     private String udId; // 유일함
     @Column(name = "device_real_id")
     private String deviceId;
+    @Column(name = "device_type")
     private String type;
     private String name;
     private String deviceClass;
