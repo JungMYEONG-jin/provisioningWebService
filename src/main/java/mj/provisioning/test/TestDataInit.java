@@ -8,6 +8,7 @@ import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class TestDataInit {
     private final DeviceUseCase deviceUseCase;
 
 //A2BFWL3C73
+    @Transactional
     @EventListener(ApplicationReadyEvent.class)
     public void init(){
         profileUseCase.saveProfiles(); // 모든 profiles 업데이트
