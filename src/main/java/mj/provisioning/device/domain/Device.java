@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "device_id")
     private Long id;
     private String udId; // 유일함
     @Column(name = "device_real_id")
