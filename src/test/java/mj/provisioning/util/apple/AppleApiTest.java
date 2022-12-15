@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.MalformedURLException;
@@ -20,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class AppleApiTest {
 
-    AppleApi api = new AppleApi();
+    @Autowired
+    AppleApi api;
     /**
      * Type IOS_APP_STORE는 디바이스가 없음
      * IOS_APP_DEVELOPMENT만 존재
@@ -75,4 +77,5 @@ class AppleApiTest {
         JsonArray data = asJsonObject.getAsJsonArray("data");
         System.out.println("data.size() = " + data.size());
     }
+
 }

@@ -27,6 +27,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import sun.security.ec.ECPrivateKeyImpl;
 
@@ -34,8 +36,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -51,8 +51,10 @@ public class AppleApi{
 
     private static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
     private static final String keyId = "7JL62P566N";
-    private static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
+    private static final String keyPath = "classpath:static/apple/AuthKey_7JL62P566N.p8";
 
+    @Autowired
+    ResourceLoader resourceLoader;
 
     private int CONN_TIME_OUT = 1000 * 30;
 
@@ -251,7 +253,11 @@ public class AppleApi{
     private byte[] readPrivateKey(String keyPath)
     {
         InputStream inputStream = null;
-        inputStream = this.getClass().getClassLoader().getResourceAsStream(keyPath); // in native read without spring core
+        try {
+            inputStream = resourceLoader.getResource(keyPath).getInputStream(); // in native read without spring core
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         byte[] content = null;
         try
         {
