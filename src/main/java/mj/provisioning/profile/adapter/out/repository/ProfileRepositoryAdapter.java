@@ -31,11 +31,6 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     @Override
-    public Optional<Profile> findById(Long id) {
-        return profileRepository.findById(id);
-    }
-
-    @Override
     public Optional<Profile> findByProfileId(String profileId) {
         return profileRepository.findByProfileId(profileId);
     }
