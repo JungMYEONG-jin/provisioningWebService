@@ -45,7 +45,10 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
     @Override
     public List<ProfileShowDto> getSearchByCondition(ProfileSearchCondition condition) {
 
-        return jpaQueryFactory.select(Projections.fields(ProfileShowDto.class, profile.name,
+        return jpaQueryFactory.select(Projections.fields(ProfileShowDto.class,
+                        profile.id,
+                        profile.profileId,
+                        profile.name,
                         profile.platform,
                         profile.profileType,
                         profile.expirationDate))
