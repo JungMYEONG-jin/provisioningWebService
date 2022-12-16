@@ -22,4 +22,6 @@ public class Bundle {
     private String name;
     private String identifier;
     private String seedId;
+    @Column(name = "real_type")
+    private String type;
 }
