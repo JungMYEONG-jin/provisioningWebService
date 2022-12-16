@@ -46,7 +46,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
     public List<ProfileShowDto> getSearchByCondition(ProfileSearchCondition condition) {
 
         return jpaQueryFactory.select(Projections.fields(ProfileShowDto.class,
-                        profile.id,
+                        profile.id.as("key"),
                         profile.profileId,
                         profile.name,
                         profile.platform,
