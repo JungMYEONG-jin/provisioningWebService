@@ -11,6 +11,7 @@ import mj.provisioning.profile.domain.ProfileType;
 @AllArgsConstructor
 @Builder
 public class ProfileShowDto {
+    private Long id;
     private String profileId;
     private String name;
     private ProfilePlatform platform;
@@ -19,6 +20,7 @@ public class ProfileShowDto {
 
     public static ProfileShowDto of(Profile profile){
         return ProfileShowDto.builder()
+                .id(profile.getId())
                 .profileId(profile.getProfileId())
                 .expirationDate(profile.getExpirationDate())
                 .name(profile.getName())
