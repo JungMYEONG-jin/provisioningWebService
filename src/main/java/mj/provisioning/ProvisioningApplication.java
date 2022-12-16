@@ -28,6 +28,7 @@ public class ProvisioningApplication {
 	 */
 	@Bean
 	@Profile("aws")
+//	@Profile("dev")
 	public TestDataInit testDataInit(ProfileUseCase profileUseCase, ProfileDeviceUseCase profileDeviceUseCase, DeviceUseCase deviceUseCase, CertificateUseCase certificateUseCase, ProfileCertificateUseCase profileCertificateUseCase){
 		return new TestDataInit(profileUseCase, profileDeviceUseCase, deviceUseCase, certificateUseCase, profileCertificateUseCase);
 	}
