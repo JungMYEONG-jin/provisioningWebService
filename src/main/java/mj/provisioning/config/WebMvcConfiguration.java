@@ -20,7 +20,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         //NOTE: servlet context set in "application.properties" is "/api" and request like "/api/session/login" resolves here to "/session/login"!
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedOrigins("*")
+                .allowedOrigins("http://localhost:3000", "http://localhost:8080")
                 .allowedHeaders("*")
                 .allowCredentials(false);
     }
