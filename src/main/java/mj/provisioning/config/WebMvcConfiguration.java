@@ -22,7 +22,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedOrigins("http://localhost:3000", "http://localhost:8080")
                 .allowedHeaders("*")
-                .allowCredentials(false);
+                .allowCredentials(true);
     }
 
     @Override
