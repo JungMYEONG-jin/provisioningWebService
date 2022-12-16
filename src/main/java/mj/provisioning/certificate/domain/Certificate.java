@@ -20,10 +20,10 @@ public class Certificate {
     private String type;
     @Column(name = "certificate_real_id")
     private String certificateId;
-
     private String serialNumber;
     private String displayName;
     private String name;
     private String expirationDate;
+    @Enumerated(EnumType.STRING)
     private CertificateType certificateType;
 }

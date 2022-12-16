@@ -43,11 +43,8 @@ class AppleApiTest {
     @Test
     void getDeviceInfoFromCurrentProfile() throws MalformedURLException, NoSuchAlgorithmException {
         String id = "Z26MK4GYYD";
-        JsonArray deviceInfoFromProfile = api.getDeviceInfoFromProfile(id);
-        for (JsonElement jsonElement : deviceInfoFromProfile) {
-            JsonObject asJsonObject = jsonElement.getAsJsonObject();
-            System.out.println("asJsonObject = " + asJsonObject);
-        }
+        String response = api.getDeviceInfoFromProfile(id);
+        System.out.println("response = " + response);
     }
 
     /**
@@ -98,6 +95,12 @@ class AppleApiTest {
             String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "");
             String certificateType = attributes.get("certificateType").toString().replaceAll("\"", "");
         }
+    }
+
+    @Test
+    void getProfileCertificateTEst() {
+        String profileCertificate = api.getProfileCertificate("4D64AC92TM");
+        System.out.println("profileCertificate = " + profileCertificate);
     }
 
     @Test

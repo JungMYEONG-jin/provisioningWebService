@@ -292,42 +292,24 @@ public class AppleApi{
         return null;
     }
 
-    public JsonArray getDeviceInfoFromProfile(String profileId){
+    public String getDeviceInfoFromProfile(String profileId){
         return getDeviceInfo(createJWT(), profileId);
     }
 
 
-    private JsonArray getDeviceInfo(String jwt, String id) {
+    private String getDeviceInfo(String jwt, String id) {
         URL url = null;
         try {
             url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/devices?limit=100");
         } catch (MalformedURLException e) {
             throw new RuntimeException("Wrong URL!! Visit Appstore Connect API...");
         }
-        String response = null;
         try {
-            response = getConnectResultByX509(jwt, url);
+            return getConnectResultByX509(jwt, url);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        JsonParser parser = new JsonParser();
-        JsonObject parse = null;
-        JsonArray res = new JsonArray();
-
-        parse = parser.parse(response).getAsJsonObject();
-        JsonArray data = parse.getAsJsonArray("data");
-        if (data!=null) {
-            for (JsonElement datum : data) {
-                JsonObject dd = datum.getAsJsonObject();
-                JsonObject temp = new JsonObject();
-                String deviceId = dd.get("id").toString().replaceAll("\"","");
-                String type = dd.get("type").toString().replaceAll("\"","");
-                temp.addProperty("id", deviceId);
-                temp.addProperty("type", type);
-                res.add(temp);
-            }
-        }
-        return res;
+        return "";
     }
 
     public JSONObject getBundleIdFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
@@ -369,25 +351,22 @@ public class AppleApi{
     }
 
 
-    public JSONObject getCertificateFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/certificates");
-        String response = getConnectResultByX509(jwt, url);
-        JSONParser parser = new JSONParser();
+    public String getProfileCertificate(String profileId){
         try {
-            JSONObject parse = (JSONObject)parser.parse(response);
-            JSONArray data = (JSONArray)parse.get("data");
-            // get latest
-            JSONObject o =(JSONObject)data.get(0);
-            String type = o.get("type").toString();
-            String certificateId = o.get("id").toString();
-            o.clear();
-            o.put("type", type);
-            o.put("id", certificateId);
-            return o;
-        } catch (ParseException e) {
+            return getCertificateFromProfile(createJWT(), profileId);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
+    }
+
+
+    private String getCertificateFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/certificates");
+        String response = getConnectResultByX509(jwt, url);
+        return response;
     }
 
     /**

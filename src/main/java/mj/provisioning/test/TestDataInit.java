@@ -6,6 +6,7 @@ import mj.provisioning.certificate.application.port.in.CertificateUseCase;
 import mj.provisioning.device.application.port.in.DeviceUseCase;
 import mj.provisioning.profile.application.port.in.ProfileUseCase;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -21,6 +22,7 @@ public class TestDataInit {
     private final ProfileDeviceUseCase profileDeviceUseCase;
     private final DeviceUseCase deviceUseCase;
     private final CertificateUseCase certificateUseCase;
+    private final ProfileCertificateUseCase profileCertificateUseCase;
 
 //A2BFWL3C73
     @Transactional
@@ -31,7 +33,10 @@ public class TestDataInit {
         certificateUseCase.saveCertificates(); // 모든 certificate 업데이트
 
         List<Profile> all = profileUseCase.findAll();
-        all.forEach(profile -> profileDeviceUseCase.saveProfileDevice(profile.getProfileId()));
+        all.forEach(profile -> {
+            profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
+            profileCertificateUseCase.saveProfileCertificate(profile.getProfileId());
+        });
     }
 
 }

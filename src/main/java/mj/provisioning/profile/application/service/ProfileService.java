@@ -70,6 +70,7 @@ public class ProfileService implements ProfileUseCase {
                     .profileContent(profileContent)
                     .uuid(uuid)
                     .deviceList(new ArrayList<>())
+                    .certificates(new ArrayList<>())
                     .build();
             // 개발용만 device가 존재
             profiles.add(build);

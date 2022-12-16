@@ -4,6 +4,7 @@ import mj.provisioning.device.application.port.in.DeviceUseCase;
 import mj.provisioning.device.application.service.DeviceService;
 import mj.provisioning.profile.application.port.in.ProfileUseCase;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ class ProvisioningApplicationTests {
 	ProfileUseCase profileUseCase;
 	@Autowired
 	DeviceUseCase deviceUseCase;
+	@Autowired
+	ProfileCertificateUseCase profileCertificateUseCase;
 
 	@Description("통합 테스트")
 	@Test
@@ -28,7 +31,10 @@ class ProvisioningApplicationTests {
 		profileUseCase.saveProfiles();
 		deviceUseCase.saveDevices();
 		List<Profile> all = profileUseCase.findAll();
-		all.stream().forEach(profile -> profileDeviceUseCase.saveProfileDevice(profile.getProfileId()));
+		all.forEach(profile -> {
+			profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
+			profileCertificateUseCase.saveProfileCertificate(profile.getProfileId());
+		});
 	}
 
 }

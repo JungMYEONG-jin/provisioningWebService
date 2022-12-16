@@ -3,6 +3,7 @@ package mj.provisioning.profiledevice.application.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
@@ -32,18 +33,27 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
         // 기존 삭제
         profileDeviceRepositoryPort.deleteByProfileId(profileId);
         List<ProfileDevice> profileDevices = new ArrayList<>();
+
         if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) {
-            JsonArray deviceInfoFromProfile = appleApi.getDeviceInfoFromProfile(profileId);
-            for (JsonElement jsonElement : deviceInfoFromProfile) {
-                JsonObject asJsonObject = jsonElement.getAsJsonObject();
-                System.out.println("jsonElement = " + asJsonObject.toString());
-                ProfileDevice profileDevice = ProfileDevice.builder().deviceId(asJsonObject.get("id").toString().replaceAll("\"", ""))
-                        .type(asJsonObject.get("type").toString().replaceAll("\"", "")).build();
-                profileDevices.add(profileDevice);
+            String response = appleApi.getDeviceInfoFromProfile(profileId);
+
+            JsonParser parser = new JsonParser();
+            JsonObject parse = parser.parse(response).getAsJsonObject();
+            JsonArray data = parse.getAsJsonArray("data");
+            if (data!=null) {
+                for (JsonElement datum : data) {
+                    JsonObject dd = datum.getAsJsonObject();
+                    String deviceId = dd.get("id").toString().replaceAll("\"","");
+                    String type = dd.get("type").toString().replaceAll("\"","");
+                    ProfileDevice profileDevice = ProfileDevice.builder().deviceId(deviceId)
+                            .type(type)
+                            .build();
+                    profileDevices.add(profileDevice);
+                }
+                profile.insertAll(profileDevices);
+                profileDeviceRepositoryPort.saveAll(profileDevices);
             }
         }
-        profile.insertAll(profileDevices);
-        profileDeviceRepositoryPort.saveAll(profileDevices);
     }
 
 }

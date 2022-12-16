@@ -3,6 +3,7 @@ package mj.provisioning;
 import mj.provisioning.certificate.application.port.in.CertificateUseCase;
 import mj.provisioning.device.application.port.in.DeviceUseCase;
 import mj.provisioning.profile.application.port.in.ProfileUseCase;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import mj.provisioning.test.TestDataInit;
 import org.springframework.boot.SpringApplication;
@@ -27,7 +28,7 @@ public class ProvisioningApplication {
 	 */
 	@Bean
 	@Profile("aws")
-	public TestDataInit testDataInit(ProfileUseCase profileUseCase, ProfileDeviceUseCase profileDeviceUseCase, DeviceUseCase deviceUseCase, CertificateUseCase certificateUseCase){
-		return new TestDataInit(profileUseCase, profileDeviceUseCase, deviceUseCase, certificateUseCase);
+	public TestDataInit testDataInit(ProfileUseCase profileUseCase, ProfileDeviceUseCase profileDeviceUseCase, DeviceUseCase deviceUseCase, CertificateUseCase certificateUseCase, ProfileCertificateUseCase profileCertificateUseCase){
+		return new TestDataInit(profileUseCase, profileDeviceUseCase, deviceUseCase, certificateUseCase, profileCertificateUseCase);
 	}
 }

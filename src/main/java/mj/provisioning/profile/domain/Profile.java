@@ -3,6 +3,7 @@ package mj.provisioning.profile.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import mj.provisioning.device.domain.Device;
+import mj.provisioning.profilecertificate.domain.ProfileCertificate;
 import mj.provisioning.profiledevice.domain.ProfileDevice;
 
 import javax.persistence.*;
@@ -39,6 +40,21 @@ public class Profile {
      */
     @OneToMany(mappedBy = "profile", cascade = CascadeType.REMOVE) // profile 삭제시 자식도 삭제
     private List<ProfileDevice> deviceList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.REMOVE)
+    private List<ProfileCertificate> certificates = new ArrayList<>();
+
+    public void insertCertificate(ProfileCertificate profileCertificate){
+        certificates.add(profileCertificate);
+        profileCertificate.setProfile(this);
+    }
+
+    public void insertAllCertificate(List<ProfileCertificate> all){
+        certificates = all;
+        for (ProfileCertificate profileCertificate : all) {
+            profileCertificate.setProfile(this);
+        }
+    }
 
     public void insertDevice(ProfileDevice profileDevice){
         deviceList.add(profileDevice);
