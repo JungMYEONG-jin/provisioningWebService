@@ -1,12 +1,17 @@
 package mj.provisioning.config;
 
+import mj.provisioning.logging.LoggingInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
+    @Autowired
+    LoggingInterceptor loggingInterceptor;
     /* (non-Javadoc)
      * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)
      */
@@ -18,5 +23,10 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .allowedOrigins("*")
                 .allowedHeaders("*")
                 .allowCredentials(false);
+    }
+
+    @Override
+    protected void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loggingInterceptor);
     }
 }
