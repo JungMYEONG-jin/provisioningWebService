@@ -10,3 +10,8 @@
 ## Spring Security 없이 CORS 전역 설정 안먹히는 이유
 1. allowedOrigins cannot be * if allowCredentials is true. This is documented at Mozilla.org
 내가 *으로 설정해도 credential을 false로 해야 먹힘.
+
+## 12/16 할거
+ProfileCertificate 생성
+BundleId 있는지?
+ProfileBundleId 생성

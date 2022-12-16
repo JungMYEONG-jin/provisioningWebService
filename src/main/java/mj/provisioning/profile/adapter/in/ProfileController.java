@@ -26,4 +26,9 @@ public class ProfileController {
         return ResponseEntity.ok(build);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<String> hello(){
+        return ResponseEntity.ok("hello");
+    }
+
 }
