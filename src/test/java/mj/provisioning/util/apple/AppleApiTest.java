@@ -97,10 +97,19 @@ class AppleApiTest {
         }
     }
 
+    /**
+     * id, name,identifier, seedId
+     */
     @Test
-    void getProfileCertificateTEst() {
+    void getProfileCertificateTest() {
         String profileCertificate = api.getProfileCertificate("4D64AC92TM");
         System.out.println("profileCertificate = " + profileCertificate);
+    }
+
+    @Test
+    void getBundleIdTest() {
+        String allBundleId = api.getAllBundleId();
+        System.out.println("allBundleId = " + allBundleId);
     }
 
     @Test

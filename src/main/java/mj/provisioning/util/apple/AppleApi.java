@@ -312,6 +312,21 @@ public class AppleApi{
         return "";
     }
 
+    public String getAllBundleId(){
+        URL url = null;
+        try {
+            url = new URL("https://api.appstoreconnect.apple.com/v1/bundleIds?limit=200");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("잘못된 url 입니다 : " + url.toString());
+        }
+        try {
+            return getConnectResultByX509(createJWT(), url);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("해당 요청을 처리 할 수 없습니다...");
+        }
+    }
+
+
     public JSONObject getBundleIdFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/bundleId");
         String response = getConnectResultByX509(jwt, url);

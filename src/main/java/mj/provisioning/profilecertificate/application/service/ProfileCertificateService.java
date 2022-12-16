@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfileType;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateRepositoryPort;
 import mj.provisioning.profilecertificate.domain.ProfileCertificate;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,12 +47,27 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
                 JsonObject dd = datum.getAsJsonObject();
                 String certificateId = dd.get("id").toString().replaceAll("\"","");
                 String type = dd.get("type").toString().replaceAll("\"","");
+                JsonObject attributes = dd.getAsJsonObject("attributes");
+                String displayName = attributes.get("displayName").toString().replaceAll("\"", "");
+                String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
+                expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
+
                 ProfileCertificate profileCertificate = ProfileCertificate.builder().certificateId(certificateId)
-                        .type(type).build();
+                        .type(type)
+                        .expirationDate(expirationDate)
+                        .displayName(displayName)
+                        .build();
                 profileCertificates.add(profileCertificate);
             }
             profile.insertAllCertificate(profileCertificates);
             profileCertificateRepositoryPort.saveAll(profileCertificates);
         }
     }
+
+    @Override
+    public ProfileCertificateShowListDto getProfileCertificateList(String profileId) {
+        List<ProfileCertificate> byProfileId = profileCertificateRepositoryPort.findByProfileId(profileId);
+        return ProfileCertificateShowListDto.builder().data(byProfileId.stream().map(ProfileCertificateShowDto::of).collect(Collectors.toList())).build();
+    }
+
 }

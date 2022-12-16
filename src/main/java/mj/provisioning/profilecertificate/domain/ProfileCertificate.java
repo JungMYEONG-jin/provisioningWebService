@@ -15,7 +15,8 @@ public class ProfileCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String expirationDate;
+    private String displayName;
     private String certificateId;
     @Column(name = "real_type")
     private String type;

@@ -1,5 +1,6 @@
 package mj.provisioning;
 
+import mj.provisioning.certificate.application.port.in.CertificateUseCase;
 import mj.provisioning.device.application.port.in.DeviceUseCase;
 import mj.provisioning.device.application.service.DeviceService;
 import mj.provisioning.profile.application.port.in.ProfileUseCase;
@@ -24,12 +25,16 @@ class ProvisioningApplicationTests {
 	DeviceUseCase deviceUseCase;
 	@Autowired
 	ProfileCertificateUseCase profileCertificateUseCase;
+	@Autowired
+	CertificateUseCase certificateUseCase;
 
 	@Description("통합 테스트")
 	@Test
 	void contextLoads() {
 		profileUseCase.saveProfiles();
 		deviceUseCase.saveDevices();
+		certificateUseCase.saveCertificates();
+
 		List<Profile> all = profileUseCase.findAll();
 		all.forEach(profile -> {
 			profileDeviceUseCase.saveProfileDevice(profile.getProfileId());

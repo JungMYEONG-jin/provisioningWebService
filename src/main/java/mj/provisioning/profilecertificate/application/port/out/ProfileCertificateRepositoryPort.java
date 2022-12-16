@@ -7,4 +7,5 @@ import java.util.List;
 public interface ProfileCertificateRepositoryPort {
     List<ProfileCertificate> saveAll(List<ProfileCertificate> profileCertificates);
     Long deleteByProfileId(String profileId);
+    List<ProfileCertificate> findByProfileId(String profileId);
 }
