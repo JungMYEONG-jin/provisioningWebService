@@ -12,6 +12,6 @@
 내가 *으로 설정해도 credential을 false로 해야 먹힘.
 
 ## 12/16 할거
-ProfileCertificate 생성
-BundleId 있는지?
-ProfileBundleId 생성
+ProfileCertificate 생성 완료
+BundleId 있는지? 생성 완료
+ProfileBundleId 생성 완료

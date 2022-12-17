@@ -97,6 +97,24 @@ class AppleApiTest {
         }
     }
 
+    @Test
+    void getBundleIdFromProfile() {
+        String bundleIdFromProfile = api.getBundleIdFromProfile("Z26MK4GYYD");
+
+        JsonParser parser = new JsonParser();
+        JsonObject object = parser.parse(bundleIdFromProfile).getAsJsonObject();
+        JsonObject data = object.getAsJsonObject("data");
+        String type = data.get("type").toString().replaceAll("\"", "");
+        String id = data.get("id").toString().replaceAll("\"", "");
+        JsonObject attributes = data.getAsJsonObject("attributes");
+        String name = attributes.get("name").toString().replaceAll("\"", "");
+        String identifier = attributes.get("identifier").toString().replaceAll("\"", "");
+        String seedId = attributes.get("seedId").toString().replaceAll("\"", "");
+
+
+        System.out.println("bundleIdFromProfile = " + bundleIdFromProfile);
+    }
+
     /**
      * id, name,identifier, seedId
      */

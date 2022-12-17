@@ -327,24 +327,18 @@ public class AppleApi{
     }
 
 
-    public JSONObject getBundleIdFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/bundleId");
-        String response = getConnectResultByX509(jwt, url);
-        JSONParser parser = new JSONParser();
-        JSONObject parse = null;
+    public String getBundleIdFromProfile(String id) {
+        URL url = null;
         try {
-            parse = (JSONObject)parser.parse(response);
-            JSONObject data = (JSONObject)parse.get("data");
-            String bundleID = data.get("id").toString();
-            String type = data.get("type").toString();
-            data.clear();
-            data.put("type", type);
-            data.put("id", bundleID);
-            return data;
-        } catch (ParseException e) {
-            e.printStackTrace();
+            url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/bundleId");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("잘못된 URL 형식입니다.");
         }
-        return null;
+        try {
+            return getConnectResultByX509(createJWT(), url);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("통신 실패입니다..");
+        }
     }
 
     /**
