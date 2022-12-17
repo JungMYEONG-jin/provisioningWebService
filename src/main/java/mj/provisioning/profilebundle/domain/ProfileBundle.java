@@ -20,7 +20,7 @@ public class ProfileBundle {
     private String seedId;
     @Column(name = "real_type")
     private String type;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "profile_id")
     private Profile profile;
 

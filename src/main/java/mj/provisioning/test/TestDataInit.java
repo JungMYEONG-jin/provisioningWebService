@@ -2,10 +2,12 @@ package mj.provisioning.test;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mj.provisioning.bundle.application.port.in.BundleUseCase;
 import mj.provisioning.certificate.application.port.in.CertificateUseCase;
 import mj.provisioning.device.application.port.in.DeviceUseCase;
 import mj.provisioning.profile.application.port.in.ProfileUseCase;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -19,10 +21,14 @@ import java.util.List;
 public class TestDataInit {
 
     private final ProfileUseCase profileUseCase;
-    private final ProfileDeviceUseCase profileDeviceUseCase;
     private final DeviceUseCase deviceUseCase;
     private final CertificateUseCase certificateUseCase;
+
+    private final ProfileDeviceUseCase profileDeviceUseCase;
     private final ProfileCertificateUseCase profileCertificateUseCase;
+    private final ProfileBundleUseCase profileBundleUseCase;
+
+
 
 //A2BFWL3C73
     @Transactional
@@ -36,6 +42,7 @@ public class TestDataInit {
         all.forEach(profile -> {
             profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
             profileCertificateUseCase.saveProfileCertificate(profile.getProfileId());
+            profileBundleUseCase.saveProfileBundles(profile.getProfileId());
         });
     }
 
