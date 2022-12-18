@@ -1,9 +1,6 @@
 package mj.provisioning.profiledevice.application.service;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
@@ -31,7 +28,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     public void saveProfileDevice(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         // 기존 삭제
-        profileDeviceRepositoryPort.deleteByProfileId(profileId);
+        profileDeviceRepositoryPort.deleteByProfile(profile);
         List<ProfileDevice> profileDevices = new ArrayList<>();
 
         if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) {
@@ -55,6 +52,22 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
             }
         }
     }
+
+    @Override
+    public JsonArray getDeviceJson(String profileId) {
+        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        List<ProfileDevice> devices = profileDeviceRepositoryPort.findByProfile(profile);
+        JsonArray jsonArray = new JsonArray();
+        devices.forEach(profileDevice -> {
+            JsonObject obj = new JsonObject();
+            obj.addProperty("id", profileDevice.getDeviceId());
+            obj.addProperty("type", profileDevice.getType());
+            jsonArray.add(obj);
+        });
+        return jsonArray;
+
+    }
+
 
 }
 

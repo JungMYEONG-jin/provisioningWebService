@@ -1,5 +1,6 @@
 package mj.provisioning.profiledevice.application.service;
 
+import com.google.gson.JsonArray;
 import mj.provisioning.profile.application.port.in.ProfileUseCase;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
@@ -21,8 +22,14 @@ class ProfileDeviceServiceTest {
     @Test
     void insertTest() {
         List<Profile> all = profileUseCase.findAll();
-        for (Profile profile : all) {
-            profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
-        }
+        all.stream().forEach(profile -> profileDeviceUseCase.saveProfileDevice(profile.getProfileId()));
+    }
+
+    @Test
+    void getDeviceInfo() {
+        String profile = "2BV6CUSYMK";
+        JsonArray deviceJson = profileDeviceUseCase.getDeviceJson(profile);
+        System.out.println("deviceJson = " + deviceJson);
+        System.out.println("deviceJson = " + deviceJson.size());
     }
 }

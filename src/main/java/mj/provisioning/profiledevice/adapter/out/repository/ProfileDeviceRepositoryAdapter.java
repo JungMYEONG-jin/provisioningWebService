@@ -1,6 +1,7 @@
 package mj.provisioning.profiledevice.adapter.out.repository;
 
 import lombok.RequiredArgsConstructor;
+import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profiledevice.application.port.out.ProfileDeviceRepositoryPort;
 import mj.provisioning.profiledevice.domain.ProfileDevice;
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,12 @@ public class ProfileDeviceRepositoryAdapter implements ProfileDeviceRepositoryPo
     }
 
     @Override
-    public Long deleteByProfileId(String profileId) {
-        return profileDeviceRepository.deleteByProfile_ProfileId(profileId);
+    public List<ProfileDevice> findByProfile(Profile profileId) {
+        return profileDeviceRepository.findByProfile(profileId);
+    }
+
+    @Override
+    public Long deleteByProfile(Profile profileId) {
+        return profileDeviceRepository.deleteByProfile(profileId);
     }
 }

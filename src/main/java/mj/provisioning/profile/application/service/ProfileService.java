@@ -14,6 +14,12 @@ import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfilePlatform;
 import mj.provisioning.profile.domain.ProfileState;
 import mj.provisioning.profile.domain.ProfileType;
+import mj.provisioning.profilebundle.application.port.out.ProfileBundleRepositoryPort;
+import mj.provisioning.profilebundle.domain.ProfileBundle;
+import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateRepositoryPort;
+import mj.provisioning.profilecertificate.domain.ProfileCertificate;
+import mj.provisioning.profiledevice.application.port.out.ProfileDeviceRepositoryPort;
+import mj.provisioning.profiledevice.domain.ProfileDevice;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +34,10 @@ public class ProfileService implements ProfileUseCase {
 
     private final ProfileRepositoryPort profileRepositoryPort;
     private final AppleApi appleApi;
+
+    private final ProfileBundleRepositoryPort profileBundleRepositoryPort;
+    private final ProfileDeviceRepositoryPort profileDeviceRepositoryPort;
+    private final ProfileCertificateRepositoryPort profileCertificateRepositoryPort;
 
     /**
      *  base64 인코딩된거를 디코드하고 .mobileprovision 형식으로 저장하면 됨.
@@ -87,6 +97,11 @@ public class ProfileService implements ProfileUseCase {
     public void updateProfile(String profileId) {
         // 새 이름으로 업데이트? 생성느낌
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
+
+
+        ProfileBundle bundle = profileBundleRepositoryPort.findByProfileId(profileId);
+        List<ProfileCertificate> certificates = profileCertificateRepositoryPort.findByProfileId(profileId);
+        List<ProfileDevice> devices = profileDeviceRepositoryPort.findByProfile(profile);
 
 //        String id = profile.getProfileId(); // 올드 id
 //        JSONObject bundleIdFromProfile = getBundleIdFromProfile(jwt, id);

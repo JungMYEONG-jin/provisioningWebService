@@ -31,8 +31,8 @@ public class ProvisioningApplication {
 	 * @return
 	 */
 	@Bean
-//	@Profile("aws")
-	@Profile("dev")
+	@Profile("aws")
+//	@Profile("dev")
 	public TestDataInit testDataInit(ProfileUseCase profileUseCase, DeviceUseCase deviceUseCase, CertificateUseCase certificateUseCase,
 									 ProfileDeviceUseCase profileDeviceUseCase, ProfileCertificateUseCase profileCertificateUseCase, ProfileBundleUseCase profileBundleUseCase){
 		return new TestDataInit(profileUseCase, deviceUseCase, certificateUseCase, profileDeviceUseCase, profileCertificateUseCase, profileBundleUseCase);
