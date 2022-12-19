@@ -10,7 +10,7 @@ import static org.springframework.util.StringUtils.hasText;
 
 @Getter
 public enum ProfileState {
-    ACTIVE("active"), INVALID("invalid");
+    ACTIVE("Active"), INVALID("Invalid");
 
     private String value;
 

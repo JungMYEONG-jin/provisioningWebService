@@ -5,7 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import mj.provisioning.device.application.port.in.DeviceShowListDto;
+import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.application.port.in.ProfileUseCase;
@@ -14,19 +15,17 @@ import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfilePlatform;
 import mj.provisioning.profile.domain.ProfileState;
 import mj.provisioning.profile.domain.ProfileType;
-import mj.provisioning.profilebundle.application.port.out.ProfileBundleRepositoryPort;
-import mj.provisioning.profilebundle.domain.ProfileBundle;
-import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateRepositoryPort;
-import mj.provisioning.profilecertificate.domain.ProfileCertificate;
-import mj.provisioning.profiledevice.application.port.out.ProfileDeviceRepositoryPort;
-import mj.provisioning.profiledevice.domain.ProfileDevice;
+import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
+import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
+import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Transactional
 @Service
@@ -36,9 +35,10 @@ public class ProfileService implements ProfileUseCase {
     private final ProfileRepositoryPort profileRepositoryPort;
     private final AppleApi appleApi;
 
-    private final ProfileBundleRepositoryPort profileBundleRepositoryPort;
-    private final ProfileDeviceRepositoryPort profileDeviceRepositoryPort;
-    private final ProfileCertificateRepositoryPort profileCertificateRepositoryPort;
+    private final ProfileBundleUseCase profileBundleUseCase;
+    private final ProfileDeviceUseCase profileDeviceUseCase;
+    private final ProfileCertificateUseCase profileCertificateUseCase;
+
 
     /**
      *  base64 인코딩된거를 디코드하고 .mobileprovision 형식으로 저장하면 됨.
@@ -102,9 +102,9 @@ public class ProfileService implements ProfileUseCase {
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
 
 
-        ProfileBundle bundle = profileBundleRepositoryPort.findByProfileId(profileId);
-        List<ProfileCertificate> certificates = profileCertificateRepositoryPort.findByProfileId(profileId);
-        List<ProfileDevice> devices = profileDeviceRepositoryPort.findByProfile(profile);
+//        ProfileBundle bundle = profileBundleRepositoryPort.findByProfileId(profileId);
+//        List<ProfileCertificate> certificates = profileCertificateRepositoryPort.findByProfileId(profileId);
+//        List<ProfileDevice> devices = profileDeviceRepositoryPort.findByProfile(profile);
 
 //        String id = profile.getProfileId(); // 올드 id
 //        JSONObject bundleIdFromProfile = getBundleIdFromProfile(jwt, id);
@@ -162,6 +162,24 @@ public class ProfileService implements ProfileUseCase {
     @Override
     public Profile getProfile(String profileId) {
         return profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
+    }
+
+    @Override
+    public ProfileEditShowDto getEditShow(String profileId) {
+        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
+
+        ProfileBundleShowListDto bundleList = profileBundleUseCase.getBundleList(profileId);
+        DeviceShowListDto deviceShowList = profileDeviceUseCase.getDeviceShowList(profileId);
+        ProfileCertificateShowListDto profileCertificateList = profileCertificateUseCase.getProfileCertificateList(profileId);
+
+        return ProfileEditShowDto.builder().name(profile.getName())
+                .expires(profile.getExpirationDate())
+                .type(profile.getProfileType().getValue())
+                .status(profile.getProfileState().getValue())
+                .certificates(profileCertificateList)
+                .bundle(bundleList)
+                .devices(deviceShowList)
+                .build();
     }
 
 }

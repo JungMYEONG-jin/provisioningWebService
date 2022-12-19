@@ -1,5 +1,6 @@
 package mj.provisioning.profile.application.port.out;
 
+import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.domain.Profile;

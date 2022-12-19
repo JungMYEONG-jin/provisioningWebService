@@ -12,4 +12,5 @@ public interface ProfileUseCase {
     List<ProfileShowDto> searchByCondition(ProfileSearchCondition condition);
     List<Profile> findAll();
     Profile getProfile(String profileId);
+    ProfileEditShowDto getEditShow(String profileId);
 }
