@@ -23,27 +23,31 @@ public class TestDataInit {
     private final ProfileUseCase profileUseCase;
     private final DeviceUseCase deviceUseCase;
     private final CertificateUseCase certificateUseCase;
-
+    private final BundleUseCase bundleUseCase;
     private final ProfileDeviceUseCase profileDeviceUseCase;
     private final ProfileCertificateUseCase profileCertificateUseCase;
     private final ProfileBundleUseCase profileBundleUseCase;
 
-
-
-//A2BFWL3C73
+    //A2BFWL3C73
     @Transactional
     @EventListener(ApplicationReadyEvent.class)
     public void init(){
         profileUseCase.saveProfiles(); // 모든 profiles 업데이트
         deviceUseCase.saveDevices(); // 모든 device 업데이트
         certificateUseCase.saveCertificates(); // 모든 certificate 업데이트
+        bundleUseCase.saveBundles();
 
         List<Profile> all = profileUseCase.findAll();
+//        all.stream().parallel().forEach(profile -> {
+//            profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
+//        });
+
         all.forEach(profile -> {
             profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
             profileCertificateUseCase.saveProfileCertificate(profile.getProfileId());
             profileBundleUseCase.saveProfileBundles(profile.getProfileId());
         });
     }
+
 
 }

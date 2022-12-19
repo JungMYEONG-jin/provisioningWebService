@@ -25,6 +25,11 @@ public class ProfileCertificateRepositoryAdapter implements ProfileCertificateRe
     }
 
     @Override
+    public Long deleteByProfileId(Profile profile) {
+        return profileCertificateRepository.deleteByProfile(profile);
+    }
+
+    @Override
     public List<ProfileCertificate> findByProfileId(String profileId) {
         return profileCertificateRepository.findByProfile_ProfileId(profileId);
     }

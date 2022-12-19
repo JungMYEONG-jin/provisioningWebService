@@ -37,7 +37,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
     public void saveProfileCertificate(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         // 기존 삭제
-        profileCertificateRepositoryPort.deleteByProfileId(profileId);
+        profileCertificateRepositoryPort.deleteByProfileId(profile);
         List<ProfileCertificate> profileCertificates = new ArrayList<>();
         String response = appleApi.getProfileCertificate(profileId);
 
