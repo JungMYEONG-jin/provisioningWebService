@@ -1,6 +1,7 @@
 package mj.provisioning.profile.application.service;
 
 import mj.provisioning.profile.adapter.out.repository.ProfileRepository;
+import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.domain.Profile;
@@ -79,5 +80,11 @@ class ProfileServiceTest {
         Profile profile = all.get(0);
         String expirationDate = profile.getExpirationDate().replaceAll("[^0-9]", "");
         System.out.println("expirationDate = " + expirationDate);
+    }
+
+    @Test
+    void getEditTest() {
+        ProfileEditShowDto editShow = profileService.getEditShow("2BV6CUSYMK");
+        System.out.println("editShow = " + editShow);
     }
 }
