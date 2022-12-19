@@ -25,7 +25,7 @@ public class ProfileController {
         return ResponseEntity.ok(build);
     }
 
-    @GetMapping("resources/profiles/edit/{profileId}")
+    @GetMapping("/resources/profiles/edit/{profileId}")
     public ResponseEntity<ProfileEditShowDto> getEdit(@Param("profileId") String profileId){
         ProfileEditShowDto editShow = profileUseCase.getEditShow(profileId);
         return ResponseEntity.ok(editShow);
