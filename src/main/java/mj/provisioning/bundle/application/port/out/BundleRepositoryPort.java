@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface BundleRepositoryPort{
     List<Bundle> saveAll(List<Bundle> bundles);
+    List<Bundle> findAll();
     void deleteAll();
 }

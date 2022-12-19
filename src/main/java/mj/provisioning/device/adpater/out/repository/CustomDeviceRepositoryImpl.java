@@ -22,4 +22,18 @@ public class CustomDeviceRepositoryImpl implements CustomDeviceRepository{
                 .fetch();
     }
 
+    @Override
+    public List<Device> findByDeviceClass(String deviceClass) {
+        return jpaQueryFactory.selectFrom(device)
+                .where(device.deviceClass.eq(deviceClass))
+                .fetch();
+    }
+
+    @Override
+    public List<Device> findByDeviceIds(List<String> deviceIds) {
+        return jpaQueryFactory.selectFrom(device)
+                .where(device.deviceId.in(deviceIds))
+                .fetch();
+    }
+
 }

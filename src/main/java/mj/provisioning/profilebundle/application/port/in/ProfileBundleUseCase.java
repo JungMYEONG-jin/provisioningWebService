@@ -4,6 +4,6 @@ import com.google.gson.JsonObject;
 
 public interface ProfileBundleUseCase {
     void saveProfileBundles(String profileId);
-    ProfileBundleShowListDto getAllBundles();
+    ProfileBundleShowListDto getBundleList(String profileId);
     JsonObject getProfileBundleForUpdate(String profileId);
 }

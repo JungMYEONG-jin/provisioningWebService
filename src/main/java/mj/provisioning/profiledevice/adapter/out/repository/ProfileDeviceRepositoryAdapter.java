@@ -30,4 +30,9 @@ public class ProfileDeviceRepositoryAdapter implements ProfileDeviceRepositoryPo
     public Long deleteByProfile(Profile profileId) {
         return profileDeviceRepository.deleteByProfile(profileId);
     }
+
+    @Override
+    public boolean isExist(String deviceId, Profile profile) {
+        return profileDeviceRepository.existsByDeviceIdAndProfile(deviceId, profile);
+    }
 }

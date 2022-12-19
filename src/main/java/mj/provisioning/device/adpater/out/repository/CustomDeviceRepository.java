@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface CustomDeviceRepository {
     List<Device> findByNames(List<String> names);
+    List<Device> findByDeviceClass(String deviceClass);
+    List<Device> findByDeviceIds(List<String> deviceIds);
 }

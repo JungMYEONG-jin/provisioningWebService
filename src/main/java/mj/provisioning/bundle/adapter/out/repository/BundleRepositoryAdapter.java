@@ -18,6 +18,11 @@ public class BundleRepositoryAdapter implements BundleRepositoryPort {
     }
 
     @Override
+    public List<Bundle> findAll() {
+        return bundleRepository.findAll();
+    }
+
+    @Override
     public void deleteAll() {
         bundleRepository.deleteAll();
     }

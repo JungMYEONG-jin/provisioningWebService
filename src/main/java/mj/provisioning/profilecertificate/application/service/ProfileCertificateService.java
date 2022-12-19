@@ -10,20 +10,17 @@ import mj.provisioning.certificate.domain.Certificate;
 import mj.provisioning.certificate.domain.CertificateType;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
-import mj.provisioning.profile.domain.ProfileType;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateRepositoryPort;
 import mj.provisioning.profilecertificate.domain.ProfileCertificate;
-import mj.provisioning.profiledevice.domain.ProfileDevice;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,6 +68,11 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
         }
     }
 
+    /**
+     * edit 페이지에 출력하는 용도.
+     * @param profileId
+     * @return
+     */
     @Override
     public ProfileCertificateShowListDto getProfileCertificateList(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
@@ -79,8 +81,9 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
         List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new RuntimeException("해당 타입에 매치되는 인증서가 존재하지 않습니다."));
 
         // select 여부 체크해서 return
-        return ProfileCertificateShowListDto.builder().data(byCertificateType.stream().map(certificate -> {
-             return ProfileCertificateShowDto.of(certificate, profileCertificateRepositoryPort.isExist(certificate.getCertificateId(), profile));
+        final long[] idx = {0};
+        return ProfileCertificateShowListDto.builder().certificateData(byCertificateType.stream().map(certificate -> {
+             return ProfileCertificateShowDto.of(certificate, profileCertificateRepositoryPort.isExist(certificate.getCertificateId(), profile), idx[0]++);
         }).collect(Collectors.toList())).build();
     }
 

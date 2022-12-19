@@ -27,7 +27,7 @@ class ProfileCertificateServiceTest {
     @Test
     void getProfileCertificateList() {
         ProfileCertificateShowListDto profileCertificateList = profileCertificateUseCase.getProfileCertificateList("2BV6CUSYMK");
-        List<ProfileCertificateShowDto> data = profileCertificateList.getData();
+        List<ProfileCertificateShowDto> data = profileCertificateList.getCertificateData();
         for (ProfileCertificateShowDto datum : data) {
             System.out.println("datum = " + datum);
         }

@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mj.provisioning.bundle.application.port.out.BundleRepositoryPort;
+import mj.provisioning.bundle.domain.Bundle;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
@@ -27,6 +29,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
     private final ProfileBundleRepositoryPort profileBundleRepositoryPort;
     private final AppleApi appleApi;
     private final ProfileRepositoryPort profileRepositoryPort;
+    private final BundleRepositoryPort bundleRepositoryPort;
 
     @Override
     public void saveProfileBundles(String profileId) {
@@ -56,10 +59,13 @@ public class ProfileBundleService implements ProfileBundleUseCase {
     }
 
     @Override
-    public ProfileBundleShowListDto getAllBundles() {
-        List<ProfileBundle> allProfileBundles = profileBundleRepositoryPort.getAllProfileBundles();
-        List<ProfileBundleShowDto> profileBundleShowDtos = allProfileBundles.stream().map(ProfileBundleShowDto::of).collect(Collectors.toList());
-        return ProfileBundleShowListDto.builder().data(profileBundleShowDtos).build();
+    public ProfileBundleShowListDto getBundleList(String profileId) {
+        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        List<Bundle> all = bundleRepositoryPort.findAll();
+
+        return ProfileBundleShowListDto.builder().bundleData(all.stream().map(bundle -> {
+            return ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile));
+        }).collect(Collectors.toList())).build();
     }
 
     @Override
@@ -72,5 +78,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         bundle.add("data", object);
         return bundle;
     }
+
+
 
 }

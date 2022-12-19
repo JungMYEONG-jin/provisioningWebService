@@ -9,6 +9,7 @@ public interface ProfileDeviceRepositoryPort {
     List<ProfileDevice> saveAll(List<ProfileDevice> profileDeviceList);
     List<ProfileDevice> findByProfile(Profile profile);
     Long deleteByProfile(Profile profile);
+    boolean isExist(String deviceId, Profile profile);
 //    List<ProfileDevice> findByProfile(String profileId);
 //    Long deleteByProfile(String profileId);
 }

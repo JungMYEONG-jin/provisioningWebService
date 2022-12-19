@@ -1,6 +1,7 @@
 package mj.provisioning.profilebundle.adapter.out.repository;
 
 import lombok.RequiredArgsConstructor;
+import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilebundle.application.port.out.ProfileBundleRepositoryPort;
 import mj.provisioning.profilebundle.domain.ProfileBundle;
 import org.springframework.stereotype.Repository;
@@ -30,5 +31,10 @@ public class ProfileBundleRepositoryAdapter implements ProfileBundleRepositoryPo
     @Override
     public ProfileBundle save(ProfileBundle profileBundle) {
         return profileBundleRepository.save(profileBundle);
+    }
+
+    @Override
+    public boolean isExist(String bundleId, Profile profile) {
+        return profileBundleRepository.existsByBundleIdAndProfile(bundleId, profile);
     }
 }

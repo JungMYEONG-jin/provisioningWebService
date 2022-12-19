@@ -9,20 +9,32 @@ import mj.provisioning.profilebundle.domain.ProfileBundle;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
+@ToString
 public class ProfileBundleShowDto {
     private Long key;
-    private String name;
-    private String identifier;
-    private String seedId;
     private String appId;
+    private String bundleId;
+    private boolean isSelected;
 
     public static ProfileBundleShowDto of(ProfileBundle bundle){
         return ProfileBundleShowDto.builder()
                 .key(bundle.getId())
-                .name(bundle.getName())
-                .identifier(bundle.getIdentifier())
-                .seedId(bundle.getSeedId())
+//                .name(bundle.getName())
+//                .identifier(bundle.getIdentifier())
+//                .seedId(bundle.getSeedId())
                 .appId(bundle.getName()+" ("+bundle.getSeedId()+"."+bundle.getIdentifier()+")")
+                .build();
+    }
+
+    public static ProfileBundleShowDto of(Bundle bundle, boolean isSelected){
+        return ProfileBundleShowDto.builder()
+                .key(bundle.getId())
+//                .name(bundle.getName())
+//                .identifier(bundle.getIdentifier())
+//                .seedId(bundle.getSeedId())
+                .appId(bundle.getName()+" ("+bundle.getSeedId()+"."+bundle.getIdentifier()+")")
+                .bundleId(bundle.getBundleId())
+                .isSelected(isSelected)
                 .build();
     }
 }

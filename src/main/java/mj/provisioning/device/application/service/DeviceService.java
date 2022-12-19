@@ -54,7 +54,7 @@ public class DeviceService implements DeviceUseCase{
 
     @Override
     public List<DeviceDto> getAllDeviceList() {
-        List<Device> all = deviceRepositoryPort.findAll();
+        List<Device> all = deviceRepositoryPort.findAll().orElseThrow(()->new RuntimeException("No Devices..."));
         return all.stream().map(DeviceDto::to).collect(Collectors.toList());
     }
 }

@@ -11,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProfileBundleShowListDto {
-    private List<ProfileBundleShowDto> data = new ArrayList<>();
+    private List<ProfileBundleShowDto> bundleData = new ArrayList<>();
 }
