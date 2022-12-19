@@ -8,11 +8,12 @@ import mj.provisioning.profile.application.port.in.*;
 import mj.provisioning.profile.domain.Profile;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,6 +39,12 @@ public class ProfileController {
     @GetMapping("/")
     public ResponseEntity<String> hello(){
         return ResponseEntity.ok("hello");
+    }
+
+    @PostMapping("/resources/profiles/edit/{profileId}")
+    public ResponseEntity postEdit(@PathVariable(name = "profileId") String profileId, @RequestBody ProfileEditRequestDto profileEditRequestDto){
+        profileEditRequestDto.setProfileId(profileId);
+        return ResponseEntity.created(URI.create("/apple/profile/list")).body("수정에 성공하였습니다.");
     }
 
 }

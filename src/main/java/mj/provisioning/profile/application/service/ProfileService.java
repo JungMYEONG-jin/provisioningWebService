@@ -101,6 +101,11 @@ public class ProfileService implements ProfileUseCase {
         // 새 이름으로 업데이트? 생성느낌
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
 
+        JsonObject profileCertificatesForUpdate = profileCertificateUseCase.getProfileCertificatesForUpdate(profileId);
+        JsonObject deviceForUpdateProfile = profileDeviceUseCase.getDeviceForUpdateProfile(profileId);
+        JsonObject profileBundleForUpdate = profileBundleUseCase.getProfileBundleForUpdate(profileId);
+
+
 
 //        ProfileBundle bundle = profileBundleRepositoryPort.findByProfileId(profileId);
 //        List<ProfileCertificate> certificates = profileCertificateRepositoryPort.findByProfileId(profileId);

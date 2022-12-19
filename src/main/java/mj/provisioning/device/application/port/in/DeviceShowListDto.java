@@ -2,6 +2,7 @@ package mj.provisioning.device.application.port.in;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -10,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class DeviceShowListDto {
-    private List<DeviceShowDto> deviceData;
+    private List<DeviceShowDto> deviceData = new ArrayList<>();
 }
