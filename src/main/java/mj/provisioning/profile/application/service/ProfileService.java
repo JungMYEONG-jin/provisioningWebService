@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Transactional
 @Service
@@ -59,6 +60,7 @@ public class ProfileService implements ProfileUseCase {
             JsonObject dd = datum.getAsJsonObject();
             JsonObject attributes = dd.getAsJsonObject("attributes");
             String profileId = dd.get("id").toString().replaceAll("\"", "");
+            String type = dd.get("type").toString().replaceAll("\"", "");
             String profileName = attributes.get("name").toString().replaceAll("\"", "");
             String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
             expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
@@ -73,6 +75,7 @@ public class ProfileService implements ProfileUseCase {
              */
             Profile build = Profile.builder().profileId(profileId)
                     .name(profileName)
+                    .type(type)
                     .profileState(ProfileState.get(profileState))
                     .profileType(ProfileType.get(profileType))
                     .expirationDate(expirationDate)
@@ -154,6 +157,11 @@ public class ProfileService implements ProfileUseCase {
     @Override
     public List<Profile> findAll() {
         return profileRepositoryPort.findAll();
+    }
+
+    @Override
+    public Profile getProfile(String profileId) {
+        return profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
     }
 
 }

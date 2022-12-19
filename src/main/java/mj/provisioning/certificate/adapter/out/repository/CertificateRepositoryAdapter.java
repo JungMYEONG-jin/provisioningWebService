@@ -3,9 +3,12 @@ package mj.provisioning.certificate.adapter.out.repository;
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.certificate.application.port.out.CertificateRepositoryPort;
 import mj.provisioning.certificate.domain.Certificate;
+import mj.provisioning.certificate.domain.CertificateType;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,5 +39,10 @@ public class CertificateRepositoryAdapter implements CertificateRepositoryPort {
     @Override
     public List<Certificate> findAll() {
         return certificateRepository.findAll();
+    }
+
+    @Override
+    public Optional<List<Certificate>> findByCertificateType(CertificateType certificateType) {
+        return certificateRepository.findAllByCertificateType(certificateType);
     }
 }

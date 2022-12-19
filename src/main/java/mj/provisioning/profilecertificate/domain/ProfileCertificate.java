@@ -1,6 +1,7 @@
 package mj.provisioning.profilecertificate.domain;
 
 import lombok.*;
+import mj.provisioning.certificate.domain.CertificateType;
 import mj.provisioning.profile.domain.Profile;
 
 import javax.persistence.*;
@@ -20,6 +21,8 @@ public class ProfileCertificate {
     private String certificateId;
     @Column(name = "real_type")
     private String type;
+    @Enumerated(EnumType.STRING)
+    private CertificateType certificateType;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     private Profile profile;

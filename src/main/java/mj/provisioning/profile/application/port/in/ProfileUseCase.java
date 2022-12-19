@@ -11,4 +11,5 @@ public interface ProfileUseCase {
     void deleteProfile(String profileId);
     List<ProfileShowDto> searchByCondition(ProfileSearchCondition condition);
     List<Profile> findAll();
+    Profile getProfile(String profileId);
 }

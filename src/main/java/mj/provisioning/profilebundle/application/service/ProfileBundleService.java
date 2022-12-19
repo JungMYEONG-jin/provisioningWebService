@@ -61,4 +61,16 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         List<ProfileBundleShowDto> profileBundleShowDtos = allProfileBundles.stream().map(ProfileBundleShowDto::of).collect(Collectors.toList());
         return ProfileBundleShowListDto.builder().data(profileBundleShowDtos).build();
     }
+
+    @Override
+    public JsonObject getProfileBundleForUpdate(String profileId) {
+        ProfileBundle byProfileId = profileBundleRepositoryPort.findByProfileId(profileId);
+        JsonObject object = new JsonObject();
+        object.addProperty("type", byProfileId.getType());
+        object.addProperty("id", byProfileId.getBundleId());
+        JsonObject bundle = new JsonObject();
+        bundle.add("data", object);
+        return bundle;
+    }
+
 }

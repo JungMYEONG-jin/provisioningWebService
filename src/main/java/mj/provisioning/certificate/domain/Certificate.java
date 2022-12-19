@@ -10,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString(exclude = {"id", "serialNumber"})
 public class Certificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

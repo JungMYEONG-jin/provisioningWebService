@@ -10,7 +10,7 @@ import static org.springframework.util.StringUtils.hasText;
 
 @Getter
 public enum ProfileType {
-    IOS_APP_STORE("App Store"), IOS_APP_DEVELOPMENT("Development"), IOS_APP_ADHOC("Ad hoc");
+    IOS_APP_STORE("IOS_DISTRIBUTION"), IOS_APP_DEVELOPMENT("DEVELOPMENT"), IOS_APP_ADHOC("IOS_DISTRIBUTION");
 
     private String value;
 

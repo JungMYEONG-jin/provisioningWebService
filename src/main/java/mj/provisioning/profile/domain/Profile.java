@@ -22,6 +22,8 @@ public class Profile {
     private Long id;
     @Column(name = "profile_real_id")
     private String profileId;
+    @Column(name = "real_type")
+    private String type;
     private String name;
     private String expirationDate;
     @Enumerated(EnumType.STRING)

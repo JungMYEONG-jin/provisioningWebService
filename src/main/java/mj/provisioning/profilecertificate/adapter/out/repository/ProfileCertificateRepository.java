@@ -10,4 +10,5 @@ public interface ProfileCertificateRepository extends JpaRepository<ProfileCerti
     boolean existsByCertificateIdAndProfile(String certificateId, Profile profile);
     Long deleteByProfile_ProfileId(String profileId);
     List<ProfileCertificate> findByProfile_ProfileId(String profileId);
+    List<ProfileCertificate> findByProfile(Profile profile);
 }

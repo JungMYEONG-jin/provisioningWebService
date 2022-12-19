@@ -53,6 +53,11 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
         }
     }
 
+    /**
+     * 현재 등록된 디바이스 목록을 json array 반환
+     * @param profileId
+     * @return
+     */
     @Override
     public JsonArray getDeviceJson(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
@@ -65,7 +70,14 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
             jsonArray.add(obj);
         });
         return jsonArray;
+    }
 
+    @Override
+    public JsonObject getDeviceForUpdateProfile(String profileId) {
+        JsonArray deviceJson = getDeviceJson(profileId);
+        JsonObject device = new JsonObject();
+        device.add("data", deviceJson);
+        return device;
     }
 
 
