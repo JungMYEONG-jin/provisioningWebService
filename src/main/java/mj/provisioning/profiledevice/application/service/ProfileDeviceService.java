@@ -102,5 +102,15 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
         }).collect(Collectors.toList())).build();
     }
 
+    @Override
+    public List<DeviceShowDto> getDeviceForEdit(String profileId) {
+        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        List<Device> all = deviceRepositoryPort.findAll().orElseThrow(()->new RuntimeException("등록된 디바이스가 존재하지 않습니다."));
+        final long[] idx = {0};
+        return all.stream().map(device -> {
+            return DeviceShowDto.of(device, profileDeviceRepositoryPort.isExist(device.getDeviceId(), profile) ,idx[0]++);
+        }).collect(Collectors.toList());
+    }
+
 }
 

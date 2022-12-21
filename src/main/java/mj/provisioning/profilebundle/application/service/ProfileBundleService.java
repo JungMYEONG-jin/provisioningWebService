@@ -69,6 +69,16 @@ public class ProfileBundleService implements ProfileBundleUseCase {
     }
 
     @Override
+    public List<ProfileBundleShowDto> getBundleForEdit(String profileId) {
+        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        List<Bundle> all = bundleRepositoryPort.findAll();
+
+        return all.stream().map(bundle -> {
+            return ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile));
+        }).collect(Collectors.toList());
+    }
+
+    @Override
     public JsonObject getProfileBundleForUpdate(String profileId) {
         ProfileBundle byProfileId = profileBundleRepositoryPort.findByProfileId(profileId);
         JsonObject object = new JsonObject();

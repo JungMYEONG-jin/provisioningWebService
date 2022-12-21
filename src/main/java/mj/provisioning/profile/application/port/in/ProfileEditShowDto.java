@@ -2,9 +2,15 @@ package mj.provisioning.profile.application.port.in;
 
 import lombok.*;
 import mj.provisioning.certificate.application.port.in.CertificateShowListDto;
+import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.device.application.port.in.DeviceShowListDto;
+import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +23,11 @@ public class ProfileEditShowDto {
     private String status;
     private String type;
     private String expires;
-    private ProfileBundleShowListDto bundle;
-    private ProfileCertificateShowListDto certificates;
-    private DeviceShowListDto devices;
+    private String profileId;
+//    private ProfileBundleShowListDto bundle;
+//    private ProfileCertificateShowListDto certificates;
+//    private DeviceShowListDto devices;
+    private List<ProfileBundleShowDto> bundle = new ArrayList<>();
+    private List<ProfileCertificateShowDto> certificates = new ArrayList<>();
+    private List<DeviceShowDto> devices = new ArrayList<>();
 }

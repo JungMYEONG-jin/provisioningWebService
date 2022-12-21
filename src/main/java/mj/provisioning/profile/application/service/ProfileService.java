@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.device.application.port.in.DeviceShowListDto;
 import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
@@ -15,8 +16,10 @@ import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfilePlatform;
 import mj.provisioning.profile.domain.ProfileState;
 import mj.provisioning.profile.domain.ProfileType;
+import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
@@ -173,10 +176,13 @@ public class ProfileService implements ProfileUseCase {
     public ProfileEditShowDto getEditShow(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
 
-        ProfileBundleShowListDto bundleList = profileBundleUseCase.getBundleList(profileId);
-        DeviceShowListDto deviceShowList = profileDeviceUseCase.getDeviceShowList(profileId);
-        ProfileCertificateShowListDto profileCertificateList = profileCertificateUseCase.getProfileCertificateList(profileId);
+//        ProfileBundleShowListDto bundleList = profileBundleUseCase.getBundleList(profileId);
+//        DeviceShowListDto deviceShowList = profileDeviceUseCase.getDeviceShowList(profileId);
+//        ProfileCertificateShowListDto profileCertificateList = profileCertificateUseCase.getProfileCertificateList(profileId);
 
+        List<ProfileBundleShowDto> bundleList = profileBundleUseCase.getBundleForEdit(profileId);
+        List<DeviceShowDto> deviceShowList = profileDeviceUseCase.getDeviceForEdit(profileId);
+        List<ProfileCertificateShowDto> profileCertificateList = profileCertificateUseCase.getProfileCertificateForEdit(profileId);
         return ProfileEditShowDto.builder().name(profile.getName())
                 .expires(profile.getExpirationDate())
                 .type(profile.getProfileType().getValue())
@@ -184,6 +190,7 @@ public class ProfileService implements ProfileUseCase {
                 .certificates(profileCertificateList)
                 .bundle(bundleList)
                 .devices(deviceShowList)
+                .profileId(profileId)
                 .build();
     }
 

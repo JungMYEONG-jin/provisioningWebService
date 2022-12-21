@@ -1,6 +1,7 @@
 package mj.provisioning.profile.application.service;
 
 import mj.provisioning.profile.adapter.out.repository.ProfileRepository;
+import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
 import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
@@ -84,7 +85,20 @@ class ProfileServiceTest {
 
     @Test
     void getEditTest() {
-        ProfileEditShowDto editShow = profileService.getEditShow("2BV6CUSYMK");
+        ProfileEditShowDto editShow = profileService.getEditShow("CVKHMHSU56");
+        ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
+        editRequestDto.setProfileId(editShow.getProfileId());
+        editRequestDto.setBundleData(editShow.getBundle().getBundleData());
+        editRequestDto.setDeviceData(editShow.getDevices().getDeviceData());
+        editRequestDto.setCertificateData(editShow.getCertificates().getCertificateData());
+
+
         System.out.println("editShow = " + editShow);
+    }
+
+    @Test
+    void doEditTest() {
+        ProfileEditShowDto editShow = profileService.getEditShow("2BV6CUSYMK");
+        ProfileEditRequestDto requestDto = new ProfileEditRequestDto();
     }
 }

@@ -32,4 +32,12 @@ class ProfileCertificateServiceTest {
             System.out.println("datum = " + datum);
         }
     }
+
+    @Test
+    void getProfileCertificateForEditTest() {
+        List<ProfileCertificateShowDto> data = profileCertificateUseCase.getProfileCertificateForEdit("2BV6CUSYMK");
+        for (ProfileCertificateShowDto datum : data) {
+            System.out.println("datum = " + datum);
+        }
+    }
 }
