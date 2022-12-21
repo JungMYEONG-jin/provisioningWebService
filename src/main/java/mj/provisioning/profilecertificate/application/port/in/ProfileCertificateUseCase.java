@@ -10,6 +10,8 @@ import java.util.List;
 public interface ProfileCertificateUseCase {
     void saveProfileCertificate(String profileId);
     void deleteByProfile(Profile profile);
+    // 새로 선택된 인증서와 프로비저닝 연관관계 맺어줌.
+    void saveUpdatedResult(Profile profile, List<String> certificateIds);
     ProfileCertificateShowListDto getProfileCertificateList(String profileId);
     List<ProfileCertificateShowDto> getProfileCertificateForEdit(String profileId);
     JsonArray getProfileCertificates(String profileId);

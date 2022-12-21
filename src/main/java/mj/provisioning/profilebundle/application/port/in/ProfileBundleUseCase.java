@@ -12,4 +12,5 @@ public interface ProfileBundleUseCase {
     List<ProfileBundleShowDto> getBundleForEdit(String profileId);
     JsonObject getProfileBundleForUpdate(String profileId);
     JsonObject getProfileBundleForUpdate(List<ProfileBundleShowDto> bundle);
+    void saveUpdatedResult(Profile profile, String bundleId);
 }

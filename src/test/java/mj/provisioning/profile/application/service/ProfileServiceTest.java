@@ -1,6 +1,7 @@
 package mj.provisioning.profile.application.service;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import mj.provisioning.profile.adapter.out.repository.ProfileRepository;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -122,8 +124,8 @@ class ProfileServiceTest {
 
     @Test
     void doEditTest() throws IOException {
-        ProfileEditShowDto editShow = profileService.getEditShow("K7D8D6GDF7");
-        Profile prev = profileService.getProfile("relationships");
+        ProfileEditShowDto editShow = profileService.getEditShow("CVKHMHSU56");
+        Profile prev = profileService.getProfile(editShow.getProfileId());
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
         editRequestDto.setName("test_for_prov");
         editRequestDto.setProfileId(editShow.getProfileId());
@@ -156,7 +158,7 @@ class ProfileServiceTest {
         toPost.add("data", param);
 
         System.out.println("toPost = " + toPost);
-
+        // 새로 생성
         String profile = appleApi.createProfileNew(appleApi.createJWT(), toPost);
         System.out.println("profile = " + profile);
 
@@ -165,17 +167,36 @@ class ProfileServiceTest {
         JsonObject updatedResult = parser.parse(profile).getAsJsonObject();
         JsonObject data = updatedResult.getAsJsonObject("data");
         // 이전 프로파일 업데이트 전 연결된 애들 삭제
-        profileDeviceService.
+        profileDeviceService.deleteByProfile(prev);
+        profileCertificateService.deleteByProfile(prev);
+        profileBundleService.deleteByProfile(prev);
+        // 새 프로파일 정보로 업데이트
+        prev.updateProfile(data);
+        // 연관 관계 다시 맺어주자
         JsonObject newRelationships = data.getAsJsonObject("relationships");
         JsonObject bundleData = newRelationships.getAsJsonObject("bundleId").getAsJsonObject("data");
-
+        // bundle update
         String newBundleId = bundleData.get("id").toString().replaceAll("\"", "");
+        profileBundleService.saveUpdatedResult(prev, newBundleId);
+        // certificate update
         JsonArray newCertificates = newRelationships.getAsJsonObject("certificates").getAsJsonArray("data");
-        JsonArray newDevices = newRelationships.getAsJsonObject("devices").getAsJsonArray("data");
-
-
+        List<String> certificateIds = new ArrayList<>();
+        for (JsonElement newCertificate : newCertificates) {
+            String id = newCertificate.getAsJsonObject().get("id").toString().replaceAll("\"", "");
+            certificateIds.add(id);
+        }
+        profileCertificateService.saveUpdatedResult(prev, certificateIds);
+        // device update
+        if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
+            JsonArray newDevices = newRelationships.getAsJsonObject("devices").getAsJsonArray("data");
+            List<String> deviceIds = new ArrayList<>();
+            for (JsonElement newDevice : newDevices) {
+                String id = newDevice.getAsJsonObject().get("id").toString().replaceAll("\"", "");
+                deviceIds.add(id);
+            }
+            profileDeviceService.saveUpdatedResult(prev, deviceIds);
+        }
         // 기존꺼 삭제
-//        appleApi.deleteProfile(profileId);
-//        profileRepositoryPort.deleteProfile(profileId);
+        appleApi.deleteProfile(editRequestDto.getProfileId());
     }
 }

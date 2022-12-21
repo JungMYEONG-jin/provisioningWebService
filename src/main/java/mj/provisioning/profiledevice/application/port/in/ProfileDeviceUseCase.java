@@ -11,6 +11,7 @@ import java.util.List;
 public interface ProfileDeviceUseCase {
     void saveProfileDevice(String profileId);
     void deleteByProfile(Profile profile);
+    void saveUpdatedResult(Profile profile, List<String> deviceIds);
     JsonArray getDeviceJson(String profileId);
     JsonObject getDeviceForUpdateProfile(String profileId);
     JsonObject getDeviceForUpdateProfile(List<DeviceShowDto> deviceData);

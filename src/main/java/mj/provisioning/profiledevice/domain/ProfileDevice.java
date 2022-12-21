@@ -1,6 +1,7 @@
 package mj.provisioning.profiledevice.domain;
 
 import lombok.*;
+import mj.provisioning.device.domain.Device;
 import mj.provisioning.profile.domain.Profile;
 
 import javax.persistence.*;
@@ -27,5 +28,11 @@ public class ProfileDevice {
 
     public void setProfile(Profile profile){
         this.profile = profile;
+    }
+
+    public static ProfileDevice of(Device device){
+        return ProfileDevice.builder().deviceId(device.getDeviceId())
+                .type(device.getType())
+                .build();
     }
 }

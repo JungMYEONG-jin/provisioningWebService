@@ -74,6 +74,24 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
     }
 
     /**
+     * 선택된 id들로 인증서를 찾는다.
+     * 그리고 연관관계 매핑
+     * @param profile
+     * @param certificateIds
+     */
+    @Override
+    public void saveUpdatedResult(Profile profile, List<String> certificateIds) {
+        List<ProfileCertificate> profileCertificates = new ArrayList<>();
+        List<Certificate> byCertificateIds = certificateRepositoryPort.findByCertificateIds(certificateIds);
+        byCertificateIds.forEach(certificate -> {
+            ProfileCertificate profileCertificate = ProfileCertificate.of(certificate);
+            profileCertificates.add(profileCertificate);
+        });
+        profile.insertAllCertificate(profileCertificates);
+        profileCertificateRepositoryPort.saveAll(profileCertificates);
+    }
+
+    /**
      * edit 페이지에 출력하는 용도.
      * @param profileId
      * @return

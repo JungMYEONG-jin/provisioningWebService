@@ -93,6 +93,8 @@ public class Profile {
         this.profileType = ProfileType.get(profileType);
         this.profileContent = profileContent;
         this.uuid = uuid;
+        this.deviceList.clear();
+        this.certificates.clear();
     }
 
 }

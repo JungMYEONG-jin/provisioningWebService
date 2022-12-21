@@ -45,4 +45,9 @@ public class CertificateRepositoryAdapter implements CertificateRepositoryPort {
     public Optional<List<Certificate>> findByCertificateType(CertificateType certificateType) {
         return certificateRepository.findAllByCertificateType(certificateType);
     }
+
+    @Override
+    public List<Certificate> findByCertificateIds(List<String> ids) {
+        return certificateRepository.findByCertificateIdIn(ids);
+    }
 }

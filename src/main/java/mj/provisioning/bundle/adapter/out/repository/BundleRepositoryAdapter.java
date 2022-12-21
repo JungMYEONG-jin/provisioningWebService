@@ -23,6 +23,11 @@ public class BundleRepositoryAdapter implements BundleRepositoryPort {
     }
 
     @Override
+    public Bundle findByBundle(String bundleId) {
+        return bundleRepository.findByBundleId(bundleId).orElseThrow(()->new RuntimeException("번들 ID와 매치되는 정보가 존재하지 않습니다."));
+    }
+
+    @Override
     public void deleteAll() {
         bundleRepository.deleteAll();
     }

@@ -13,4 +13,5 @@ public interface CertificateRepositoryPort {
     void deleteByCertificateId(String certificateId);
     List<Certificate> findAll();
     Optional<List<Certificate>> findByCertificateType(CertificateType certificateType);
+    List<Certificate> findByCertificateIds(List<String> ids);
 }

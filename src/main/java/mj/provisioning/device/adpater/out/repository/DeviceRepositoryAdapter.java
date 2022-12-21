@@ -48,6 +48,11 @@ public class DeviceRepositoryAdapter implements DeviceRepositoryPort {
     }
 
     @Override
+    public List<Device> findByIds(List<String> ids) {
+        return deviceRepository.findByDeviceIds(ids);
+    }
+
+    @Override
     public Optional<List<Device>> findAll() {
         return Optional.of(deviceRepository.findAll());
     }

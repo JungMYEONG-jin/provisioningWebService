@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface CertificateRepository extends JpaRepository<Certificate, Long> {
     void deleteAllByCertificateId(String certificateId);
     Optional<List<Certificate>> findAllByCertificateType(CertificateType certificateType);
+    List<Certificate> findByCertificateIdIn(List<String> certificateIds);
 }

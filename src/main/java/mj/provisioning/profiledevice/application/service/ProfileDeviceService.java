@@ -65,6 +65,25 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     }
 
     /**
+     *
+     * @param profile
+     * @param deviceIds
+     */
+    @Override
+    public void saveUpdatedResult(Profile profile, List<String> deviceIds) {
+        List<Device> byIds = deviceRepositoryPort.findByIds(deviceIds);
+        List<ProfileDevice> profileDevices = new ArrayList<>();
+        if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) {
+                byIds.forEach(device -> {
+                    ProfileDevice profileDevice = ProfileDevice.of(device);
+                    profileDevices.add(profileDevice);
+                });
+                profile.insertAll(profileDevices);
+                profileDeviceRepositoryPort.saveAll(profileDevices);
+            }
+    }
+
+    /**
      * 현재 등록된 디바이스 목록을 json array 반환
      * @param profileId
      * @return

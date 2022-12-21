@@ -1,6 +1,7 @@
 package mj.provisioning.profilebundle.domain;
 
 import lombok.*;
+import mj.provisioning.bundle.domain.Bundle;
 import mj.provisioning.profile.domain.Profile;
 
 import javax.persistence.*;
@@ -36,5 +37,14 @@ public class ProfileBundle {
 
     public void setProfile(Profile profile){
         this.profile = profile;
+    }
+    public static ProfileBundle update(Profile profile, Bundle bundle){
+        return ProfileBundle.builder().bundleId(bundle.getBundleId())
+                .identifier(bundle.getIdentifier())
+                .name(bundle.getName())
+                .profile(profile)
+                .seedId(bundle.getSeedId())
+                .type(bundle.getType())
+                .build();
     }
 }

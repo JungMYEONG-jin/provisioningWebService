@@ -1,6 +1,7 @@
 package mj.provisioning.profilecertificate.domain;
 
 import lombok.*;
+import mj.provisioning.certificate.domain.Certificate;
 import mj.provisioning.certificate.domain.CertificateType;
 import mj.provisioning.profile.domain.Profile;
 
@@ -29,5 +30,15 @@ public class ProfileCertificate {
 
     public void setProfile(Profile profile){
         this.profile = profile;
+    }
+
+    public static ProfileCertificate of(Certificate certificate){
+        return ProfileCertificate.builder()
+                .certificateType(certificate.getCertificateType())
+                .displayName(certificate.getDisplayName())
+                .type(certificate.getType())
+                .certificateId(certificate.getCertificateId())
+                .expirationDate(certificate.getExpirationDate())
+                .build();
     }
 }

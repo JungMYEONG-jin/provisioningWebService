@@ -111,5 +111,14 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         return param;
     }
 
+    @Override
+    public void saveUpdatedResult(Profile profile, String bundleId) {
+        Bundle byBundle = bundleRepositoryPort.findByBundle(bundleId);
+        ProfileBundle update = ProfileBundle.update(profile, byBundle);
+        // 오히려 프로비저닝은 번들 id가 한개고
+        // 번들은 여러개의 프로비저닝을 가질수있음
+        profileBundleRepositoryPort.save(update);
+    }
+
 
 }
