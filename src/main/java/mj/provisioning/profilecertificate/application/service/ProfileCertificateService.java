@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import mj.provisioning.certificate.application.port.out.CertificateRepositoryPort;
 import mj.provisioning.certificate.domain.Certificate;
 import mj.provisioning.certificate.domain.CertificateType;
+import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
@@ -119,6 +120,27 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
         JsonArray profileCertificates = getProfileCertificates(profileId);
         object.add("data", profileCertificates);
         return object;
+    }
+
+    /**
+     * request의 인증서 데이터 기반으로
+     * 파싱을 진행     * @param certificateData
+     * @return
+     */
+    @Override
+    public JsonObject getProfileCertificatesForUpdate(List<ProfileCertificateShowDto> certificateData) {
+        JsonArray certificates = new JsonArray();
+        certificateData.stream().forEach(profileCertificateShowDto -> {
+            if (profileCertificateShowDto.isSelected()) { // true인 애들만
+                JsonObject object = new JsonObject();
+                object.addProperty("type", profileCertificateShowDto.getType());
+                object.addProperty("id", profileCertificateShowDto.getCertificateId());
+                certificates.add(object);
+            }
+        });
+        JsonObject param = new JsonObject();
+        param.add("data", certificates);
+        return param;
     }
 
 }

@@ -1,11 +1,13 @@
 package mj.provisioning.profile.application.service;
 
+import com.google.gson.JsonObject;
 import mj.provisioning.profile.adapter.out.repository.ProfileRepository;
 import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
 import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.profilecertificate.application.service.ProfileCertificateService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +24,8 @@ class ProfileServiceTest {
     ProfileService profileService;
     @Autowired
     ProfileRepository profileRepository;
+    @Autowired
+    ProfileCertificateService profileCertificateService;
 
     @Test
     void getProfilesTest() {
@@ -85,12 +89,17 @@ class ProfileServiceTest {
 
     @Test
     void getEditTest() {
-        ProfileEditShowDto editShow = profileService.getEditShow("CVKHMHSU56");
+        //64TC4LQ99S
+        //CVKHMHSU56
+        ProfileEditShowDto editShow = profileService.getEditShow("64TC4LQ99S");
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
         editRequestDto.setProfileId(editShow.getProfileId());
-        editRequestDto.setBundleData(editShow.getBundle().getBundleData());
-        editRequestDto.setDeviceData(editShow.getDevices().getDeviceData());
-        editRequestDto.setCertificateData(editShow.getCertificates().getCertificateData());
+        editRequestDto.setBundleData(editShow.getBundle());
+        editRequestDto.setDeviceData(editShow.getDevices());
+        editRequestDto.setCertificateData(editShow.getCertificates());
+
+        JsonObject profileCertificatesForUpdate = profileCertificateService.getProfileCertificatesForUpdate(editRequestDto.getCertificateData());
+        System.out.println("profileCertificatesForUpdate = " + profileCertificatesForUpdate);
 
 
         System.out.println("editShow = " + editShow);
