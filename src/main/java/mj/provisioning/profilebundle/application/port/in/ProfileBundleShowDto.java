@@ -15,6 +15,7 @@ public class ProfileBundleShowDto {
     private String appId;
     private String bundleId;
     private boolean isSelected;
+    private String type;
 
     public static ProfileBundleShowDto of(ProfileBundle bundle){
         return ProfileBundleShowDto.builder()
@@ -23,6 +24,7 @@ public class ProfileBundleShowDto {
 //                .identifier(bundle.getIdentifier())
 //                .seedId(bundle.getSeedId())
                 .appId(bundle.getName()+" ("+bundle.getSeedId()+"."+bundle.getIdentifier()+")")
+                .type(bundle.getType())
                 .build();
     }
 
@@ -35,6 +37,7 @@ public class ProfileBundleShowDto {
                 .appId(bundle.getName()+" ("+bundle.getSeedId()+"."+bundle.getIdentifier()+")")
                 .bundleId(bundle.getBundleId())
                 .isSelected(isSelected)
+                .type(bundle.getType())
                 .build();
     }
 }

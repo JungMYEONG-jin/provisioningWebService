@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mj.provisioning.bundle.application.port.out.BundleRepositoryPort;
 import mj.provisioning.bundle.domain.Bundle;
+import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
@@ -89,6 +90,21 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         return bundle;
     }
 
+    /**
+     * request로 부터 select된 번들만 분리하여 json object로 변경
+     * @param bundle
+     * @return
+     */
+    @Override
+    public JsonObject getProfileBundleForUpdate(List<ProfileBundleShowDto> bundle) {
+        JsonObject object = new JsonObject();
+        ProfileBundleShowDto matchedBundle = bundle.stream().filter(profileBundleShowDto -> profileBundleShowDto.isSelected()).findFirst().orElseThrow(() -> new RuntimeException("번들이 존재하지 않습니다."));
+        object.addProperty("id", matchedBundle.getBundleId());
+        object.addProperty("type",matchedBundle.getType());
+        JsonObject param = new JsonObject();
+        param.add("data", object);
+        return param;
+    }
 
 
 }
