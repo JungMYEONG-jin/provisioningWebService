@@ -16,6 +16,7 @@ import java.util.List;
 public class ProfileEditRequestDto {
     private String profileId;
     private String name;
+    private String type;
     private List<ProfileBundleShowDto> bundleData = new ArrayList<>();
     private List<ProfileCertificateShowDto> certificateData = new ArrayList<>();
     private List<DeviceShowDto> deviceData = new ArrayList<>();

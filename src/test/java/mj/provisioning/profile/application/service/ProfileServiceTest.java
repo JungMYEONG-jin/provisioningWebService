@@ -1,17 +1,24 @@
 package mj.provisioning.profile.application.service;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import mj.provisioning.profile.adapter.out.repository.ProfileRepository;
 import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
 import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.profile.domain.ProfileType;
+import mj.provisioning.profilebundle.application.service.ProfileBundleService;
 import mj.provisioning.profilecertificate.application.service.ProfileCertificateService;
+import mj.provisioning.profiledevice.application.service.ProfileDeviceService;
+import mj.provisioning.util.apple.AppleApi;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,6 +33,12 @@ class ProfileServiceTest {
     ProfileRepository profileRepository;
     @Autowired
     ProfileCertificateService profileCertificateService;
+    @Autowired
+    ProfileDeviceService profileDeviceService;
+    @Autowired
+    ProfileBundleService profileBundleService;
+    @Autowired
+    AppleApi appleApi;
 
     @Test
     void getProfilesTest() {
@@ -90,8 +103,9 @@ class ProfileServiceTest {
     @Test
     void getEditTest() {
         //64TC4LQ99S
-        //CVKHMHSU56
-        ProfileEditShowDto editShow = profileService.getEditShow("64TC4LQ99S");
+        //CVKHMHSU56 test
+        ProfileEditShowDto editShow = profileService.getEditShow("CVKHMHSU56");
+        System.out.println("editShow = " + editShow);
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
         editRequestDto.setProfileId(editShow.getProfileId());
         editRequestDto.setBundleData(editShow.getBundle());
@@ -100,14 +114,68 @@ class ProfileServiceTest {
 
         JsonObject profileCertificatesForUpdate = profileCertificateService.getProfileCertificatesForUpdate(editRequestDto.getCertificateData());
         System.out.println("profileCertificatesForUpdate = " + profileCertificatesForUpdate);
-
-
-        System.out.println("editShow = " + editShow);
+        JsonObject profileBundleForUpdate = profileBundleService.getProfileBundleForUpdate(editRequestDto.getBundleData());
+        System.out.println("profileBundleForUpdate = " + profileBundleForUpdate);
+        JsonObject deviceForUpdateProfile = profileDeviceService.getDeviceForUpdateProfile(editRequestDto.getDeviceData());
+        System.out.println("deviceForUpdateProfile = " + deviceForUpdateProfile);
     }
 
     @Test
-    void doEditTest() {
-        ProfileEditShowDto editShow = profileService.getEditShow("2BV6CUSYMK");
-        ProfileEditRequestDto requestDto = new ProfileEditRequestDto();
+    void doEditTest() throws IOException {
+        ProfileEditShowDto editShow = profileService.getEditShow("K7D8D6GDF7");
+        Profile prev = profileService.getProfile("relationships");
+        ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
+        editRequestDto.setName("test_for_prov");
+        editRequestDto.setProfileId(editShow.getProfileId());
+        editRequestDto.setBundleData(editShow.getBundle());
+        editRequestDto.setDeviceData(editShow.getDevices());
+        editRequestDto.setCertificateData(editShow.getCertificates());
+        editRequestDto.setType(editShow.getType());
+
+        JsonObject attr = new JsonObject();
+        attr.addProperty("name", editRequestDto.getName());
+        attr.addProperty("profileType", editRequestDto.getType()); // dist, dev
+        JsonObject relationships = new JsonObject();
+
+        JsonObject profileCertificatesForUpdate = profileCertificateService.getProfileCertificatesForUpdate(editRequestDto.getCertificateData());
+        JsonObject profileBundleForUpdate = profileBundleService.getProfileBundleForUpdate(editRequestDto.getBundleData());
+        JsonObject deviceForUpdateProfile = null;
+        if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
+            deviceForUpdateProfile = profileDeviceService.getDeviceForUpdateProfile(editRequestDto.getDeviceData());
+            relationships.add("devices", deviceForUpdateProfile);
+        }
+        relationships.add("bundleId", profileBundleForUpdate);
+        relationships.add("certificates", profileCertificatesForUpdate);
+
+        JsonObject param = new JsonObject();
+        param.addProperty("type", "profiles");
+        param.add("attributes", attr);
+        param.add("relationships", relationships);
+
+        JsonObject toPost = new JsonObject();
+        toPost.add("data", param);
+
+        System.out.println("toPost = " + toPost);
+
+        String profile = appleApi.createProfileNew(appleApi.createJWT(), toPost);
+        System.out.println("profile = " + profile);
+
+        // 파싱해서 업데이트하자
+        JsonParser parser = new JsonParser();
+        JsonObject updatedResult = parser.parse(profile).getAsJsonObject();
+        JsonObject data = updatedResult.getAsJsonObject("data");
+        // 이전 프로파일 업데이트 전 연결된 애들 삭제
+        profileDeviceService.
+        JsonObject newRelationships = data.getAsJsonObject("relationships");
+        JsonObject bundleData = newRelationships.getAsJsonObject("bundleId").getAsJsonObject("data");
+
+        String newBundleId = bundleData.get("id").toString().replaceAll("\"", "");
+        JsonArray newCertificates = newRelationships.getAsJsonObject("certificates").getAsJsonArray("data");
+        JsonArray newDevices = newRelationships.getAsJsonObject("devices").getAsJsonArray("data");
+
+
+        // 기존꺼 삭제
+//        appleApi.deleteProfile(profileId);
+//        profileRepositoryPort.deleteProfile(profileId);
     }
 }

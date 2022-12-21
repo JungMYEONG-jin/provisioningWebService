@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface ProfileBundleRepository extends JpaRepository<ProfileBundle, Long> {
     Long deleteByProfile_ProfileId(String profileId);
+    Long deleteByProfile(Profile profile);
     Optional<ProfileBundle> findByProfile_ProfileId(String profileId);
     boolean existsByBundleIdAndProfile(String bundleId, Profile profile);
 }

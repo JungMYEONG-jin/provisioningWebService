@@ -59,6 +59,11 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
         }
     }
 
+    @Override
+    public void deleteByProfile(Profile profile) {
+        profileDeviceRepositoryPort.deleteByProfile(profile);
+    }
+
     /**
      * 현재 등록된 디바이스 목록을 json array 반환
      * @param profileId
@@ -81,6 +86,25 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     @Override
     public JsonObject getDeviceForUpdateProfile(String profileId) {
         JsonArray deviceJson = getDeviceJson(profileId);
+        JsonObject device = new JsonObject();
+        device.add("data", deviceJson);
+        return device;
+    }
+
+    @Override
+    public JsonObject getDeviceForUpdateProfile(List<DeviceShowDto> deviceData) {
+        JsonArray deviceJson = new JsonArray();
+        deviceData.forEach(deviceShowDto -> {
+            /**
+             * request select 된 기기만 등록
+             */
+            if (deviceShowDto.isSelected()){
+                JsonObject obj = new JsonObject();
+                obj.addProperty("id", deviceShowDto.getDeviceId());
+                obj.addProperty("type", deviceShowDto.getType());
+                deviceJson.add(obj);
+            }
+        });
         JsonObject device = new JsonObject();
         device.add("data", deviceJson);
         return device;

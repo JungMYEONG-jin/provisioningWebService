@@ -1,6 +1,7 @@
 package mj.provisioning.profile.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.JsonObject;
 import lombok.*;
 import mj.provisioning.device.domain.Device;
 import mj.provisioning.profilebundle.domain.ProfileBundle;
@@ -69,6 +70,29 @@ public class Profile {
         for (ProfileCertificate profileCertificate : all) {
             profileCertificate.setProfile(this);
         }
+    }
+
+    public void updateProfile(JsonObject object){
+        JsonObject attributes = object.getAsJsonObject("attributes");
+        String profileId = object.get("id").toString().replaceAll("\"", "");
+        String type = object.get("type").toString().replaceAll("\"", "");
+        String profileName = attributes.get("name").toString().replaceAll("\"", "");
+        String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
+        expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
+        String platform = attributes.get("platform").toString().replaceAll("\"", "");
+        String profileState = attributes.get("profileState").toString().replaceAll("\"", "");
+        String profileType = attributes.get("profileType").toString().replaceAll("\"", "");
+        String profileContent = attributes.get("profileContent").toString().replaceAll("\"", "");
+        String uuid = attributes.get("uuid").toString().replaceAll("\"", "");
+        this.profileId = profileId;
+        this.type = type;
+        this.name = profileName;
+        this.expirationDate = expirationDate;
+        this.platform = ProfilePlatform.get(platform);
+        this.profileState = ProfileState.get(profileState);
+        this.profileType = ProfileType.get(profileType);
+        this.profileContent = profileContent;
+        this.uuid = uuid;
     }
 
 }

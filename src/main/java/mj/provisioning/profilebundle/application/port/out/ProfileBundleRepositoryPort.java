@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ProfileBundleRepositoryPort {
     Long deleteByProfileId(String profileId);
+    void deleteByProfile(Profile profile);
     ProfileBundle findByProfileId(String profileId);
     List<ProfileBundle> getAllProfileBundles();
     ProfileBundle save(ProfileBundle profileBundle);

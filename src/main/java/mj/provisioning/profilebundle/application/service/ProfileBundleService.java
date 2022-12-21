@@ -60,6 +60,11 @@ public class ProfileBundleService implements ProfileBundleUseCase {
     }
 
     @Override
+    public void deleteByProfile(Profile profile) {
+        profileBundleRepositoryPort.deleteByProfile(profile);
+    }
+
+    @Override
     public ProfileBundleShowListDto getBundleList(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         List<Bundle> all = bundleRepositoryPort.findAll();

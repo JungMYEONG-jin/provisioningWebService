@@ -19,6 +19,11 @@ public class ProfileBundleRepositoryAdapter implements ProfileBundleRepositoryPo
     }
 
     @Override
+    public void deleteByProfile(Profile profile) {
+        profileBundleRepository.deleteByProfile(profile);
+    }
+
+    @Override
     public ProfileBundle findByProfileId(String profileId) {
         return profileBundleRepository.findByProfile_ProfileId(profileId).orElseThrow(()->new RuntimeException("해당 프로비저닝에 일치하는 번들 정보가 존재하지 않습니다."));
     }

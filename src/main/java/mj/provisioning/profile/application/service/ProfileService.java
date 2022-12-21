@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
-import mj.provisioning.device.application.port.in.DeviceShowListDto;
 import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
@@ -17,10 +16,8 @@ import mj.provisioning.profile.domain.ProfilePlatform;
 import mj.provisioning.profile.domain.ProfileState;
 import mj.provisioning.profile.domain.ProfileType;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
-import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
-import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import mj.provisioning.util.apple.AppleApi;
@@ -181,11 +178,13 @@ public class ProfileService implements ProfileUseCase {
 //        ProfileCertificateShowListDto profileCertificateList = profileCertificateUseCase.getProfileCertificateList(profileId);
 
         List<ProfileBundleShowDto> bundleList = profileBundleUseCase.getBundleForEdit(profileId);
-        List<DeviceShowDto> deviceShowList = profileDeviceUseCase.getDeviceForEdit(profileId);
+        List<DeviceShowDto> deviceShowList = new ArrayList<>();
+        if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) // 개발만 기기 등록이 가능함.
+            deviceShowList = profileDeviceUseCase.getDeviceForEdit(profileId);
         List<ProfileCertificateShowDto> profileCertificateList = profileCertificateUseCase.getProfileCertificateForEdit(profileId);
         return ProfileEditShowDto.builder().name(profile.getName())
                 .expires(profile.getExpirationDate())
-                .type(profile.getProfileType().getValue())
+                .type(profile.getProfileType().name())
                 .status(profile.getProfileState().getValue())
                 .certificates(profileCertificateList)
                 .bundle(bundleList)

@@ -18,6 +18,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
@@ -385,7 +387,7 @@ public class AppleApi{
      * @throws NoSuchAlgorithmException
      * @throws MalformedURLException
      */
-    public String createProfile(String token, String name, String profileType, String bundleId, String certificateId, JSONArray devicesArr) throws IOException {
+    public String createProfile(String token, JsonObject toPostData) throws IOException {
         HttpURLConnection con = null;
         BufferedReader br = null;
         StringBuffer sb = null;
@@ -402,46 +404,7 @@ public class AppleApi{
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true); // outputstream 사용해서 post body 데이터 전송
 
-            JSONObject param = new JSONObject();
-
-            JSONObject attr = new JSONObject();
-            attr.put("name", name);
-            attr.put("profileType", profileType);
-
-            JSONObject relationships = new JSONObject();
-            JSONObject bundle = new JSONObject();
-            JSONObject data = new JSONObject();
-            JSONObject certificates = new JSONObject();
-            JSONArray certificateData = new JSONArray();
-
-            JSONObject devices = new JSONObject();
-            // bundle set
-            data.put("type", "bundleIds");
-            data.put("id", bundleId);
-            bundle.put("data", data);
-            relationships.put("bundleId", bundle); //json
-            // certificate set
-            JSONObject certiData = new JSONObject();
-            certiData.put("type", "certificates");
-            certiData.put("id", certificateId);
-            certificateData.add(certiData); // json arr
-            //certificate set
-            certificates.put("data", certificateData);//json array
-            relationships.put("certificates", certificates);
-            // device set
-            devices.put("data", devicesArr);
-            relationships.put("devices", devices);
-
-
-            param.put("type", "profiles");
-            param.put("attributes", attr);
-            param.put("relationships", relationships);
-
-            JSONObject toPostData =new JSONObject();
-            toPostData.put("data", param);
-
-            String paramData = toPostData.toJSONString();
-            System.out.println("paramData = " + paramData);
+            String paramData = toPostData.toString();
             try{
                 OutputStream os = con.getOutputStream();
                 byte[] req = paramData.getBytes("utf-8"); //post write
@@ -458,12 +421,81 @@ public class AppleApi{
                 response.append(result.trim());
             }
             result = response.toString();
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public String createProfileNew(String token, JsonObject toPostData) throws IOException {
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        SSLContext sslContext = null;
+        int result;
+        try {
+            sslContext = SSLContext.getInstance("SSL");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        try {
+            X509TrustManager trustManager = new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+
+                }
+
+                @Override
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+                }
+
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+
+                    return null;
+                }
+            };
+
+            sslContext.init(null, new TrustManager[] { trustManager },
+                    new SecureRandom());
+            SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext,
+                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            Scheme sch = new Scheme("https", 443, socketFactory);
+            httpClient.getConnectionManager().getSchemeRegistry().register(sch);
+
+            HttpParams httpParam = httpClient.getParams();
+            org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
+            org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
+
+            HttpPost http = null;
+            URL url = null;
+            try {
+                url = new URL("https://api.appstoreconnect.apple.com/v1/profiles");
+                http = new HttpPost(url.toURI());
+                http.setHeader("Authorization", "Bearer "+ token);
+                // post by json
+                http.setHeader("Content-Type", "application/json");
+                http.setHeader("Accept", "application/json");
+            } catch (Exception e) {
+                http = new HttpPost(url.toURI());
+            }
+
+            StringEntity entity = new StringEntity(toPostData.toString());
+            http.setEntity(entity);
+            HttpResponse response = httpClient.execute(http);
+            int statusCode = response.getStatusLine().getStatusCode();
+            System.out.println("statusCode = " + statusCode);
+            String s = new BasicResponseHandler().handleResponse(response);
+            return s;
+
+        } catch (Exception e) {
+            throw new AppleAPIException(e);
+        } finally {
+            httpClient.getConnectionManager().shutdown();
+        }
     }
 
     /**

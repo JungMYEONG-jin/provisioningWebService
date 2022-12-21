@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import mj.provisioning.certificate.application.port.out.CertificateRepositoryPort;
 import mj.provisioning.certificate.domain.Certificate;
 import mj.provisioning.certificate.domain.CertificateType;
-import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
@@ -67,6 +66,11 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
             profile.insertAllCertificate(profileCertificates);
             profileCertificateRepositoryPort.saveAll(profileCertificates);
         }
+    }
+
+    @Override
+    public void deleteByProfile(Profile profile) {
+        profileCertificateRepositoryPort.deleteByProfileId(profile);
     }
 
     /**

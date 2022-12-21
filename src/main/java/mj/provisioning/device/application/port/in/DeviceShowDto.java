@@ -14,12 +14,14 @@ public class DeviceShowDto {
     private String name;
     private String deviceId;
     private boolean isSelected;
+    private String type;
     public static DeviceShowDto of(Device device, boolean isSelected, Long key){
         return DeviceShowDto.builder()
                 .name(device.getName())
                 .deviceId(device.getDeviceId())
                 .isSelected(isSelected)
                 .key(key)
+                .type(device.getType())
                 .build();
     }
 }
