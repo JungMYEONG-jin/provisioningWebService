@@ -36,8 +36,8 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     @Override
-    public Profile findByProfileIdFetchJoin(String profileId) {
-        return profileRepository.findByFetchJoin(profileId);
+    public Optional<Profile> findByProfileIdFetchJoin(String profileId) {
+        return Optional.of(profileRepository.findByFetchJoin(profileId));
     }
 
     @Override

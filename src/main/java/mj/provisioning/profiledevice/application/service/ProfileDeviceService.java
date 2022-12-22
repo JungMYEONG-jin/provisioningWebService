@@ -32,7 +32,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
 
     @Override
     public void saveProfileDevice(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         // 기존 삭제
         profileDeviceRepositoryPort.deleteByProfile(profile);
         List<ProfileDevice> profileDevices = new ArrayList<>();
@@ -90,7 +90,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
      */
     @Override
     public JsonArray getDeviceJson(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         List<ProfileDevice> devices = profileDeviceRepositoryPort.findByProfile(profile);
         JsonArray jsonArray = new JsonArray();
         devices.forEach(profileDevice -> {
@@ -137,7 +137,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
      */
     @Override
     public DeviceShowListDto getDeviceShowList(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         List<Device> all = deviceRepositoryPort.findAll().orElseThrow(()->new RuntimeException("등록된 디바이스가 존재하지 않습니다."));
         final long[] idx = {0};
         return DeviceShowListDto.builder().deviceData(all.stream().map(device -> {
@@ -147,7 +147,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
 
     @Override
     public List<DeviceShowDto> getDeviceForEdit(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         List<Device> all = deviceRepositoryPort.findAll().orElseThrow(()->new RuntimeException("등록된 디바이스가 존재하지 않습니다."));
         final long[] idx = {0};
         return all.stream().map(device -> {

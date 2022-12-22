@@ -34,7 +34,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
 
     @Override
     public void saveProfileBundles(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         // 기존 삭제
         profileBundleRepositoryPort.deleteByProfileId(profileId);
         String response = appleApi.getBundleIdFromProfile(profileId);
@@ -67,7 +67,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
 
     @Override
     public ProfileBundleShowListDto getBundleList(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         List<Bundle> all = bundleRepositoryPort.findAll();
 
         return ProfileBundleShowListDto.builder().bundleData(all.stream().map(bundle -> {
@@ -77,7 +77,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
 
     @Override
     public List<ProfileBundleShowDto> getBundleForEdit(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         List<Bundle> all = bundleRepositoryPort.findAll();
 
         return all.stream().map(bundle -> {

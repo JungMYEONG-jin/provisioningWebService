@@ -12,7 +12,7 @@ public interface ProfileRepositoryPort {
     Profile save(Profile profile);
     List<Profile> saveAll(List<Profile> profiles);
     Optional<Profile> findByProfileId(String profileId);
-    Profile findByProfileIdFetchJoin(String profileId);
+    Optional<Profile> findByProfileIdFetchJoin(String profileId);
     Optional<Profile> findByName(String name);
     List<ProfileShowDto> searchCondition(ProfileSearchCondition condition); // 메인에서 조회 조건
     void deleteProfile(String profileId);

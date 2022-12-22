@@ -35,7 +35,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
 
     @Override
     public void saveProfileCertificate(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         // 기존 삭제
         profileCertificateRepositoryPort.deleteByProfileId(profile);
         List<ProfileCertificate> profileCertificates = new ArrayList<>();
@@ -98,7 +98,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
      */
     @Override
     public ProfileCertificateShowListDto getProfileCertificateList(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         // 개발 인증서인지 운영 인증서인지 체크
         String certificateType = profile.getProfileType().getValue();
         List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new RuntimeException("해당 타입에 매치되는 인증서가 존재하지 않습니다."));
@@ -112,7 +112,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
 
     @Override
     public List<ProfileCertificateShowDto> getProfileCertificateForEdit(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         // 개발 인증서인지 운영 인증서인지 체크
         String certificateType = profile.getProfileType().getValue();
         List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new RuntimeException("해당 타입에 매치되는 인증서가 존재하지 않습니다."));
@@ -124,7 +124,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
 
     @Override
     public JsonArray getProfileCertificates(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         List<ProfileCertificate> byProfileId = profileCertificateRepositoryPort.findByProfileId(profile);
         JsonArray certificates = new JsonArray();
         byProfileId.stream().forEach(profileCertificate -> {

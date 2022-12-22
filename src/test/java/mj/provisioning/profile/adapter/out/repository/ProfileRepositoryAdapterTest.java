@@ -16,7 +16,7 @@ class ProfileRepositoryAdapterTest {
     @Transactional
     @Test
     void fetchTest() {
-        Profile byProfileIdFetchJoin = profileRepositoryPort.findByProfileIdFetchJoin("363QUF539S");
+        Profile byProfileIdFetchJoin = profileRepositoryPort.findByProfileIdFetchJoin("363QUF539S").get();
         System.out.println("byProfileIdFetchJoin = " + byProfileIdFetchJoin);
         System.out.println("getCertificates = " + byProfileIdFetchJoin.getCertificates().size());
         System.out.println("getDeviceList = " + byProfileIdFetchJoin.getDeviceList().size());
