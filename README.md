@@ -3,7 +3,7 @@
 
 ## Diagram
 
-![](Table Diagram.png)
+![](TableDiagram.png)
 
 
 
