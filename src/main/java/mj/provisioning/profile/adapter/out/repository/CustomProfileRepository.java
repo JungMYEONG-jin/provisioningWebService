@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface CustomProfileRepository {
     List<ProfileShowDto> getSearchByCondition(ProfileSearchCondition condition);
+    void deleteByFetchJoin(Long id);
 }

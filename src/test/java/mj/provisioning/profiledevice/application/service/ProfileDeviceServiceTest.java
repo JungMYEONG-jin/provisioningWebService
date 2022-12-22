@@ -30,6 +30,11 @@ class ProfileDeviceServiceTest {
     }
 
     @Test
+    void saveTest() {
+        profileDeviceUseCase.saveProfileDevice("CVKHMHSU56");
+    }
+
+    @Test
     void getDeviceInfo() {
         String profile = "2BV6CUSYMK";
         JsonArray deviceJson = profileDeviceUseCase.getDeviceJson(profile);

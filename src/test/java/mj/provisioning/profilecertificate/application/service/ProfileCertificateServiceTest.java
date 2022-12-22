@@ -18,9 +18,15 @@ class ProfileCertificateServiceTest {
     @Autowired
     ProfileCertificateUseCase profileCertificateUseCase;
 
+
+    @Test
+    void saveTest() {
+        profileCertificateUseCase.saveProfileCertificate("CVKHMHSU56");
+    }
+
     @Test
     void getCertificateTest() {
-        JsonObject profileCertificatesForUpdate = profileCertificateUseCase.getProfileCertificatesForUpdate("2BV6CUSYMK");
+        JsonObject profileCertificatesForUpdate = profileCertificateUseCase.getProfileCertificatesForUpdate("CVKHMHSU56");
         System.out.println("profileCertificatesForUpdate = " + profileCertificatesForUpdate);
     }
 

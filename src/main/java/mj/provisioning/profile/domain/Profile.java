@@ -1,9 +1,7 @@
 package mj.provisioning.profile.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.JsonObject;
 import lombok.*;
-import mj.provisioning.device.domain.Device;
 import mj.provisioning.profilebundle.domain.ProfileBundle;
 import mj.provisioning.profilecertificate.domain.ProfileCertificate;
 import mj.provisioning.profiledevice.domain.ProfileDevice;
@@ -72,6 +70,14 @@ public class Profile {
         }
     }
 
+    @OneToOne(mappedBy = "profile", cascade = CascadeType.REMOVE)
+    private ProfileBundle profileBundle;
+
+    public void insertBundle(ProfileBundle profileBundle){
+        this.profileBundle = profileBundle;
+        profileBundle.setProfile(this);
+    }
+
     public void updateProfile(JsonObject object){
         JsonObject attributes = object.getAsJsonObject("attributes");
         String profileId = object.get("id").toString().replaceAll("\"", "");
@@ -93,8 +99,6 @@ public class Profile {
         this.profileType = ProfileType.get(profileType);
         this.profileContent = profileContent;
         this.uuid = uuid;
-        this.deviceList.clear();
-        this.certificates.clear();
     }
 
 }

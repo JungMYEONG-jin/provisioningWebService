@@ -36,8 +36,8 @@ class ProvisioningApplicationTests {
 	@Test
 	void contextLoads() {
 		profileUseCase.saveProfiles();
-		deviceUseCase.saveDevices();
-		certificateUseCase.saveCertificates();
+//		deviceUseCase.saveDevices();
+//		certificateUseCase.saveCertificates();
 
 		List<Profile> all = profileUseCase.findAll();
 		all.forEach(profile -> {

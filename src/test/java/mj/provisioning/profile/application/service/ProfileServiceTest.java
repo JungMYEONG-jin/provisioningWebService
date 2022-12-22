@@ -171,7 +171,7 @@ class ProfileServiceTest {
         profileCertificateService.deleteByProfile(prev);
         profileBundleService.deleteByProfile(prev);
         // 새 프로파일 정보로 업데이트
-        prev.updateProfile(data);
+        profileService.updateProfile(prev, data);
         // 연관 관계 다시 맺어주자
         JsonObject newRelationships = data.getAsJsonObject("relationships");
         JsonObject bundleData = newRelationships.getAsJsonObject("bundleId").getAsJsonObject("data");
@@ -199,4 +199,5 @@ class ProfileServiceTest {
         // 기존꺼 삭제
         appleApi.deleteProfile(editRequestDto.getProfileId());
     }
+
 }

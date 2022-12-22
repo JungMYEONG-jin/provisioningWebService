@@ -58,4 +58,11 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
                         profileTypeEq(ProfileType.get(condition.getProfileType())))
                 .fetch();
     }
+
+    @Override
+    public void deleteByFetchJoin(Long id) {
+        jpaQueryFactory.delete(profile)
+                .where(profile.id.eq(id))
+                .execute();
+    }
 }

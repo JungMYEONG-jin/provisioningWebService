@@ -50,7 +50,7 @@ public class ProfileService implements ProfileUseCase {
         // profile 생성 전략이
         // 수정을 해도 모든값이 변경되어 저장이된다.
         // 어차피 값도 작으니 그냥 싹 삭제후 다시 받아오는게 최선인듯
-        profileRepositoryPort.deleteAll();
+//        profileRepositoryPort.deleteAll();
         String response = appleApi.getProfileInfo();
         JsonParser parser = new JsonParser();
         JsonObject parse = parser.parse(response).getAsJsonObject();
@@ -60,33 +60,35 @@ public class ProfileService implements ProfileUseCase {
             JsonObject dd = datum.getAsJsonObject();
             JsonObject attributes = dd.getAsJsonObject("attributes");
             String profileId = dd.get("id").toString().replaceAll("\"", "");
-            String type = dd.get("type").toString().replaceAll("\"", "");
-            String profileName = attributes.get("name").toString().replaceAll("\"", "");
-            String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
-            expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
-            String platform = attributes.get("platform").toString().replaceAll("\"", "");
-            String profileState = attributes.get("profileState").toString().replaceAll("\"", "");
-            String profileType = attributes.get("profileType").toString().replaceAll("\"", "");
-            String profileContent = attributes.get("profileContent").toString().replaceAll("\"", "");
-            String uuid = attributes.get("uuid").toString().replaceAll("\"", "");
-            /**
-             * 빌더 패턴 사용시 기본 생성자 전략 무시함!!
-             * 따라서 nullpointer 조심하자~
-             */
-            Profile build = Profile.builder().profileId(profileId)
-                    .name(profileName)
-                    .type(type)
-                    .profileState(ProfileState.get(profileState))
-                    .profileType(ProfileType.get(profileType))
-                    .expirationDate(expirationDate)
-                    .platform(ProfilePlatform.get(platform))
-                    .profileContent(profileContent)
-                    .uuid(uuid)
-                    .deviceList(new ArrayList<>())
-                    .certificates(new ArrayList<>())
-                    .build();
-            // 개발용만 device가 존재
-            profiles.add(build);
+            if (!profileRepositoryPort.isExist(profileId)){
+                String type = dd.get("type").toString().replaceAll("\"", "");
+                String profileName = attributes.get("name").toString().replaceAll("\"", "");
+                String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
+                expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
+                String platform = attributes.get("platform").toString().replaceAll("\"", "");
+                String profileState = attributes.get("profileState").toString().replaceAll("\"", "");
+                String profileType = attributes.get("profileType").toString().replaceAll("\"", "");
+                String profileContent = attributes.get("profileContent").toString().replaceAll("\"", "");
+                String uuid = attributes.get("uuid").toString().replaceAll("\"", "");
+                /**
+                 * 빌더 패턴 사용시 기본 생성자 전략 무시함!!
+                 * 따라서 nullpointer 조심하자~
+                 */
+                Profile build = Profile.builder().profileId(profileId)
+                        .name(profileName)
+                        .type(type)
+                        .profileState(ProfileState.get(profileState))
+                        .profileType(ProfileType.get(profileType))
+                        .expirationDate(expirationDate)
+                        .platform(ProfilePlatform.get(platform))
+                        .profileContent(profileContent)
+                        .uuid(uuid)
+                        .deviceList(new ArrayList<>())
+                        .certificates(new ArrayList<>())
+                        .build();
+                // 개발용만 device가 존재
+                profiles.add(build);
+            }
         }
         profileRepositoryPort.saveAll(profiles);
     }
@@ -97,51 +99,8 @@ public class ProfileService implements ProfileUseCase {
     }
 
     @Override
-    public void updateProfile(String profileId) {
-        // 새 이름으로 업데이트? 생성느낌
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
-
-        JsonObject profileCertificatesForUpdate = profileCertificateUseCase.getProfileCertificatesForUpdate(profileId);
-        JsonObject deviceForUpdateProfile = profileDeviceUseCase.getDeviceForUpdateProfile(profileId);
-        JsonObject profileBundleForUpdate = profileBundleUseCase.getProfileBundleForUpdate(profileId);
-
-
-
-//        ProfileBundle bundle = profileBundleRepositoryPort.findByProfileId(profileId);
-//        List<ProfileCertificate> certificates = profileCertificateRepositoryPort.findByProfileId(profileId);
-//        List<ProfileDevice> devices = profileDeviceRepositoryPort.findByProfile(profile);
-
-//        String id = profile.getProfileId(); // 올드 id
-//        JSONObject bundleIdFromProfile = getBundleIdFromProfile(jwt, id);
-//        System.out.println("bundleIdFromProfile = " + bundleIdFromProfile);
-//        JSONObject certificateFromProfile = getCertificateFromProfile(jwt, id);
-//        System.out.println("certificateFromProfile = " + certificateFromProfile);
-//        JSONArray devices = getDeviceInfoFromProfile(jwt, id);
-//        System.out.println("devices = " + devices);
-//        String profile = createProfile(jwt, obj.get("name").toString(), obj.get("type").toString(),
-//                bundleIdFromProfile.get("id").toString(), certificateFromProfile.get("id").toString(), devices);
-//        JSONParser parser = new JSONParser();
-//        try {
-//            JSONObject parse = (JSONObject)parser.parse(profile);
-//            JSONObject data = (JSONObject)parse.get("data");
-//            String newId = data.get("id").toString();
-//            int code = deleteProfile(jwt, id);// 기존 삭제
-//            return code;
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        return -1; // error
-
-        // 기존꺼 삭제
-        appleApi.deleteProfile(profileId);
-        profileRepositoryPort.deleteProfile(profileId);
-        // prfoileDevice에서도 삭제
-
-        //profileCertificate에서도 삭제
-
-        // bundle에서도 삭제
-
-
+    public void updateProfile(Profile profile, JsonObject param) {
+        profile.updateProfile(param);
     }
 
     /**

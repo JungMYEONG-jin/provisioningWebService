@@ -23,7 +23,7 @@ class ProfileBundleServiceTest {
     @Commit
     @Test
     void saveTest() {
-        profileBundleUseCase.saveProfileBundles("2BV6CUSYMK");
+        profileBundleUseCase.saveProfileBundles("CVKHMHSU56");
     }
 
     @Test

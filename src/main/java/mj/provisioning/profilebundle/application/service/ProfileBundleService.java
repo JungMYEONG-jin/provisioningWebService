@@ -56,6 +56,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
                 .seedId(seedId).build();
         // 오히려 프로비저닝은 번들 id가 한개고
         // 번들은 여러개의 프로비저닝을 가질수있음
+        profile.insertBundle(profileBundle); // profile 삭제시 전부 날리기 위해
         profileBundleRepositoryPort.save(profileBundle);
     }
 

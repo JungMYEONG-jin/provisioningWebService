@@ -46,8 +46,8 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     @Override
-    public Long deleteProfile(String profileId) {
-        return profileRepository.deleteByProfileId(profileId);
+    public void deleteProfile(String profileId) {
+        profileRepository.deleteAllByProfileId(profileId);
     }
 
     @Override
