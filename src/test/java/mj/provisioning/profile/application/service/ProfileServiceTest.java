@@ -124,7 +124,7 @@ class ProfileServiceTest {
 
     @Test
     void doEditTest() throws IOException {
-        ProfileEditShowDto editShow = profileService.getEditShow("CVKHMHSU56");
+        ProfileEditShowDto editShow = profileService.getEditShow("2AX2ADJH5S");
         Profile prev = profileService.getProfile(editShow.getProfileId());
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
         editRequestDto.setName("test_for_prov");
@@ -199,5 +199,6 @@ class ProfileServiceTest {
         // 기존꺼 삭제
         appleApi.deleteProfile(editRequestDto.getProfileId());
     }
+
 
 }

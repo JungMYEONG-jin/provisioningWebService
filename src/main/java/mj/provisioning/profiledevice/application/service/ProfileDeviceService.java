@@ -65,7 +65,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     }
 
     /**
-     *
+     * 업데이트 결과를 저장하자
      * @param profile
      * @param deviceIds
      */
