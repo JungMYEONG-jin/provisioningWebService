@@ -35,6 +35,15 @@ class ProfileBundleServiceTest {
         }
     }
 
+    @Commit
+    @Test
+    void saveAllTest() {
+        List<Profile> all = profileRepositoryPort.findAll();
+        for (Profile profile : all) {
+            profileBundleUseCase.saveProfileBundles(profile.getProfileId());
+        }
+    }
+
     @Test
     void getJsonTest() {
         JsonObject profileBundleForUpdate = profileBundleUseCase.getProfileBundleForUpdate("2BV6CUSYMK");

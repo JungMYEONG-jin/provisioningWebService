@@ -89,10 +89,8 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
     public void saveUpdatedResult(Profile profile, List<String> certificateIds) {
         List<ProfileCertificate> profileCertificates = new ArrayList<>();
         List<Certificate> byCertificateIds = certificateRepositoryPort.findByCertificateIds(certificateIds);
-        byCertificateIds.forEach(certificate -> {
-            ProfileCertificate profileCertificate = ProfileCertificate.of(certificate);
-            profileCertificates.add(profileCertificate);
-        });
+        profileCertificates = byCertificateIds.stream().map(ProfileCertificate::of).collect(Collectors.toList());
+
         profile.insertAllCertificate(profileCertificates);
         profileCertificateRepositoryPort.saveAll(profileCertificates);
     }

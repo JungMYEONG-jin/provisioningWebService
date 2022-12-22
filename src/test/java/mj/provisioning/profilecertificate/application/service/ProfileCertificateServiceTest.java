@@ -1,6 +1,8 @@
 package mj.provisioning.profilecertificate.application.service;
 
 import com.google.gson.JsonObject;
+import mj.provisioning.profile.application.port.in.ProfileUseCase;
+import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
@@ -17,11 +19,20 @@ class ProfileCertificateServiceTest {
 
     @Autowired
     ProfileCertificateUseCase profileCertificateUseCase;
-
+    @Autowired
+    ProfileUseCase profileUseCase;
 
     @Test
     void saveTest() {
         profileCertificateUseCase.saveProfileCertificate("CVKHMHSU56");
+    }
+
+    @Test
+    void saveAllTest() {
+        List<Profile> all = profileUseCase.findAll();
+        for (Profile profile : all) {
+            profileCertificateUseCase.saveProfileCertificate(profile.getProfileId());
+        }
     }
 
     @Test
