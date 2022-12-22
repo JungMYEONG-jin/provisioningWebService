@@ -14,12 +14,15 @@ import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDt
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
 import mj.provisioning.profilebundle.application.port.out.ProfileBundleRepositoryPort;
 import mj.provisioning.profilebundle.domain.ProfileBundle;
+import mj.provisioning.util.RegexParsing;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static mj.provisioning.util.RegexParsing.*;
 
 @Transactional
 @Service
@@ -42,12 +45,12 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         JsonParser parser = new JsonParser();
         JsonObject object = parser.parse(response).getAsJsonObject();
         JsonObject data = object.getAsJsonObject("data");
-        String type = data.get("type").toString().replaceAll("\"", "");
-        String id = data.get("id").toString().replaceAll("\"", "");
+        String type = parseQuotations(data.get("type").toString());
+        String id = parseQuotations(data.get("id").toString());
         JsonObject attributes = data.getAsJsonObject("attributes");
-        String name = attributes.get("name").toString().replaceAll("\"", "");
-        String identifier = attributes.get("identifier").toString().replaceAll("\"", "");
-        String seedId = attributes.get("seedId").toString().replaceAll("\"", "");
+        String name = parseQuotations(attributes.get("name").toString());
+        String identifier = parseQuotations(attributes.get("identifier").toString());
+        String seedId = parseQuotations(attributes.get("seedId").toString());
         ProfileBundle profileBundle = ProfileBundle.builder().bundleId(id)
                 .type(type)
                 .profile(profile)

@@ -20,9 +20,6 @@ public class ProfileBundleShowDto {
     public static ProfileBundleShowDto of(ProfileBundle bundle){
         return ProfileBundleShowDto.builder()
                 .key(bundle.getId())
-//                .name(bundle.getName())
-//                .identifier(bundle.getIdentifier())
-//                .seedId(bundle.getSeedId())
                 .appId(bundle.getName()+" ("+bundle.getSeedId()+"."+bundle.getIdentifier()+")")
                 .type(bundle.getType())
                 .build();
@@ -31,9 +28,6 @@ public class ProfileBundleShowDto {
     public static ProfileBundleShowDto of(Bundle bundle, boolean isSelected){
         return ProfileBundleShowDto.builder()
                 .key(bundle.getId())
-//                .name(bundle.getName())
-//                .identifier(bundle.getIdentifier())
-//                .seedId(bundle.getSeedId())
                 .appId(bundle.getName()+" ("+bundle.getSeedId()+"."+bundle.getIdentifier()+")")
                 .bundleId(bundle.getBundleId())
                 .isSelected(isSelected)

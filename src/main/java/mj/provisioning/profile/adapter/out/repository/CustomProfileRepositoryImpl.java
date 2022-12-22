@@ -73,11 +73,11 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
     public Profile findByFetchJoin(String profileId) {
         return jpaQueryFactory.select(profile)
                 .from(profile)
-                .where(profile.profileId.eq(profileId))
                 .leftJoin(profile.deviceList)
                 .fetchJoin()
                 .leftJoin(profile.profileBundle)
                 .fetchJoin()
+                .where(profile.profileId.eq(profileId))
                 .fetchOne();
     }
 
@@ -85,10 +85,6 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
     public List<Profile> findByNameLike(String name) {
         return jpaQueryFactory.selectFrom(profile)
                 .where(nameLike(name))
-                .leftJoin(profile.deviceList)
-                .fetchJoin()
-                .leftJoin(profile.profileBundle)
-                .fetchJoin()
                 .fetch();
     }
 

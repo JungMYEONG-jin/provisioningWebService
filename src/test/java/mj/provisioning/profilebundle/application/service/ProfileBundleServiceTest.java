@@ -1,6 +1,8 @@
 package mj.provisioning.profilebundle.application.service;
 
 import com.google.gson.JsonObject;
+import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
+import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
@@ -19,11 +21,18 @@ class ProfileBundleServiceTest {
 
     @Autowired
     ProfileBundleUseCase profileBundleUseCase;
-
+    @Autowired
+    ProfileRepositoryPort profileRepositoryPort;
     @Commit
     @Test
     void saveTest() {
-        profileBundleUseCase.saveProfileBundles("CVKHMHSU56");
+        List<Profile> test = profileRepositoryPort.findByNameLike("test");
+        for (Profile profile : test) {
+            profileBundleUseCase.deleteByProfile(profile);
+        }
+        for (Profile profile : test) {
+            profileBundleUseCase.saveProfileBundles(profile.getProfileId());
+        }
     }
 
     @Test

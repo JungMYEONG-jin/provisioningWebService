@@ -29,11 +29,6 @@ public class ProfileBundleRepositoryAdapter implements ProfileBundleRepositoryPo
     }
 
     @Override
-    public List<ProfileBundle> getAllProfileBundles() {
-        return profileBundleRepository.findAll();
-    }
-
-    @Override
     public ProfileBundle save(ProfileBundle profileBundle) {
         return profileBundleRepository.save(profileBundle);
     }
