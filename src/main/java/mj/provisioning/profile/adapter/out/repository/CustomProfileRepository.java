@@ -9,4 +9,5 @@ import java.util.List;
 public interface CustomProfileRepository {
     List<ProfileShowDto> getSearchByCondition(ProfileSearchCondition condition);
     Profile findByFetchJoin(String profileId);
+    List<Profile> findByNameLike(String name);
 }

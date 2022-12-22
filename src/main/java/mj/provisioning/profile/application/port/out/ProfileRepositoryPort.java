@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface ProfileRepositoryPort {
     Profile save(Profile profile);
     List<Profile> saveAll(List<Profile> profiles);
+    List<Profile> findByNameLike(String name);
     Optional<Profile> findByProfileId(String profileId);
     Optional<Profile> findByProfileIdFetchJoin(String profileId);
     Optional<Profile> findByName(String name);

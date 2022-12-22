@@ -31,6 +31,11 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     @Override
+    public List<Profile> findByNameLike(String name) {
+        return profileRepository.findByNameLike(name);
+    }
+
+    @Override
     public Optional<Profile> findByProfileId(String profileId) {
         return profileRepository.findByProfileId(profileId);
     }

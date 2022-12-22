@@ -81,4 +81,15 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
                 .fetchOne();
     }
 
+    @Override
+    public List<Profile> findByNameLike(String name) {
+        return jpaQueryFactory.selectFrom(profile)
+                .where(nameLike(name))
+                .leftJoin(profile.deviceList)
+                .fetchJoin()
+                .leftJoin(profile.profileBundle)
+                .fetchJoin()
+                .fetch();
+    }
+
 }

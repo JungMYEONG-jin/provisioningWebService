@@ -14,4 +14,5 @@ public interface ProfileUseCase {
     List<Profile> findAll();
     Profile getProfile(String profileId);
     ProfileEditShowDto getEditShow(String profileId);
+    List<Profile> findByNameLike(String name);
 }

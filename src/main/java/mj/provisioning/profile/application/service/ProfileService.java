@@ -123,17 +123,12 @@ public class ProfileService implements ProfileUseCase {
 
     @Override
     public Profile getProfile(String profileId) {
-        return profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
+        return profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
     }
 
     @Override
     public ProfileEditShowDto getEditShow(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileId(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
-
-//        ProfileBundleShowListDto bundleList = profileBundleUseCase.getBundleList(profileId);
-//        DeviceShowListDto deviceShowList = profileDeviceUseCase.getDeviceShowList(profileId);
-//        ProfileCertificateShowListDto profileCertificateList = profileCertificateUseCase.getProfileCertificateList(profileId);
-
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
         List<ProfileBundleShowDto> bundleList = profileBundleUseCase.getBundleForEdit(profileId);
         List<DeviceShowDto> deviceShowList = new ArrayList<>();
         if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) // 개발만 기기 등록이 가능함.
@@ -148,6 +143,11 @@ public class ProfileService implements ProfileUseCase {
                 .devices(deviceShowList)
                 .profileId(profileId)
                 .build();
+    }
+
+    @Override
+    public List<Profile> findByNameLike(String name) {
+        return profileRepositoryPort.findByNameLike(name);
     }
 
 }

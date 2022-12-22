@@ -1,6 +1,7 @@
 package mj.provisioning;
 
 import com.google.gson.JsonObject;
+import mj.provisioning.bundle.application.port.in.BundleUseCase;
 import mj.provisioning.certificate.application.port.in.CertificateUseCase;
 import mj.provisioning.device.application.port.in.DeviceUseCase;
 import mj.provisioning.device.application.service.DeviceService;
@@ -32,22 +33,26 @@ class ProvisioningApplicationTests {
 	CertificateUseCase certificateUseCase;
 	@Autowired
 	ProfileBundleUseCase profileBundleUseCase;
+	@Autowired
+	BundleUseCase bundleUseCase;
 
 	@Commit
 	@Description("통합 테스트")
 	@Test
 	void contextLoads() {
 		profileUseCase.saveProfiles();
-//		deviceUseCase.saveDevices();
-//		certificateUseCase.saveCertificates();
+		deviceUseCase.saveDevices();
+		certificateUseCase.saveCertificates();
+		bundleUseCase.saveBundles();
 
-		List<Profile> all = profileUseCase.findAll();
+		List<Profile> all = profileUseCase.findByNameLike("test");
 		all.forEach(profile -> {
 			profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
 			profileCertificateUseCase.saveProfileCertificate(profile.getProfileId());
 			profileBundleUseCase.saveProfileBundles(profile.getProfileId());
 		});
 	}
+
 
 	@Test
 	void createProfileTest() {

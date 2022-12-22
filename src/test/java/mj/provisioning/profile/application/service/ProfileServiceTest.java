@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -126,10 +127,10 @@ class ProfileServiceTest {
     @Commit
     @Test
     void doEditTest() throws IOException {
-        ProfileEditShowDto editShow = profileService.getEditShow("KAQZ2HT9YT");
+        ProfileEditShowDto editShow = profileService.getEditShow("B9GD478PM8");
         Profile prev = profileService.getProfile(editShow.getProfileId());
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
-        editRequestDto.setName("test_for_prov_temp_why_not");
+        editRequestDto.setName("test_on_test_tpro");
         editRequestDto.setProfileId(editShow.getProfileId());
         editRequestDto.setBundleData(editShow.getBundle());
         editRequestDto.setDeviceData(editShow.getDevices());
@@ -198,6 +199,9 @@ class ProfileServiceTest {
             }
             profileDeviceService.saveUpdatedResult(prev, deviceIds);
         }
+        //
+        profileService.saveProfile(prev);
+
         // 기존꺼 삭제
         appleApi.deleteProfile(editRequestDto.getProfileId());
     }
