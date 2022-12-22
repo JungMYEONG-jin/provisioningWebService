@@ -15,6 +15,7 @@ import mj.provisioning.profilecertificate.application.port.in.ProfileCertificate
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateRepositoryPort;
 import mj.provisioning.profilecertificate.domain.ProfileCertificate;
+import mj.provisioning.util.RegexParsing;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static mj.provisioning.util.RegexParsing.*;
 
 @Service
 @Transactional
@@ -33,6 +36,10 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
     private final ProfileRepositoryPort profileRepositoryPort;
     private final CertificateRepositoryPort certificateRepositoryPort;
 
+    /**
+     * profile과 매핑된 인증서 업데이트
+     * @param profileId
+     */
     @Override
     public void saveProfileCertificate(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
@@ -47,13 +54,12 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
         if (data!=null) {
             for (JsonElement datum : data) {
                 JsonObject dd = datum.getAsJsonObject();
-                String certificateId = dd.get("id").toString().replaceAll("\"","");
-                String type = dd.get("type").toString().replaceAll("\"","");
+                String certificateId = parseQuotations(dd.get("id").toString());
+                String type = parseQuotations(dd.get("type").toString());
                 JsonObject attributes = dd.getAsJsonObject("attributes");
-                String displayName = attributes.get("displayName").toString().replaceAll("\"", "");
-                String certificateType = attributes.get("certificateType").toString().replaceAll("\"", "");
-                String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
-                expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
+                String displayName = parseQuotations(attributes.get("displayName").toString());
+                String certificateType = parseQuotations(attributes.get("certificateType").toString());
+                String expirationDate = parseDateFormat(attributes.get("expirationDate").toString());
 
                 ProfileCertificate profileCertificate = ProfileCertificate.builder().certificateId(certificateId)
                         .type(type)
