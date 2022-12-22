@@ -27,8 +27,8 @@ public class ProfileDeviceRepositoryAdapter implements ProfileDeviceRepositoryPo
     }
 
     @Override
-    public Long deleteByProfile(Profile profileId) {
-        return profileDeviceRepository.deleteByProfile(profileId);
+    public void deleteByProfile(Profile profile) {
+        profileDeviceRepository.deleteByProfile(profile);
     }
 
     @Override
