@@ -15,3 +15,11 @@
 ProfileCertificate 생성 완료
 BundleId 있는지? 생성 완료
 ProfileBundleId 생성 완료
+
+## 12/22
+update 후 정보 변경이 안된 현상 발견했음
+Transaction 종료가 제대로 안되서 발생한거 같음.
+다시 테스트 필요
+>@Modifying(clearAutomatically = true, flushAutomatically = true)
+@Query("DELETE FROM ProfileDevice pd WHERE pd.profile = :profile")
+> Modifying 영속성 문제 해결을 위해 true 필요함!

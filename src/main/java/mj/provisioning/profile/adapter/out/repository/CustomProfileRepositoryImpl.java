@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
+import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfilePlatform;
 import mj.provisioning.profile.domain.ProfileType;
 import org.springframework.stereotype.Repository;
@@ -59,10 +60,25 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
                 .fetch();
     }
 
+    /**
+     * xToMany 에는 Fetch join 여러번이 불가능하다.
+     * batch_size 적용하고
+     * 가장 많이 연관된 자식을 fetch join 해주면 어느정도 해소가 가능하다
+     * 디바이스가 가장 많으므로 디바이스로 가자..
+     * 번들은 xToOne이라 가능하다.
+     * @param profileId
+     * @return
+     */
     @Override
-    public void deleteByFetchJoin(Long id) {
-        jpaQueryFactory.delete(profile)
-                .where(profile.id.eq(id))
-                .execute();
+    public Profile findByFetchJoin(String profileId) {
+        return jpaQueryFactory.select(profile)
+                .from(profile)
+                .where(profile.profileId.eq(profileId))
+                .leftJoin(profile.deviceList)
+                .fetchJoin()
+                .leftJoin(profile.profileBundle)
+                .fetchJoin()
+                .fetchOne();
     }
+
 }

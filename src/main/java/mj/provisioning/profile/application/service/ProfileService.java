@@ -50,7 +50,7 @@ public class ProfileService implements ProfileUseCase {
         // profile 생성 전략이
         // 수정을 해도 모든값이 변경되어 저장이된다.
         // 어차피 값도 작으니 그냥 싹 삭제후 다시 받아오는게 최선인듯
-//        profileRepositoryPort.deleteAll();
+        profileRepositoryPort.deleteAll();
         String response = appleApi.getProfileInfo();
         JsonParser parser = new JsonParser();
         JsonObject parse = parser.parse(response).getAsJsonObject();
@@ -60,36 +60,34 @@ public class ProfileService implements ProfileUseCase {
             JsonObject dd = datum.getAsJsonObject();
             JsonObject attributes = dd.getAsJsonObject("attributes");
             String profileId = dd.get("id").toString().replaceAll("\"", "");
-            if (!profileRepositoryPort.isExist(profileId)){
-                String type = dd.get("type").toString().replaceAll("\"", "");
-                String profileName = attributes.get("name").toString().replaceAll("\"", "");
-                String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
-                expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
-                String platform = attributes.get("platform").toString().replaceAll("\"", "");
-                String profileState = attributes.get("profileState").toString().replaceAll("\"", "");
-                String profileType = attributes.get("profileType").toString().replaceAll("\"", "");
-                String profileContent = attributes.get("profileContent").toString().replaceAll("\"", "");
-                String uuid = attributes.get("uuid").toString().replaceAll("\"", "");
-                /**
-                 * 빌더 패턴 사용시 기본 생성자 전략 무시함!!
-                 * 따라서 nullpointer 조심하자~
-                 */
-                Profile build = Profile.builder().profileId(profileId)
-                        .name(profileName)
-                        .type(type)
-                        .profileState(ProfileState.get(profileState))
-                        .profileType(ProfileType.get(profileType))
-                        .expirationDate(expirationDate)
-                        .platform(ProfilePlatform.get(platform))
-                        .profileContent(profileContent)
-                        .uuid(uuid)
-                        .deviceList(new ArrayList<>())
-                        .certificates(new ArrayList<>())
-                        .build();
-                // 개발용만 device가 존재
-                profiles.add(build);
+            String type = dd.get("type").toString().replaceAll("\"", "");
+            String profileName = attributes.get("name").toString().replaceAll("\"", "");
+            String expirationDate = attributes.get("expirationDate").toString().replaceAll("\"", "").replaceAll("[^0-9]", "");
+            expirationDate = expirationDate.substring(0, 4) + "/" + expirationDate.substring(4, 6) + "/" + expirationDate.substring(6, 8);
+            String platform = attributes.get("platform").toString().replaceAll("\"", "");
+            String profileState = attributes.get("profileState").toString().replaceAll("\"", "");
+            String profileType = attributes.get("profileType").toString().replaceAll("\"", "");
+            String profileContent = attributes.get("profileContent").toString().replaceAll("\"", "");
+            String uuid = attributes.get("uuid").toString().replaceAll("\"", "");
+            /**
+             * 빌더 패턴 사용시 기본 생성자 전략 무시함!!
+             * 따라서 nullpointer 조심하자~
+             */
+            Profile build = Profile.builder().profileId(profileId)
+                    .name(profileName)
+                    .type(type)
+                    .profileState(ProfileState.get(profileState))
+                    .profileType(ProfileType.get(profileType))
+                    .expirationDate(expirationDate)
+                    .platform(ProfilePlatform.get(platform))
+                    .profileContent(profileContent)
+                    .uuid(uuid)
+                    .deviceList(new ArrayList<>())
+                    .certificates(new ArrayList<>())
+                    .build();
+            // 개발용만 device가 존재
+            profiles.add(build);
             }
-        }
         profileRepositoryPort.saveAll(profiles);
     }
 

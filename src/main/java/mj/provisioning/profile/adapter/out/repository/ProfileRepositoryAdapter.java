@@ -36,6 +36,11 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     @Override
+    public Profile findByProfileIdFetchJoin(String profileId) {
+        return profileRepository.findByFetchJoin(profileId);
+    }
+
+    @Override
     public Optional<Profile> findByName(String name) {
         return profileRepository.findByName(name);
     }
@@ -50,9 +55,12 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
         profileRepository.deleteAllByProfileId(profileId);
     }
 
+    /**
+     * 한번에 삭제
+     */
     @Override
     public void deleteAll() {
-        profileRepository.deleteAll();
+        profileRepository.deleteAllInBatch();
     }
 
     @Override
