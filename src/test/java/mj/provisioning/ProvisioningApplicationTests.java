@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
+import org.springframework.test.annotation.Commit;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ class ProvisioningApplicationTests {
 	@Autowired
 	ProfileBundleUseCase profileBundleUseCase;
 
+	@Commit
 	@Description("통합 테스트")
 	@Test
 	void contextLoads() {

@@ -23,3 +23,5 @@ Transaction 종료가 제대로 안되서 발생한거 같음.
 >@Modifying(clearAutomatically = true, flushAutomatically = true)
 @Query("DELETE FROM ProfileDevice pd WHERE pd.profile = :profile")
 > Modifying 영속성 문제 해결을 위해 true 필요함!
+
+JPA는 bulk 삭제시 cascade를 지원하지 않는다.

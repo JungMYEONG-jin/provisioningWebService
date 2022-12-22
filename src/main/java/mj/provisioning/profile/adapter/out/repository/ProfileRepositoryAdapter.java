@@ -56,11 +56,11 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     /**
-     * 한번에 삭제
+     * cascade까지 날려야 해서 deleteAll이 최선인듯...
      */
     @Override
     public void deleteAll() {
-        profileRepository.deleteAllInBatch();
+        profileRepository.deleteAll();
     }
 
     @Override

@@ -70,7 +70,7 @@ public class Profile {
         }
     }
 
-    @OneToOne(mappedBy = "profile", cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "profile", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private ProfileBundle profileBundle;
 
     public void insertBundle(ProfileBundle profileBundle){

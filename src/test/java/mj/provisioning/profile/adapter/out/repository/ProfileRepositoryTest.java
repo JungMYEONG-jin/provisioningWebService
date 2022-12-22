@@ -14,6 +14,11 @@ class ProfileRepositoryTest {
 
     @Test
     void deleteCascadeTest() {
-        profileRepository.deleteById(113L);
+        profileRepository.deleteById(1L);
+    }
+
+    @Test
+    void deleteAllTest() {
+        profileRepository.deleteAll();
     }
 }
