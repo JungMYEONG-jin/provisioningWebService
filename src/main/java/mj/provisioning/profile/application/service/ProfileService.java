@@ -6,10 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
-import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
-import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
-import mj.provisioning.profile.application.port.in.ProfileShowDto;
-import mj.provisioning.profile.application.port.in.ProfileUseCase;
+import mj.provisioning.profile.application.port.in.*;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfilePlatform;
@@ -112,6 +109,79 @@ public class ProfileService implements ProfileUseCase {
     }
 
     @Override
+    public void editProvisioning(ProfileEditRequestDto editRequestDto) {
+        // get Profile
+        Profile prev = getProfile(editRequestDto.getProfileId());
+        // get Json Param
+        JsonObject attr = new JsonObject();
+        attr.addProperty("name", editRequestDto.getName());
+        attr.addProperty("profileType", editRequestDto.getType()); // dist, dev
+        JsonObject relationships = new JsonObject();
+
+        JsonObject profileCertificatesForUpdate = profileCertificateUseCase.getProfileCertificatesForUpdate(editRequestDto.getCertificateData());
+        JsonObject profileBundleForUpdate = profileBundleUseCase.getProfileBundleForUpdate(editRequestDto.getBundleData());
+        JsonObject deviceForUpdateProfile = null;
+        if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
+            deviceForUpdateProfile = profileDeviceUseCase.getDeviceForUpdateProfile(editRequestDto.getDeviceData());
+            relationships.add("devices", deviceForUpdateProfile);
+        }
+        relationships.add("bundleId", profileBundleForUpdate);
+        relationships.add("certificates", profileCertificatesForUpdate);
+
+        JsonObject param = new JsonObject();
+        param.addProperty("type", "profiles");
+        param.add("attributes", attr);
+        param.add("relationships", relationships);
+
+        JsonObject toPost = new JsonObject();
+        toPost.add("data", param);
+
+        System.out.println("toPost = " + toPost);
+        // 새로 생성
+        String profile = appleApi.createProfileNew(appleApi.createJWT(), toPost);
+        System.out.println("profile = " + profile);
+
+        // 파싱해서 업데이트하자
+        JsonParser parser = new JsonParser();
+        JsonObject updatedResult = parser.parse(profile).getAsJsonObject();
+        JsonObject data = updatedResult.getAsJsonObject("data");
+        // 이전 프로파일 업데이트 전 연결된 애들 삭제
+        profileDeviceUseCase.deleteByProfile(prev);
+        profileCertificateUseCase.deleteByProfile(prev);
+        profileBundleUseCase.deleteByProfile(prev);
+        // 새 프로파일 정보로 업데이트
+        updateProfile(prev, data);
+        // 연관 관계 다시 맺어주자
+        JsonObject newRelationships = data.getAsJsonObject("relationships");
+        JsonObject bundleData = newRelationships.getAsJsonObject("bundleId").getAsJsonObject("data");
+        // bundle update
+        String newBundleId = bundleData.get("id").toString().replaceAll("\"", "");
+        profileBundleUseCase.saveUpdatedResult(prev, newBundleId);
+        // certificate update
+        JsonArray newCertificates = newRelationships.getAsJsonObject("certificates").getAsJsonArray("data");
+        List<String> certificateIds = new ArrayList<>();
+        for (JsonElement newCertificate : newCertificates) {
+            String id = newCertificate.getAsJsonObject().get("id").toString().replaceAll("\"", "");
+            certificateIds.add(id);
+        }
+        profileCertificateUseCase.saveUpdatedResult(prev, certificateIds);
+        // device update
+        if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
+            JsonArray newDevices = newRelationships.getAsJsonObject("devices").getAsJsonArray("data");
+            List<String> deviceIds = new ArrayList<>();
+            for (JsonElement newDevice : newDevices) {
+                String id = newDevice.getAsJsonObject().get("id").toString().replaceAll("\"", "");
+                deviceIds.add(id);
+            }
+            profileDeviceUseCase.saveUpdatedResult(prev, deviceIds);
+        }
+        // update
+        saveProfile(prev);
+        // 기존꺼 삭제
+        appleApi.deleteProfile(editRequestDto.getProfileId());
+    }
+
+    @Override
     public List<ProfileShowDto> searchByCondition(ProfileSearchCondition condition) {
         return profileRepositoryPort.searchCondition(condition);
     }
@@ -149,5 +219,7 @@ public class ProfileService implements ProfileUseCase {
     public List<Profile> findByNameLike(String name) {
         return profileRepositoryPort.findByNameLike(name);
     }
+
+
 
 }

@@ -124,86 +124,17 @@ class ProfileServiceTest {
         System.out.println("deviceForUpdateProfile = " + deviceForUpdateProfile);
     }
 
-    @Commit
     @Test
     void doEditTest() throws IOException {
-        ProfileEditShowDto editShow = profileService.getEditShow("B9GD478PM8");
-        Profile prev = profileService.getProfile(editShow.getProfileId());
+        ProfileEditShowDto editShow = profileService.getEditShow("PBBA7WDZB4");
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
-        editRequestDto.setName("test_on_test_tpro");
+        editRequestDto.setName("1222_test_provisioning");
         editRequestDto.setProfileId(editShow.getProfileId());
         editRequestDto.setBundleData(editShow.getBundle());
         editRequestDto.setDeviceData(editShow.getDevices());
         editRequestDto.setCertificateData(editShow.getCertificates());
         editRequestDto.setType(editShow.getType());
-
-        JsonObject attr = new JsonObject();
-        attr.addProperty("name", editRequestDto.getName());
-        attr.addProperty("profileType", editRequestDto.getType()); // dist, dev
-        JsonObject relationships = new JsonObject();
-
-        JsonObject profileCertificatesForUpdate = profileCertificateService.getProfileCertificatesForUpdate(editRequestDto.getCertificateData());
-        JsonObject profileBundleForUpdate = profileBundleService.getProfileBundleForUpdate(editRequestDto.getBundleData());
-        JsonObject deviceForUpdateProfile = null;
-        if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
-            deviceForUpdateProfile = profileDeviceService.getDeviceForUpdateProfile(editRequestDto.getDeviceData());
-            relationships.add("devices", deviceForUpdateProfile);
-        }
-        relationships.add("bundleId", profileBundleForUpdate);
-        relationships.add("certificates", profileCertificatesForUpdate);
-
-        JsonObject param = new JsonObject();
-        param.addProperty("type", "profiles");
-        param.add("attributes", attr);
-        param.add("relationships", relationships);
-
-        JsonObject toPost = new JsonObject();
-        toPost.add("data", param);
-
-        System.out.println("toPost = " + toPost);
-        // 새로 생성
-        String profile = appleApi.createProfileNew(appleApi.createJWT(), toPost);
-        System.out.println("profile = " + profile);
-
-        // 파싱해서 업데이트하자
-        JsonParser parser = new JsonParser();
-        JsonObject updatedResult = parser.parse(profile).getAsJsonObject();
-        JsonObject data = updatedResult.getAsJsonObject("data");
-        // 이전 프로파일 업데이트 전 연결된 애들 삭제
-        profileDeviceService.deleteByProfile(prev);
-        profileCertificateService.deleteByProfile(prev);
-        profileBundleService.deleteByProfile(prev);
-        // 새 프로파일 정보로 업데이트
-        profileService.updateProfile(prev, data);
-        // 연관 관계 다시 맺어주자
-        JsonObject newRelationships = data.getAsJsonObject("relationships");
-        JsonObject bundleData = newRelationships.getAsJsonObject("bundleId").getAsJsonObject("data");
-        // bundle update
-        String newBundleId = bundleData.get("id").toString().replaceAll("\"", "");
-        profileBundleService.saveUpdatedResult(prev, newBundleId);
-        // certificate update
-        JsonArray newCertificates = newRelationships.getAsJsonObject("certificates").getAsJsonArray("data");
-        List<String> certificateIds = new ArrayList<>();
-        for (JsonElement newCertificate : newCertificates) {
-            String id = newCertificate.getAsJsonObject().get("id").toString().replaceAll("\"", "");
-            certificateIds.add(id);
-        }
-        profileCertificateService.saveUpdatedResult(prev, certificateIds);
-        // device update
-        if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
-            JsonArray newDevices = newRelationships.getAsJsonObject("devices").getAsJsonArray("data");
-            List<String> deviceIds = new ArrayList<>();
-            for (JsonElement newDevice : newDevices) {
-                String id = newDevice.getAsJsonObject().get("id").toString().replaceAll("\"", "");
-                deviceIds.add(id);
-            }
-            profileDeviceService.saveUpdatedResult(prev, deviceIds);
-        }
-        //
-        profileService.saveProfile(prev);
-
-        // 기존꺼 삭제
-        appleApi.deleteProfile(editRequestDto.getProfileId());
+        profileService.editProvisioning(editRequestDto);
     }
 
 

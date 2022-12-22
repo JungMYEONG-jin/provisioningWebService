@@ -28,7 +28,6 @@ public class TestDataInit {
     private final ProfileCertificateUseCase profileCertificateUseCase;
     private final ProfileBundleUseCase profileBundleUseCase;
 
-    //A2BFWL3C73
     @Transactional
     @EventListener(ApplicationReadyEvent.class)
     public void init(){

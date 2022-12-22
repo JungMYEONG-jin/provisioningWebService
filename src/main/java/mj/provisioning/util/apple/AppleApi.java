@@ -427,7 +427,7 @@ public class AppleApi{
         return result;
     }
 
-    public String createProfileNew(String token, JsonObject toPostData) throws IOException {
+    public String createProfileNew(String token, JsonObject toPostData) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         SSLContext sslContext = null;
         int result;

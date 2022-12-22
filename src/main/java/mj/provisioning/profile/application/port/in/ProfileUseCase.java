@@ -10,6 +10,7 @@ public interface ProfileUseCase {
     void saveProfile(Profile profile);
     void updateProfile(Profile profile, JsonObject param);
     void deleteProfile(String profileId);
+    void editProvisioning(ProfileEditRequestDto profileEditRequestDto);
     List<ProfileShowDto> searchByCondition(ProfileSearchCondition condition);
     List<Profile> findAll();
     Profile getProfile(String profileId);
