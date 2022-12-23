@@ -10,8 +10,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
-    @Autowired
-    LoggingInterceptor loggingInterceptor;
+//    @Autowired
+//    LoggingInterceptor loggingInterceptor;
     /* (non-Javadoc)
      * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)
      */
@@ -27,6 +27,6 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loggingInterceptor);
+      //  registry.addInterceptor(loggingInterceptor);
     }
 }

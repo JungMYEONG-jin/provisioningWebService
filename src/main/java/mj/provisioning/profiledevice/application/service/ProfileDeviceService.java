@@ -6,6 +6,7 @@ import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.device.application.port.in.DeviceShowListDto;
 import mj.provisioning.device.application.port.out.DeviceRepositoryPort;
 import mj.provisioning.device.domain.Device;
+import mj.provisioning.device.domain.DeviceClass;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profile.domain.ProfileType;
@@ -148,7 +149,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     @Override
     public List<DeviceShowDto> getDeviceForEdit(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
-        List<Device> all = deviceRepositoryPort.findAll().orElseThrow(()->new RuntimeException("등록된 디바이스가 존재하지 않습니다."));
+        List<Device> all = deviceRepositoryPort.findByClass(DeviceClass.IPHONE.name());
         final long[] idx = {0};
         return all.stream().map(device -> {
             return DeviceShowDto.of(device, profileDeviceRepositoryPort.isExist(device.getDeviceId(), profile) ,idx[0]++);

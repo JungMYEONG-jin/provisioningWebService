@@ -39,7 +39,7 @@ public class ProfileController {
     public ResponseEntity postEdit(@PathVariable(name = "profileId") String profileId, @RequestBody ProfileEditRequestDto profileEditRequestDto){
 //        profileEditRequestDto.setProfileId(profileId);
         profileUseCase.editProvisioning(profileEditRequestDto);
-        return ResponseEntity.created(URI.create("/apple/profile/list")).body("수정에 성공하였습니다.");
+        return ResponseEntity.ok("수정에 성공하였습니다.");
     }
 
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.profile.application.port.in.*;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -179,6 +181,9 @@ public class ProfileService implements ProfileUseCase {
         saveProfile(prev);
         // 기존꺼 삭제
         appleApi.deleteProfile(editRequestDto.getProfileId());
+        // log
+        log.info("new id {}", prev.getProfileId());
+        log.info("new content {}", prev.getProfileContent());
     }
 
     @Override

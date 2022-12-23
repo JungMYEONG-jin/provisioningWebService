@@ -13,8 +13,8 @@ public class DeviceShowDto {
     private Long key;
     private String name;
     private String deviceId;
-    private boolean isSelected;
     private String type;
+    private boolean isSelected;
     public static DeviceShowDto of(Device device, boolean isSelected, Long key){
         return DeviceShowDto.builder()
                 .name(device.getName())
