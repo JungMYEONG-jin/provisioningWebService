@@ -2,6 +2,7 @@ package mj.provisioning.profile.application.port.in;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -10,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProfileShowListDto {
-    private List<ProfileShowDto> data;
+    @Builder.Default
+    private List<ProfileShowDto> data = new ArrayList<>();
 }

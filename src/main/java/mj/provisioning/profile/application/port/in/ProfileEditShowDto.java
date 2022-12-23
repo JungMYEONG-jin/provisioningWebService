@@ -27,7 +27,10 @@ public class ProfileEditShowDto {
 //    private ProfileBundleShowListDto bundle;
 //    private ProfileCertificateShowListDto certificates;
 //    private DeviceShowListDto devices;
+    @Builder.Default
     private List<ProfileBundleShowDto> bundles = new ArrayList<>();
+    @Builder.Default
     private List<ProfileCertificateShowDto> certificates = new ArrayList<>();
+    @Builder.Default
     private List<DeviceShowDto> devices = new ArrayList<>();
 }

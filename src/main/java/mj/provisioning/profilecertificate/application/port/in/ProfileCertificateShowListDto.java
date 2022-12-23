@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProfileCertificateShowListDto {
+    @Builder.Default
     private List<ProfileCertificateShowDto> certificateData = new ArrayList<>();
 }

@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CertificateShowListDto {
+    @Builder.Default
     private List<CertificateShowDto> data = new ArrayList<>();
 }

@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class BundleShowListDto {
+    @Builder.Default
     private List<BundleShowDto> bundleData = new ArrayList<>();
 }

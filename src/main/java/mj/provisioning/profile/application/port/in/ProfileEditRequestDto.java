@@ -18,7 +18,10 @@ public class ProfileEditRequestDto {
     private String profileId;
     private String name;
     private String type;
+    @Builder.Default
     private List<ProfileBundleShowDto> bundles = new ArrayList<>();
+    @Builder.Default
     private List<ProfileCertificateShowDto> certificates = new ArrayList<>();
+    @Builder.Default
     private List<DeviceShowDto> devices = new ArrayList<>();
 }

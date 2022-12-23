@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class DeviceShowListDto {
+    @Builder.Default
     private List<DeviceShowDto> deviceData = new ArrayList<>();
 }
