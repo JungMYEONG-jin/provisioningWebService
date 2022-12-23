@@ -1,16 +1,14 @@
 package mj.provisioning.logging;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 @Slf4j
@@ -34,45 +32,27 @@ public class RequestServletWrapper extends HttpServletRequestWrapper {
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-
-        StringReader stringReader = new StringReader(requestData);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(requestData.getBytes(StandardCharsets.UTF_8));
         return new ServletInputStream() {
             private ReadListener readListener = null;
 
             @Override
             public boolean isFinished() {
-                try{
-                    return stringReader.read()<0;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 return false;
             }
 
             @Override
             public boolean isReady() {
-                return isFinished();
+                return false;
             }
 
             @Override
             public void setReadListener(ReadListener listener) {
-                this.readListener = listener;
-
-                try{
-                    if (!isFinished()){
-                        readListener.onDataAvailable();
-                    }else {
-                        readListener.onAllDataRead();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
             }
 
             @Override
             public int read() throws IOException {
-                return stringReader.read();
+                return byteArrayInputStream.read();
             }
         };
     }

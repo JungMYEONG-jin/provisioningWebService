@@ -32,6 +32,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (Objects.equals(request.getMethod(), "POST")){
+            Map<String, Object> map = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+            log.info("RequestBody {}", map);
             log.info("RequestURI : {}", request.getRequestURI());
             return true;
         }else{
