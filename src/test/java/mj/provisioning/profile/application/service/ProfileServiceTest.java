@@ -112,15 +112,15 @@ class ProfileServiceTest {
         System.out.println("editShow = " + editShow);
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
         editRequestDto.setProfileId(editShow.getProfileId());
-        editRequestDto.setBundleData(editShow.getBundle());
-        editRequestDto.setDeviceData(editShow.getDevices());
-        editRequestDto.setCertificateData(editShow.getCertificates());
+        editRequestDto.setBundles(editShow.getBundles());
+        editRequestDto.setDevices(editShow.getDevices());
+        editRequestDto.setCertificates(editShow.getCertificates());
 
-        JsonObject profileCertificatesForUpdate = profileCertificateService.getProfileCertificatesForUpdate(editRequestDto.getCertificateData());
+        JsonObject profileCertificatesForUpdate = profileCertificateService.getProfileCertificatesForUpdate(editRequestDto.getCertificates());
         System.out.println("profileCertificatesForUpdate = " + profileCertificatesForUpdate);
-        JsonObject profileBundleForUpdate = profileBundleService.getProfileBundleForUpdate(editRequestDto.getBundleData());
+        JsonObject profileBundleForUpdate = profileBundleService.getProfileBundleForUpdate(editRequestDto.getBundles());
         System.out.println("profileBundleForUpdate = " + profileBundleForUpdate);
-        JsonObject deviceForUpdateProfile = profileDeviceService.getDeviceForUpdateProfile(editRequestDto.getDeviceData());
+        JsonObject deviceForUpdateProfile = profileDeviceService.getDeviceForUpdateProfile(editRequestDto.getDevices());
         System.out.println("deviceForUpdateProfile = " + deviceForUpdateProfile);
     }
 
@@ -130,9 +130,9 @@ class ProfileServiceTest {
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
         editRequestDto.setName("1222_test_provisioning");
         editRequestDto.setProfileId(editShow.getProfileId());
-        editRequestDto.setBundleData(editShow.getBundle());
-        editRequestDto.setDeviceData(editShow.getDevices());
-        editRequestDto.setCertificateData(editShow.getCertificates());
+        editRequestDto.setBundles(editShow.getBundles());
+        editRequestDto.setDevices(editShow.getDevices());
+        editRequestDto.setCertificates(editShow.getCertificates());
         editRequestDto.setType(editShow.getType());
         profileService.editProvisioning(editRequestDto);
     }

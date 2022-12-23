@@ -11,8 +11,9 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
+@ToString
 public class ProfileEditRequestDto {
     private String profileId;
     private String name;

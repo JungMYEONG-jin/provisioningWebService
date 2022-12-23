@@ -1,14 +1,19 @@
 package mj.provisioning.logging;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
+
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Scanner;
 
+@Slf4j
 public class RequestServletWrapper extends HttpServletRequestWrapper {
     private String requestData = null;
     /**
@@ -31,7 +36,6 @@ public class RequestServletWrapper extends HttpServletRequestWrapper {
     public ServletInputStream getInputStream() throws IOException {
 
         StringReader stringReader = new StringReader(requestData);
-
         return new ServletInputStream() {
             private ReadListener readListener = null;
 

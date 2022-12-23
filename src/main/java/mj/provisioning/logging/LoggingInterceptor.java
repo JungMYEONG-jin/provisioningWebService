@@ -2,7 +2,10 @@ package mj.provisioning.logging;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
+import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,22 +25,16 @@ import java.util.Objects;
 /**
  * interceptor 등록해서 요청 처리
  */
-//@Component
+@Component
 @Slf4j
 public class LoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (Objects.equals(request.getMethod(), "POST")){
-//
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            JsonNode jsonNode = objectMapper.readTree(request.getInputStream());
-            Map<String, Object> map = new ObjectMapper().readValue(request.getInputStream(), Map.class);
-            log.info("RequestBody : {}", map);
             log.info("RequestURI : {}", request.getRequestURI());
             return true;
         }else{
-            log.info("Request : {}", request.getQueryString());
             log.info("RequestURI : {}", request.getRequestURI());
             return true;
         }

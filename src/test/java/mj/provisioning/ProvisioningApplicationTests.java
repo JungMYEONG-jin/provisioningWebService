@@ -1,6 +1,8 @@
 package mj.provisioning;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import mj.provisioning.bundle.application.port.in.BundleUseCase;
 import mj.provisioning.certificate.application.port.in.CertificateUseCase;
 import mj.provisioning.device.application.port.in.DeviceUseCase;
@@ -80,5 +82,53 @@ class ProvisioningApplicationTests {
 		JsonObject toPostData = new JsonObject();
 		toPostData.add("data", param);
 		System.out.println("toPostData = " + toPostData);
+	}
+
+	@Test
+	void jsonDoubleQuote() {
+		String a = "{\n" +
+				"    \"name\": \"testeaddev4554ice3\",\n" +
+				"    \"type\": \"IOS_APP_DEVELOPMENT\",\n" +
+				"    \"profileId\": \"H335K28HD2\",\n" +
+				"    \"bundles\": [\n" +
+				"        {\n" +
+				"            \"key\": 597,\n" +
+				"            \"appId\": \"XC crashlytuc (66UW797TRG.crashlytuc)\",\n" +
+				"            \"bundleId\": \"Z696DHDP3Y\",\n" +
+				"            \"type\": \"bundleIds\",\n" +
+				"            \"selected\": true\n" +
+				"        }\n" +
+				"    ],\n" +
+				"    \"certificates\": [\n" +
+				"        {\n" +
+				"            \"key\": 0,\n" +
+				"            \"displayName\": \"SOOJIN CHOI\",\n" +
+				"            \"expirationDate\": \"2023/11/25\",\n" +
+				"            \"certificateId\": \"26RLS77PFS\",\n" +
+				"            \"type\": \"certificates\",\n" +
+				"            \"selected\": true\n" +
+				"        }\n" +
+				"    ],\n" +
+				"    \"devices\": [\n" +
+				"        {\n" +
+				"            \"key\": 0,\n" +
+				"            \"name\": \"O2O_개인_배성진_iPhone7\",\n" +
+				"            \"deviceId\": \"28H5YM8L7M\",\n" +
+				"            \"type\": \"devices\",\n" +
+				"            \"selected\": true\n" +
+				"        },\n" +
+				"        {\n" +
+				"            \"key\": 1,\n" +
+				"            \"name\": \"SMART_핑거_정현아_iPhone11\",\n" +
+				"            \"deviceId\": \"28UF688C87\",\n" +
+				"            \"type\": \"devices\",\n" +
+				"            \"selected\": true\n" +
+				"        }\n" +
+				"    ]\n" +
+				"}";
+		JsonParser parser = new JsonParser();
+		String s = parser.parse(a).toString();
+		System.out.println("s = " + s);
+
 	}
 }
