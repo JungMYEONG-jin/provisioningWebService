@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
@@ -26,9 +28,9 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (Objects.equals(request.getMethod(), "POST")){
-            ServletInputStream inputStream = request.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-            Map<String, Object> map = new ObjectMapper().readValue(br, Map.class);
+            CharsetDecoder charsetDecoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.IGNORE);
+            InputStreamReader reader = new InputStreamReader(request.getInputStream(), charsetDecoder);
+            Map<String, Object> map = new ObjectMapper().readValue(reader, Map.class);
             log.info("RequestBody : {}", map);
             log.info("RequestURI : {}", request.getRequestURI());
             return true;

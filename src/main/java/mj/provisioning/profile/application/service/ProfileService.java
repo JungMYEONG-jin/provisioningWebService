@@ -118,11 +118,11 @@ public class ProfileService implements ProfileUseCase {
         attr.addProperty("profileType", editRequestDto.getType()); // dist, dev
         JsonObject relationships = new JsonObject();
 
-        JsonObject profileCertificatesForUpdate = profileCertificateUseCase.getProfileCertificatesForUpdate(editRequestDto.getCertificateData());
-        JsonObject profileBundleForUpdate = profileBundleUseCase.getProfileBundleForUpdate(editRequestDto.getBundleData());
+        JsonObject profileCertificatesForUpdate = profileCertificateUseCase.getProfileCertificatesForUpdate(editRequestDto.getCertificates());
+        JsonObject profileBundleForUpdate = profileBundleUseCase.getProfileBundleForUpdate(editRequestDto.getBundles());
         JsonObject deviceForUpdateProfile = null;
         if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
-            deviceForUpdateProfile = profileDeviceUseCase.getDeviceForUpdateProfile(editRequestDto.getDeviceData());
+            deviceForUpdateProfile = profileDeviceUseCase.getDeviceForUpdateProfile(editRequestDto.getDevices());
             relationships.add("devices", deviceForUpdateProfile);
         }
         relationships.add("bundleId", profileBundleForUpdate);
@@ -209,7 +209,7 @@ public class ProfileService implements ProfileUseCase {
                 .type(profile.getProfileType().name())
                 .status(profile.getProfileState().getValue())
                 .certificates(profileCertificateList)
-                .bundle(bundleList)
+                .bundles(bundleList)
                 .devices(deviceShowList)
                 .profileId(profileId)
                 .build();
