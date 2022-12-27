@@ -21,21 +21,14 @@ import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNRevision;
-import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
-import static mj.provisioning.util.FileUploadUtils.*;
+import static mj.provisioning.util.FileUploadUtils.addFile;
+import static mj.provisioning.util.FileUploadUtils.writeProvisioning;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
