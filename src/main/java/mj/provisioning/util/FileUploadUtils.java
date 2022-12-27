@@ -1,12 +1,13 @@
 package mj.provisioning.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.tmatesoft.svn.core.SVNCommitInfo;
+import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.io.ISVNEditor;
+import org.tmatesoft.svn.core.io.diff.SVNDeltaGenerator;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,5 +72,67 @@ public class FileUploadUtils {
         } catch (IOException e) {
             log.error("Can not list directory ", e);
         }
+    }
+
+    public static SVNCommitInfo addFile(ISVNEditor editor, String filePath, byte[] data) throws SVNException {
+
+        /**
+         * 항상 첫번째를 연다. 현재 root dir을 연다. 즉 다른 엔트리가 열리거나 추가전까진 해당 dir에서 작업을 한다는걸 의미한다.
+         * -1 is head
+         */
+        editor.openRoot(-1);
+        /**
+         * 현재 repository에 폴더를 추가한다.
+         * dir은 root 경로 기준 상대경로임.
+         */
+//        editor.addDir(dir, null, -1);
+        /**
+         * 위에서 생성한 폴더에 파일을 넣는다.
+         */
+        editor.addFile(filePath, null, -1);
+
+        editor.applyTextDelta(filePath, null);
+        SVNDeltaGenerator deltaGenerator = new SVNDeltaGenerator();
+        String checksum = deltaGenerator.sendDelta(filePath, new ByteArrayInputStream(data), editor, true);
+
+        editor.closeFile(filePath, checksum);
+        /**
+         * close current dir
+         */
+        editor.closeDir();
+        return editor.closeEdit();
+    }
+
+    public static SVNCommitInfo addDir(ISVNEditor editor, String dir, String filePath, byte[] data) throws SVNException {
+
+        /**
+         * 항상 첫번째를 연다. 현재 root dir을 연다. 즉 다른 엔트리가 열리거나 추가전까진 해당 dir에서 작업을 한다는걸 의미한다.
+         * -1 is head
+         */
+        editor.openRoot(-1);
+        /**
+         * 현재 repository에 폴더를 추가한다.
+         * dir은 root 경로 기준 상대경로임.
+         */
+        editor.addDir(dir, null, -1);
+        /**
+         * 위에서 생성한 폴더에 파일을 넣는다.
+         */
+        editor.addFile(filePath, null, -1);
+
+        editor.applyTextDelta(filePath, null);
+        SVNDeltaGenerator deltaGenerator = new SVNDeltaGenerator();
+        String checksum = deltaGenerator.sendDelta(filePath, new ByteArrayInputStream(data), editor, true);
+
+        editor.closeFile(filePath, checksum);
+        /**
+         * close current dir
+         */
+        editor.closeDir();
+        /**
+         * close root
+         */
+        editor.closeDir();
+        return editor.closeEdit();
     }
 }
