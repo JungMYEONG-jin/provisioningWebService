@@ -39,7 +39,7 @@ public class ProfileController {
     }
 
     @PostMapping(value = "/resources/profiles/edit/{profileId}", produces = "application/text; charset=UTF-8")
-    public ResponseEntity postEdit(@PathVariable(name = "profileId") String profileId, @RequestBody ProfileEditRequestDto profileEditRequestDto){
+    public ResponseEntity postEdit(@PathVariable(name = "profileId") String profileId, @RequestBody ProfileEditRequestDto profileEditRequestDto) throws SVNException {
         Profile profile = profileUseCase.editProvisioning(profileEditRequestDto);
         try {
             fileUploadUtils.uploadToSVN("svntest", profile.getName(), profile.getProfileContent());

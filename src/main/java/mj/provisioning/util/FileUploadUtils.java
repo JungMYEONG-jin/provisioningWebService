@@ -2,6 +2,7 @@ package mj.provisioning.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.tmatesoft.svn.core.*;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
@@ -107,6 +108,7 @@ public class FileUploadUtils {
      * @param data
      * @throws SVNException
      */
+    @Async
     public void uploadToSVN(String savePath, String name, String data) throws SVNException {
         DAVRepositoryFactory.setup();
         SVNURL url = SVNURL.parseURIEncoded("https://10.25.219.102/svn/FILESHARE_REPOSITORY/"+savePath);
