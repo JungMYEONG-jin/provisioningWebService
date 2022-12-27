@@ -110,8 +110,12 @@ public class ProfileService implements ProfileUseCase {
         profileRepositoryPort.deleteProfile(profileId);
     }
 
+    /**
+     * @param editRequestDto
+     * @return new Profile
+     */
     @Override
-    public void editProvisioning(ProfileEditRequestDto editRequestDto) {
+    public Profile editProvisioning(ProfileEditRequestDto editRequestDto) {
         // get Profile
         Profile prev = getProfile(editRequestDto.getProfileId());
         // get Json Param
@@ -184,6 +188,8 @@ public class ProfileService implements ProfileUseCase {
         // log
         log.info("new id {}", prev.getProfileId());
         log.info("new content {}", prev.getProfileContent());
+        // 새거 반환
+        return prev;
     }
 
     @Override

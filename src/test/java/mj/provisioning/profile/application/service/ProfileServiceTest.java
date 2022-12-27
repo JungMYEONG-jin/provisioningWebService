@@ -14,6 +14,7 @@ import mj.provisioning.profile.domain.ProfileType;
 import mj.provisioning.profilebundle.application.service.ProfileBundleService;
 import mj.provisioning.profilecertificate.application.service.ProfileCertificateService;
 import mj.provisioning.profiledevice.application.service.ProfileDeviceService;
+import mj.provisioning.util.FileUploadUtils;
 import mj.provisioning.util.apple.AppleApi;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,15 +133,20 @@ class ProfileServiceTest {
 
     @Test
     void doEditTest() throws IOException {
-        ProfileEditShowDto editShow = profileService.getEditShow("PBBA7WDZB4");
+        ProfileEditShowDto editShow = profileService.getEditShow("CHWCG6R845");
         ProfileEditRequestDto editRequestDto = new ProfileEditRequestDto();
-        editRequestDto.setName("1222_test_provisioning");
+        editRequestDto.setName("upload_file_test");
         editRequestDto.setProfileId(editShow.getProfileId());
         editRequestDto.setBundles(editShow.getBundles());
         editRequestDto.setDevices(editShow.getDevices());
         editRequestDto.setCertificates(editShow.getCertificates());
         editRequestDto.setType(editShow.getType());
-        profileService.editProvisioning(editRequestDto);
+        Profile newProfile = profileService.editProvisioning(editRequestDto);
+        System.out.println("newProfile = " + newProfile.getName());
+        System.out.println("newProfile = " + newProfile.getProfileId());
+        System.out.println("newProfile = " + newProfile.getProfileContent());
+
+        FileUploadUtils.writeProvisioning(newProfile.getProfileContent(), newProfile.getName(), "/provisioning");
     }
 
 
