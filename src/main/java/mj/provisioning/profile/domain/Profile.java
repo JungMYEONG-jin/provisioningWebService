@@ -2,6 +2,8 @@ package mj.provisioning.profile.domain;
 
 import com.google.gson.JsonObject;
 import lombok.*;
+import mj.provisioning.profilebundle.domain.ProfileBundle;
+import mj.provisioning.profilecertificate.domain.ProfileCertificate;
 import mj.provisioning.profiledevice.domain.ProfileDevice;
 
 import javax.persistence.*;
