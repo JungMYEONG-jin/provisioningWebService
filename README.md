@@ -66,3 +66,7 @@ JPA는 bulk 삭제시 cascade를 지원하지 않는다.
 >12/27
 - SVN 업로드 성공
 - 전체 코드 리팩토링 필요.
+
+
+> 프로파일 선택
+> java -jar -Dspring.profiles.active=default
