@@ -80,10 +80,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
         List<ProfileDevice> profileDevices = new ArrayList<>();
         // 운영만 아니면 다 디바이스 가짐
         if (!profile.getProfileType().equals(ProfileType.IOS_APP_STORE)) {
-                byIds.forEach(device -> {
-                    ProfileDevice profileDevice = ProfileDevice.of(device);
-                    profileDevices.add(profileDevice);
-                });
+                profileDevices = byIds.stream().map(ProfileDevice::of).collect(Collectors.toList());
                 profile.insertAll(profileDevices);
                 profileDeviceRepositoryPort.saveAll(profileDevices);
             }
@@ -119,17 +116,14 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     @Override
     public JsonObject getDeviceForUpdateProfile(List<DeviceShowDto> deviceData) {
         JsonArray deviceJson = new JsonArray();
-        deviceData.forEach(deviceShowDto -> {
-            /**
-             * request select 된 기기만 등록
-             */
-            if (deviceShowDto.isSelected()){
-                JsonObject obj = new JsonObject();
-                obj.addProperty("id", deviceShowDto.getDeviceId());
-                obj.addProperty("type", deviceShowDto.getType());
-                deviceJson.add(obj);
-            }
-        });
+        deviceData.stream().filter(DeviceShowDto::isSelected).forEach(
+                deviceShowDto -> {
+                    JsonObject obj = new JsonObject();
+                    obj.addProperty("id", deviceShowDto.getDeviceId());
+                    obj.addProperty("type", deviceShowDto.getType());
+                    deviceJson.add(obj);
+                }
+        );
         JsonObject device = new JsonObject();
         device.add("data", deviceJson);
         return device;
