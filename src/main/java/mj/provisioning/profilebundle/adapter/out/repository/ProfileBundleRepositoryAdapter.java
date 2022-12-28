@@ -5,6 +5,7 @@ import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilebundle.application.port.out.ProfileBundleRepositoryPort;
 import mj.provisioning.profilebundle.domain.ProfileBundle;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

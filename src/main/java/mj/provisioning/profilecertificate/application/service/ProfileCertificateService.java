@@ -17,6 +17,7 @@ import mj.provisioning.profilecertificate.application.port.out.ProfileCertificat
 import mj.provisioning.profilecertificate.domain.ProfileCertificate;
 import mj.provisioning.util.RegexParsing;
 import mj.provisioning.util.apple.AppleApi;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

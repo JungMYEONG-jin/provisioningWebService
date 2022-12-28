@@ -50,9 +50,6 @@ public class TestDataInit {
         bundleUseCase.saveBundles();
 
         List<Profile> all = profileUseCase.findAll();
-//        all.stream().parallel().forEach(profile -> {
-//            profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
-//        });
 
         all.forEach(profile -> {
             profileDeviceUseCase.saveProfileDevice(profile.getProfileId());

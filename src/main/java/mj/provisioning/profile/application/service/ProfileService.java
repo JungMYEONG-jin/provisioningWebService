@@ -212,7 +212,7 @@ public class ProfileService implements ProfileUseCase {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
         List<ProfileBundleShowDto> bundleList = profileBundleUseCase.getBundleForEdit(profileId);
         List<DeviceShowDto> deviceShowList = new ArrayList<>();
-        if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) // 개발만 기기 등록이 가능함.
+        if (!profile.getProfileType().equals(ProfileType.IOS_APP_STORE)) // 운영 제외하고 기기 등록 전부 가능
             deviceShowList = profileDeviceUseCase.getDeviceForEdit(profileId);
         List<ProfileCertificateShowDto> profileCertificateList = profileCertificateUseCase.getProfileCertificateForEdit(profileId);
         return ProfileEditShowDto.builder().name(profile.getName())

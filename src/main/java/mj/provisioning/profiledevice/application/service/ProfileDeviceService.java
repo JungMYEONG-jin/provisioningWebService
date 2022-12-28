@@ -14,6 +14,7 @@ import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import mj.provisioning.profiledevice.application.port.out.ProfileDeviceRepositoryPort;
 import mj.provisioning.profiledevice.domain.ProfileDevice;
 import mj.provisioning.util.apple.AppleApi;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

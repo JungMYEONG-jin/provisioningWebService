@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.device.application.port.in.DeviceShowListDto;
 import mj.provisioning.profile.domain.Profile;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 

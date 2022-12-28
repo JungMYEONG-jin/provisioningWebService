@@ -2,6 +2,7 @@ package mj.provisioning.profilebundle.application.port.in;
 
 import com.google.gson.JsonObject;
 import mj.provisioning.profile.domain.Profile;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 

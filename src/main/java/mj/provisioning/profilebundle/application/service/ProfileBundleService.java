@@ -16,6 +16,7 @@ import mj.provisioning.profilebundle.application.port.out.ProfileBundleRepositor
 import mj.provisioning.profilebundle.domain.ProfileBundle;
 import mj.provisioning.util.RegexParsing;
 import mj.provisioning.util.apple.AppleApi;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
