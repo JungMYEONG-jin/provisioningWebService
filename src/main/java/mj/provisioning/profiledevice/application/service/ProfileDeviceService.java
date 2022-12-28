@@ -38,7 +38,10 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
         profileDeviceRepositoryPort.deleteByProfile(profile);
         List<ProfileDevice> profileDevices = new ArrayList<>();
 
-        if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) {
+        /**
+         * distribution 제외하고 dev, adhoc device 있음.
+         */
+        if (!profile.getProfileType().equals(ProfileType.IOS_APP_STORE)) {
             String response = appleApi.getDeviceInfoFromProfile(profileId);
 
             JsonParser parser = new JsonParser();

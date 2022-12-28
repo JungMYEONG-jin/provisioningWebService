@@ -33,8 +33,8 @@ public class ProvisioningApplication {
 	 */
 	@Bean
 //	@Profile("aws")
-//	@Profile("dev")
-	@Profile("local2")
+	@Profile("dev")
+//	@Profile("local2")
 	public TestDataInit testDataInit(ProfileUseCase profileUseCase, DeviceUseCase deviceUseCase, CertificateUseCase certificateUseCase, BundleUseCase bundleUseCase,
 									 ProfileDeviceUseCase profileDeviceUseCase, ProfileCertificateUseCase profileCertificateUseCase, ProfileBundleUseCase profileBundleUseCase, SvnRepository svnRepository){
 		return new TestDataInit(profileUseCase, deviceUseCase, certificateUseCase, bundleUseCase, profileDeviceUseCase, profileCertificateUseCase, profileBundleUseCase, svnRepository);
