@@ -78,7 +78,8 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     public void saveUpdatedResult(Profile profile, List<String> deviceIds) {
         List<Device> byIds = deviceRepositoryPort.findByIds(deviceIds);
         List<ProfileDevice> profileDevices = new ArrayList<>();
-        if (profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)) {
+        // 운영만 아니면 다 디바이스 가짐
+        if (!profile.getProfileType().equals(ProfileType.IOS_APP_STORE)) {
                 byIds.forEach(device -> {
                     ProfileDevice profileDevice = ProfileDevice.of(device);
                     profileDevices.add(profileDevice);

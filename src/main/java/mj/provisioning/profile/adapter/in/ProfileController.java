@@ -46,8 +46,8 @@ public class ProfileController {
         Profile profile = profileUseCase.editProvisioning(profileEditRequestDto);
         try {
             SvnRepoInfo svnRepoInfo = svnRepository.findAll().stream().
-                    filter(info -> info.getProvisioningName().contains(profile.getName().substring(0, info.getProvisioningName().length()))).
-                    findFirst().orElseThrow(() -> new RuntimeException("일치하는 프로비저닝이 존재하지 않습니다."));
+                    filter(info -> info.getProvisioningName().equals(profile.getName().substring(0, info.getProvisioningName().length()))).
+                    findFirst().orElseThrow(() -> new RuntimeException("이름 규칙에 실패하였습니다."));
             fileUploadUtils.uploadToSVN(svnRepoInfo.getUri(), profile.getName(), profile.getProfileContent());
         } catch (SVNException e) {
             throw new RuntimeException("Fail to upload svn");

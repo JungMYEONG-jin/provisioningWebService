@@ -127,7 +127,8 @@ public class ProfileService implements ProfileUseCase {
         JsonObject profileCertificatesForUpdate = profileCertificateUseCase.getProfileCertificatesForUpdate(editRequestDto.getCertificates());
         JsonObject profileBundleForUpdate = profileBundleUseCase.getProfileBundleForUpdate(editRequestDto.getBundles());
         JsonObject deviceForUpdateProfile = null;
-        if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
+        // 운영이 아닌애들은 전부 디바이스를 가짐
+        if (!editRequestDto.getType().equals(ProfileType.IOS_APP_STORE.name())) {
             deviceForUpdateProfile = profileDeviceUseCase.getDeviceForUpdateProfile(editRequestDto.getDevices());
             relationships.add("devices", deviceForUpdateProfile);
         }
@@ -172,7 +173,7 @@ public class ProfileService implements ProfileUseCase {
         }
         profileCertificateUseCase.saveUpdatedResult(prev, certificateIds);
         // device update
-        if (editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.getValue()) || editRequestDto.getType().equals(ProfileType.IOS_APP_DEVELOPMENT.name())) {
+        if (!editRequestDto.getType().equals(ProfileType.IOS_APP_STORE.name())) {
             JsonArray newDevices = newRelationships.getAsJsonObject("devices").getAsJsonArray("data");
             List<String> deviceIds = new ArrayList<>();
             for (JsonElement newDevice : newDevices) {
