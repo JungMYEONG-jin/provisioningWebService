@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.tmatesoft.svn.core.*;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
@@ -11,7 +12,12 @@ import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.io.diff.SVNDeltaGenerator;
+import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
+import org.tmatesoft.svn.core.wc2.ISvnObjectReceiver;
+import org.tmatesoft.svn.core.wc2.SvnList;
+import org.tmatesoft.svn.core.wc2.SvnOperationFactory;
+import org.tmatesoft.svn.core.wc2.SvnTarget;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
@@ -19,6 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -131,6 +139,36 @@ public class FileUploadUtils {
         byte[] contents = DatatypeConverter.parseBase64Binary(data);
         SVNCommitInfo commitInfo = addFile(editor,name+".mobileprovision", contents);
         log.info("commitInfo = {}", commitInfo);
+    }
+
+
+    public List<String> getCurrentDirectoryList(String uri) throws SVNException {
+        DAVRepositoryFactory.setup();
+        SVNURL svnurl = SVNURL.parseURIEncoded("https://10.25.219.102/svn/FILESHARE_REPOSITORY/"+uri);
+        SVNRevision revision = SVNRevision.HEAD;
+        SvnOperationFactory operationFactory = new SvnOperationFactory();
+        ISVNAuthenticationManager authenticationManager = SVNWCUtil.createDefaultAuthenticationManager(user, pw);
+        operationFactory.setAuthenticationManager(authenticationManager);
+
+        List<String> res = new ArrayList<>();
+
+        SvnList list = operationFactory.createList();
+        list.setDepth(SVNDepth.IMMEDIATES);
+        list.setRevision(revision);
+        list.addTarget(SvnTarget.fromURL(svnurl, revision));
+        list.setReceiver(new ISvnObjectReceiver<SVNDirEntry>() {
+            @Override
+            public void receive(SvnTarget svnTarget, SVNDirEntry svnDirEntry) throws SVNException {
+                String relativePath = svnDirEntry.getRelativePath();
+                if (StringUtils.hasText(relativePath)) {
+                    res.add(relativePath);
+                }
+            }
+        });
+
+        list.run();
+
+        return res;
     }
 
 
