@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mj.provisioning.profile.application.port.in.*;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.svn.domain.SvnRepoInfo;
 import mj.provisioning.svn.repository.SvnRepository;
 import mj.provisioning.util.FileUploadUtils;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,10 @@ public class ProfileController {
     public ResponseEntity postEdit(@PathVariable(name = "profileId") String profileId, @RequestBody ProfileEditRequestDto profileEditRequestDto) throws SVNException {
         Profile profile = profileUseCase.editProvisioning(profileEditRequestDto);
         try {
-            fileUploadUtils.uploadToSVN("svntest", profile.getName(), profile.getProfileContent());
+            SvnRepoInfo svnRepoInfo = svnRepository.findAll().stream().
+                    filter(info -> info.getProvisioningName().contains(profile.getName().substring(0, info.getProvisioningName().length()))).
+                    findFirst().orElseThrow(() -> new RuntimeException("일치하는 프로비저닝이 존재하지 않습니다."));
+            fileUploadUtils.uploadToSVN(svnRepoInfo.getUri(), profile.getName(), profile.getProfileContent());
         } catch (SVNException e) {
             throw new RuntimeException("Fail to upload svn");
         }

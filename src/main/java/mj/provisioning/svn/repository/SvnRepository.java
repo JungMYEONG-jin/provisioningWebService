@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SvnRepository extends JpaRepository<SvnRepoInfo, Long> {
-
+    SvnRepoInfo findByProvisioningName(String provisioningName);
 }
