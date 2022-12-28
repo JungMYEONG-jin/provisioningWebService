@@ -46,7 +46,7 @@ public class ProfileController {
     public ResponseEntity postEdit(@PathVariable(name = "profileId") String profileId, @RequestBody ProfileEditRequestDto profileEditRequestDto) throws SVNException {
         Profile profile = profileUseCase.editProvisioning(profileEditRequestDto);
         try {
-            SvnRepoInfo svnRepoInfo = svnRepository.findByProvisioningName(profileEditRequestDto.getRepository().name());
+            SvnRepoInfo svnRepoInfo = svnRepository.findByProvisioningName(profileEditRequestDto.getAppName());
             fileUploadUtils.uploadToSVN(svnRepoInfo.getUri(), profile.getName(), profile.getProfileContent());
         } catch (SVNException e) {
             throw new RuntimeException("Fail to upload svn");

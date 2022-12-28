@@ -1,14 +1,9 @@
 package mj.provisioning.profile.application.port.in;
 
 import lombok.*;
-import mj.provisioning.certificate.application.port.in.CertificateShowListDto;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
-import mj.provisioning.device.application.port.in.DeviceShowListDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
-import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
-import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
-import mj.provisioning.svn.domain.ProvisioningRepository;
 import mj.provisioning.svn.dto.ProvisioningRepositoryDto;
 
 import java.util.ArrayList;

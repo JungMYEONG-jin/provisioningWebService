@@ -1,7 +1,7 @@
 package mj.provisioning.svn.dto;
 
 import lombok.*;
-import mj.provisioning.svn.domain.ProvisioningRepository;
+import mj.provisioning.svn.domain.SvnRepoInfo;
 
 @Getter
 @Setter
@@ -9,11 +9,13 @@ import mj.provisioning.svn.domain.ProvisioningRepository;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 public class ProvisioningRepositoryDto {
-    ProvisioningRepository repository;
+    private Long id;
+    private String appName;
 
-    public static ProvisioningRepositoryDto of(ProvisioningRepository provisioningRepository){
+    public static ProvisioningRepositoryDto of(SvnRepoInfo svnRepoInfo){
         return ProvisioningRepositoryDto.builder()
-                .repository(provisioningRepository)
+                .id(svnRepoInfo.getId())
+                .appName(svnRepoInfo.getProvisioningName())
                 .build();
     }
 }

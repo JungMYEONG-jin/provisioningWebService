@@ -18,14 +18,14 @@ import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
-import mj.provisioning.svn.domain.ProvisioningRepository;
+import mj.provisioning.svn.domain.SvnRepoInfo;
 import mj.provisioning.svn.dto.ProvisioningRepositoryDto;
+import mj.provisioning.svn.repository.SvnRepository;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +41,7 @@ public class ProfileService implements ProfileUseCase {
     private final ProfileBundleUseCase profileBundleUseCase;
     private final ProfileDeviceUseCase profileDeviceUseCase;
     private final ProfileCertificateUseCase profileCertificateUseCase;
+    private final SvnRepository svnRepository;
 
 
     /**
@@ -215,6 +216,7 @@ public class ProfileService implements ProfileUseCase {
     @Override
     public ProfileEditShowDto getEditShow(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
+        List<SvnRepoInfo> svnRepoInfos = svnRepository.findAll();
         List<ProfileBundleShowDto> bundleList = profileBundleUseCase.getBundleForEdit(profileId);
         List<DeviceShowDto> deviceShowList = new ArrayList<>();
         if (!profile.getProfileType().equals(ProfileType.IOS_APP_STORE)) // 운영 제외하고 기기 등록 전부 가능
@@ -228,7 +230,7 @@ public class ProfileService implements ProfileUseCase {
                 .bundles(bundleList)
                 .devices(deviceShowList)
                 .profileId(profileId)
-                .svnRepos(Arrays.stream(ProvisioningRepository.values()).map(ProvisioningRepositoryDto::of).collect(Collectors.toList()))
+                .svnRepos(svnRepoInfos.stream().map(ProvisioningRepositoryDto::of).collect(Collectors.toList()))
                 .build();
     }
 
