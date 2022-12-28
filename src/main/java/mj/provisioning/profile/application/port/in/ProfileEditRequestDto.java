@@ -4,6 +4,7 @@ import lombok.*;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
+import mj.provisioning.svn.domain.ProvisioningRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,4 +25,5 @@ public class ProfileEditRequestDto {
     private List<ProfileCertificateShowDto> certificates = new ArrayList<>();
     @Builder.Default
     private List<DeviceShowDto> devices = new ArrayList<>();
+    private ProvisioningRepository repository;
 }

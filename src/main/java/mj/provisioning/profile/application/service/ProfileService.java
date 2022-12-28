@@ -18,12 +18,16 @@ import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
+import mj.provisioning.svn.domain.ProvisioningRepository;
+import mj.provisioning.svn.dto.ProvisioningRepositoryDto;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -224,6 +228,7 @@ public class ProfileService implements ProfileUseCase {
                 .bundles(bundleList)
                 .devices(deviceShowList)
                 .profileId(profileId)
+                .svnRepos(Arrays.stream(ProvisioningRepository.values()).map(ProvisioningRepositoryDto::of).collect(Collectors.toList()))
                 .build();
     }
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mj.provisioning.profile.application.port.in.*;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.svn.domain.ProvisioningRepository;
 import mj.provisioning.svn.domain.SvnRepoInfo;
 import mj.provisioning.svn.repository.SvnRepository;
 import mj.provisioning.util.FileUploadUtils;
@@ -45,9 +46,7 @@ public class ProfileController {
     public ResponseEntity postEdit(@PathVariable(name = "profileId") String profileId, @RequestBody ProfileEditRequestDto profileEditRequestDto) throws SVNException {
         Profile profile = profileUseCase.editProvisioning(profileEditRequestDto);
         try {
-            SvnRepoInfo svnRepoInfo = svnRepository.findAll().stream().
-                    filter(info -> info.getProvisioningName().equals(profile.getName().substring(0, info.getProvisioningName().length()))).
-                    findFirst().orElseThrow(() -> new RuntimeException("이름 규칙에 실패하였습니다."));
+            SvnRepoInfo svnRepoInfo = svnRepository.findByProvisioningName(profileEditRequestDto.getRepository().name());
             fileUploadUtils.uploadToSVN(svnRepoInfo.getUri(), profile.getName(), profile.getProfileContent());
         } catch (SVNException e) {
             throw new RuntimeException("Fail to upload svn");

@@ -8,6 +8,8 @@ import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
+import mj.provisioning.svn.domain.ProvisioningRepository;
+import mj.provisioning.svn.dto.ProvisioningRepositoryDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,4 +35,6 @@ public class ProfileEditShowDto {
     private List<ProfileCertificateShowDto> certificates = new ArrayList<>();
     @Builder.Default
     private List<DeviceShowDto> devices = new ArrayList<>();
+    @Builder.Default
+    private List<ProvisioningRepositoryDto> svnRepos = new ArrayList<>();
 }
