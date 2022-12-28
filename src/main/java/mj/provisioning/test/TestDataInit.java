@@ -10,10 +10,14 @@ import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
+import mj.provisioning.svn.domain.ProvisioningRepository;
+import mj.provisioning.svn.domain.SvnRepoInfo;
+import mj.provisioning.svn.repository.SvnRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -27,10 +31,19 @@ public class TestDataInit {
     private final ProfileDeviceUseCase profileDeviceUseCase;
     private final ProfileCertificateUseCase profileCertificateUseCase;
     private final ProfileBundleUseCase profileBundleUseCase;
+    private final SvnRepository svnRepository;
 
     @Transactional
     @EventListener(ApplicationReadyEvent.class)
     public void init(){
+        List<SvnRepoInfo> res = new ArrayList<>();
+        for (ProvisioningRepository value : ProvisioningRepository.values()) {
+            res.add(SvnRepoInfo.builder()
+                    .provisioningName(value.name())
+                    .uri(value.getUri())
+                    .build());
+        }
+        svnRepository.saveAll(res);
         profileUseCase.saveProfiles(); // 모든 profiles 업데이트
         deviceUseCase.saveDevices(); // 모든 device 업데이트
         certificateUseCase.saveCertificates(); // 모든 certificate 업데이트
@@ -46,6 +59,7 @@ public class TestDataInit {
             profileCertificateUseCase.saveProfileCertificate(profile.getProfileId());
             profileBundleUseCase.saveProfileBundles(profile.getProfileId());
         });
+
     }
 
 

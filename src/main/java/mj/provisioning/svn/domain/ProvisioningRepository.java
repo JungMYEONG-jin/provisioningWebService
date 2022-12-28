@@ -1,4 +1,4 @@
-package mj.provisioning.svn.repository;
+package mj.provisioning.svn.domain;
 
 import org.springframework.util.StringUtils;
 
@@ -73,6 +73,10 @@ public enum ProvisioningRepository {
 
     ProvisioningRepository(String uri) {
         this.uri = uri;
+    }
+
+    public String getUri() {
+        return uri;
     }
 
     private static final Map<String, ProvisioningRepository> PROVISIONING_MAP;

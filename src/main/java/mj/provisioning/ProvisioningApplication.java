@@ -7,6 +7,7 @@ import mj.provisioning.profile.application.port.in.ProfileUseCase;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
+import mj.provisioning.svn.repository.SvnRepository;
 import mj.provisioning.test.TestDataInit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,12 +32,12 @@ public class ProvisioningApplication {
 	 * @return
 	 */
 	@Bean
-//	@Profile("aws")
+	@Profile("aws")
 //	@Profile("dev")
-	@Profile("local2")
+//	@Profile("local2")
 	public TestDataInit testDataInit(ProfileUseCase profileUseCase, DeviceUseCase deviceUseCase, CertificateUseCase certificateUseCase, BundleUseCase bundleUseCase,
-									 ProfileDeviceUseCase profileDeviceUseCase, ProfileCertificateUseCase profileCertificateUseCase, ProfileBundleUseCase profileBundleUseCase){
-		return new TestDataInit(profileUseCase, deviceUseCase, certificateUseCase, bundleUseCase, profileDeviceUseCase, profileCertificateUseCase, profileBundleUseCase);
+									 ProfileDeviceUseCase profileDeviceUseCase, ProfileCertificateUseCase profileCertificateUseCase, ProfileBundleUseCase profileBundleUseCase, SvnRepository svnRepository){
+		return new TestDataInit(profileUseCase, deviceUseCase, certificateUseCase, bundleUseCase, profileDeviceUseCase, profileCertificateUseCase, profileBundleUseCase, svnRepository);
 	}
 
 }
