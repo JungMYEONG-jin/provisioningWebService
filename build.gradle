@@ -53,7 +53,7 @@ dependencies {
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}" // 한개 더 추가!
 
 
-
+	fileTree(dir: 'lib/', include:['*.jar'])
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
