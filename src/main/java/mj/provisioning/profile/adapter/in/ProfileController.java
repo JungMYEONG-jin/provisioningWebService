@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mj.provisioning.profile.application.port.in.*;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.svn.repository.SvnRepository;
 import mj.provisioning.util.FileUploadUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ public class ProfileController {
 
     private final ProfileUseCase profileUseCase;
     private final FileUploadUtils fileUploadUtils;
+    private final SvnRepository svnRepository;
 
     @GetMapping("/apple/profile/list")
     public ResponseEntity<ProfileShowListDto> getList(ProfileSearchCondition condition){
