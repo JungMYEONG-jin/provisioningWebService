@@ -52,6 +52,7 @@ dependencies {
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}" // 한개 더 추가!
 
+	implementation fileTree(dir:  'lib', includes: ['*.jar'])
 
 
 	annotationProcessor 'org.projectlombok:lombok'
