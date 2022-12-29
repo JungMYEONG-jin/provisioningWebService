@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import mj.provisioning.certificate.application.port.out.CertificateRepositoryPort;
 import mj.provisioning.certificate.domain.Certificate;
 import mj.provisioning.certificate.domain.CertificateType;
+import mj.provisioning.exception.CustomException;
+import mj.provisioning.exception.ErrorCode;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
@@ -88,10 +90,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
      */
     @Override
     public void saveUpdatedResult(Profile profile, List<String> certificateIds) {
-        List<ProfileCertificate> profileCertificates = new ArrayList<>();
-        List<Certificate> byCertificateIds = certificateRepositoryPort.findByCertificateIds(certificateIds);
-        profileCertificates = byCertificateIds.stream().map(ProfileCertificate::of).collect(Collectors.toList());
-
+        List<ProfileCertificate> profileCertificates = certificateRepositoryPort.findByCertificateIds(certificateIds).stream().map(ProfileCertificate::of).collect(Collectors.toList());
         profile.insertAllCertificate(profileCertificates);
         profileCertificateRepositoryPort.saveAll(profileCertificates);
     }
@@ -103,33 +102,28 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
      */
     @Override
     public ProfileCertificateShowListDto getProfileCertificateList(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         // 개발 인증서인지 운영 인증서인지 체크
         String certificateType = profile.getProfileType().getValue();
-        List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new RuntimeException("해당 타입에 매치되는 인증서가 존재하지 않습니다."));
-
+        List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new CustomException(ErrorCode.CERTIFICATE_NOT_EXIST.getMessage(), ErrorCode.CERTIFICATE_NOT_EXIST));
         // select 여부 체크해서 return
         final long[] idx = {0};
-        return ProfileCertificateShowListDto.builder().certificateData(byCertificateType.stream().map(certificate -> {
-             return ProfileCertificateShowDto.of(certificate, profileCertificateRepositoryPort.isExist(certificate.getCertificateId(), profile), idx[0]++);
-        }).collect(Collectors.toList())).build();
+        return ProfileCertificateShowListDto.builder().certificateData(byCertificateType.stream().map(certificate -> ProfileCertificateShowDto.of(certificate, profileCertificateRepositoryPort.isExist(certificate.getCertificateId(), profile), idx[0]++)).collect(Collectors.toList())).build();
     }
 
     @Override
     public List<ProfileCertificateShowDto> getProfileCertificateForEdit(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         // 개발 인증서인지 운영 인증서인지 체크
         String certificateType = profile.getProfileType().getValue();
-        List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new RuntimeException("해당 타입에 매치되는 인증서가 존재하지 않습니다."));
+        List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new CustomException(ErrorCode.CERTIFICATE_NOT_EXIST.getMessage(), ErrorCode.CERTIFICATE_NOT_EXIST));
         final long[] idx = {0};
-        return byCertificateType.stream().map(certificate -> {
-            return ProfileCertificateShowDto.of(certificate, profileCertificateRepositoryPort.isExist(certificate.getCertificateId(), profile), idx[0]++);
-        }).collect(Collectors.toList());
+        return byCertificateType.stream().map(certificate -> ProfileCertificateShowDto.of(certificate, profileCertificateRepositoryPort.isExist(certificate.getCertificateId(), profile), idx[0]++)).collect(Collectors.toList());
     }
 
     @Override
     public JsonArray getProfileCertificates(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         List<ProfileCertificate> byProfileId = profileCertificateRepositoryPort.findByProfileId(profile);
         JsonArray certificates = new JsonArray();
         byProfileId.stream().forEach(profileCertificate -> {
@@ -157,13 +151,11 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
     @Override
     public JsonObject getProfileCertificatesForUpdate(List<ProfileCertificateShowDto> certificateData) {
         JsonArray certificates = new JsonArray();
-        certificateData.stream().forEach(profileCertificateShowDto -> {
-            if (profileCertificateShowDto.isChosen()) { // true인 애들만
-                JsonObject object = new JsonObject();
-                object.addProperty("type", profileCertificateShowDto.getType());
-                object.addProperty("id", profileCertificateShowDto.getCertificateId());
-                certificates.add(object);
-            }
+        certificateData.stream().filter(ProfileCertificateShowDto::isChosen).forEach(profileCertificateShowDto -> {
+            JsonObject object = new JsonObject();
+            object.addProperty("type", profileCertificateShowDto.getType());
+            object.addProperty("id", profileCertificateShowDto.getCertificateId());
+            certificates.add(object);
         });
         JsonObject param = new JsonObject();
         param.add("data", certificates);

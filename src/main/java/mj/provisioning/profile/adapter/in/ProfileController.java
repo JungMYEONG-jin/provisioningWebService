@@ -2,6 +2,8 @@ package mj.provisioning.profile.adapter.in;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mj.provisioning.exception.CustomException;
+import mj.provisioning.exception.ErrorCode;
 import mj.provisioning.profile.application.port.in.*;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.svn.domain.ProvisioningRepository;
@@ -50,7 +52,7 @@ public class ProfileController {
         try {
             List<ProvisioningRepositoryDto> collect = profileEditRequestDto.getSvnRepos().stream().filter(ProvisioningRepositoryDto::isChosen).collect(Collectors.toList());
             if (collect.size()>1) // 1개 여야만 됨..
-                throw new RuntimeException("경로는 1개만 선택 가능합니다...");
+                throw new CustomException(ErrorCode.PATH_NOT_MULTI.getMessage(), ErrorCode.PATH_NOT_MULTI);
             SvnRepoInfo svnRepoInfo = svnRepository.findByProvisioningName(collect.get(0).getAppName());
             fileUploadUtils.uploadToSVN(svnRepoInfo.getUri(), profile.getName(), profile.getProfileContent());
         } catch (SVNException e) {
