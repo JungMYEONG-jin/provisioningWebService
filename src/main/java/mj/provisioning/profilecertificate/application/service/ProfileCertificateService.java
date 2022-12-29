@@ -158,7 +158,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
     public JsonObject getProfileCertificatesForUpdate(List<ProfileCertificateShowDto> certificateData) {
         JsonArray certificates = new JsonArray();
         certificateData.stream().forEach(profileCertificateShowDto -> {
-            if (profileCertificateShowDto.isSelected()) { // true인 애들만
+            if (profileCertificateShowDto.isChosen()) { // true인 애들만
                 JsonObject object = new JsonObject();
                 object.addProperty("type", profileCertificateShowDto.getType());
                 object.addProperty("id", profileCertificateShowDto.getCertificateId());

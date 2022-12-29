@@ -108,7 +108,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
     @Override
     public JsonObject getProfileBundleForUpdate(List<ProfileBundleShowDto> bundle) {
         JsonObject object = new JsonObject();
-        ProfileBundleShowDto matchedBundle = bundle.stream().filter(profileBundleShowDto -> profileBundleShowDto.isSelected()).findFirst().orElseThrow(() -> new RuntimeException("번들이 존재하지 않습니다."));
+        ProfileBundleShowDto matchedBundle = bundle.stream().filter(profileBundleShowDto -> profileBundleShowDto.isChosen()).findFirst().orElseThrow(() -> new RuntimeException("번들이 존재하지 않습니다."));
         object.addProperty("id", matchedBundle.getBundleId());
         object.addProperty("type",matchedBundle.getType());
         JsonObject param = new JsonObject();

@@ -19,22 +19,22 @@ public class ProfileCertificateShowDto {
     private String expirationDate;
     private String certificateId;
     private String type;
-    private boolean isSelected;
-    public static ProfileCertificateShowDto of(ProfileCertificate certificate, boolean isSelected, Long key){
+    private boolean chosen;
+    public static ProfileCertificateShowDto of(ProfileCertificate certificate, boolean chosen, Long key){
         return ProfileCertificateShowDto.builder().displayName(certificate.getDisplayName())
                 .expirationDate(certificate.getExpirationDate())
                 .certificateId(certificate.getCertificateId())
-                .isSelected(isSelected)
+                .chosen(chosen)
                 .key(key)
                 .type(certificate.getType())
                 .build();
     }
 
-    public static ProfileCertificateShowDto of(Certificate certificate, boolean isSelected, Long key){
+    public static ProfileCertificateShowDto of(Certificate certificate, boolean chosen, Long key){
         return ProfileCertificateShowDto.builder().displayName(certificate.getDisplayName())
                 .expirationDate(certificate.getExpirationDate())
                 .certificateId(certificate.getCertificateId())
-                .isSelected(isSelected)
+                .chosen(chosen)
                 .key(key)
                 .type(certificate.getType())
                 .build();

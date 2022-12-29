@@ -116,7 +116,7 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
     @Override
     public JsonObject getDeviceForUpdateProfile(List<DeviceShowDto> deviceData) {
         JsonArray deviceJson = new JsonArray();
-        deviceData.stream().filter(DeviceShowDto::isSelected).forEach(
+        deviceData.stream().filter(DeviceShowDto::isChosen).forEach(
                 deviceShowDto -> {
                     JsonObject obj = new JsonObject();
                     obj.addProperty("id", deviceShowDto.getDeviceId());
