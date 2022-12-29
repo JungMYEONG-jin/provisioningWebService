@@ -47,35 +47,6 @@ class AppleApiTest {
         System.out.println("response = " + response);
     }
 
-    /**
-     * udid 매치로 찾아서 등록해주자
-     * device table을 만들자 우선
-     * id, device_id, type, name, udid, deviceClass
-     */
-    @Test
-    void getAllRegisteredDevice() throws MalformedURLException, NoSuchAlgorithmException, ParseException {
-        String allDevices = api.getAllDevices(api.createJWT());
-        JsonParser parser = new JsonParser();
-        JsonObject deviceJson = parser.parse(allDevices).getAsJsonObject();
-        JsonArray dataArray = deviceJson.get("data").getAsJsonArray();
-        for (JsonElement jsonElement : dataArray) {
-            JsonObject object = jsonElement.getAsJsonObject();
-            String type = object.get("type").toString().replaceAll("\"", "");
-            String deviceId = object.get("id").toString().replaceAll("\"", "");
-            JsonObject attributes = object.getAsJsonObject("attributes");
-            String name = attributes.get("name").toString().replaceAll("\"", "");
-            String deviceClass = attributes.get("deviceClass").toString().replaceAll("\"", "");
-            String udid = attributes.get("udid").toString().replaceAll("\"", "");
-
-            System.out.print(" type = " + type);
-            System.out.print(" udid = " + udid);
-            System.out.print(" deviceClass = " + deviceClass);
-            System.out.print(" deviceId = " + deviceId);
-            System.out.println(" name = " + name);
-        }
-        System.out.println("allDevices = " + allDevices);
-    }
-
     @Test
     void getAllCertificatesTest() {
         String allCertificates = api.getAllCertificates();

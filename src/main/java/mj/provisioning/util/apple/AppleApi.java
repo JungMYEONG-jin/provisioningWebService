@@ -6,6 +6,8 @@ import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import mj.provisioning.exception.AppleAPIException;
+import mj.provisioning.exception.CustomException;
+import mj.provisioning.exception.ErrorCode;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -54,19 +56,24 @@ public class AppleApi{
     @Autowired
     ResourceLoader resourceLoader;
 
+    // 30 seconds
     private int CONN_TIME_OUT = 1000 * 30;
 
+    /**
+     * 현재 ID에 등록된 모든 기기를 가져온다.
+     * @return
+     */
     public String getAllRegisteredDevices(){
         String jwt = createJWT();
         return getAllDevices(jwt);
     }
 
-    public String getAllDevices(String jwt) {
+    private String getAllDevices(String jwt) {
         URL url = null;
         try {
             url = new URL("https://api.appstoreconnect.apple.com/v1/devices?limit=200");
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            throw new CustomException(ErrorCode.URL_ERROR.getMessage(), ErrorCode.URL_ERROR);
         }
         try {
             return getConnectResultByX509(jwt,  url);
@@ -74,43 +81,6 @@ public class AppleApi{
             e.printStackTrace();
         }
         return "";
-    }
-
-    public int updateProfile(String jwt, String profileName) throws IOException, NoSuchAlgorithmException {
-//        String profileInfo = getProfileInfo();
-//        JSONObject obj = null;
-//
-//        for (Object o : profileInfo) {
-//            JSONObject temp = (JSONObject) o;
-//            if (temp.get("prevName").equals(profileName))
-//            {
-//                obj = temp;
-//                break;
-//            }
-//        }
-//        if (obj==null)
-//            return -1;
-//
-//        String id = obj.get("id").toString(); // 올드 id
-//        JSONObject bundleIdFromProfile = getBundleIdFromProfile(jwt, id);
-//        System.out.println("bundleIdFromProfile = " + bundleIdFromProfile);
-//        JSONObject certificateFromProfile = getCertificateFromProfile(jwt, id);
-//        System.out.println("certificateFromProfile = " + certificateFromProfile);
-//        JSONArray devices = getDeviceInfoFromProfile(jwt, id);
-//        System.out.println("devices = " + devices);
-//        String profile = createProfile(jwt, obj.get("name").toString(), obj.get("type").toString(),
-//                bundleIdFromProfile.get("id").toString(), certificateFromProfile.get("id").toString(), devices);
-//        JSONParser parser = new JSONParser();
-//        try {
-//            JSONObject parse = (JSONObject)parser.parse(profile);
-//            JSONObject data = (JSONObject)parse.get("data");
-//            String newId = data.get("id").toString();
-//            int code = deleteProfile(jwt, id);// 기존 삭제
-//            return code;
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-       return -1; // error
     }
 
     /**
@@ -129,7 +99,7 @@ public class AppleApi{
         try {
             url = new URL("https://api.appstoreconnect.apple.com/v1/profiles?limit=200");
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            throw new CustomException(ErrorCode.URL_ERROR.getMessage(), ErrorCode.URL_ERROR);
         }
         try {
             return getConnectResultByX509(jwt,  url);
@@ -195,7 +165,6 @@ public class AppleApi{
 
             HttpResponse response = null;
             HttpEntity entity = null;
-            HttpRequest request = null;
             String responseBody = null;
             /**
              * ??? ?? OUTPUT
@@ -376,57 +345,9 @@ public class AppleApi{
         return response;
     }
 
-    /**
-     * token is jwt
-     * @param token
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws MalformedURLException
-     */
-    public String createProfile(String token, JsonObject toPostData) throws IOException {
-        HttpURLConnection con = null;
-        BufferedReader br = null;
-        StringBuffer sb = null;
-        String result = "";
-
-        try{
-            URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles");
-            con = (HttpURLConnection) url.openConnection();
-            // post
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Authorization", "Bearer "+ token);
-            // post by json
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true); // outputstream 사용해서 post body 데이터 전송
-
-            String paramData = toPostData.toString();
-            try{
-                OutputStream os = con.getOutputStream();
-                byte[] req = paramData.getBytes("utf-8"); //post write
-                os.write(req, 0, req.length);
-                os.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-
-            br = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
-            StringBuilder response = new StringBuilder();
-            while((result=br.readLine())!=null){
-                response.append(result.trim());
-            }
-            result = response.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     public String createProfileNew(String token, JsonObject toPostData) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         SSLContext sslContext = null;
-        int result;
         try {
             sslContext = SSLContext.getInstance("SSL");
         } catch (NoSuchAlgorithmException e) {
@@ -505,33 +426,6 @@ public class AppleApi{
     public int deleteProfile(String profileId){
         return deleteOldProfile(createJWT(), profileId);
     }
-
-//    private int deleteOldProfile(String token, String id){
-//        HttpURLConnection con = null;
-//        try{
-//            URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id);
-//            con = (HttpURLConnection) url.openConnection();
-//            // post
-//            con.setRequestMethod("DELETE");
-//            con.setRequestProperty("Authorization", "Bearer "+ token);
-//            // post by json
-//            con.setRequestProperty("Content-Type", "application/json");
-//            con.setRequestProperty("Accept", "application/json");
-//            con.setDoOutput(true); // outputstream 사용해서 post body 데이터 전송
-//        } catch (IOException e) {
-//            throw new RuntimeException("연결 실패...");
-//        }
-//
-//        try {
-//            return con.getResponseCode();
-//        } catch (IOException e) {
-//            throw new RuntimeException("연결 실패...");
-//        }
-//    }
-
-//    public int deleteProfileOld(String profileId){
-//        return deleteOldProfileByX509(createJWT(), profileId);
-//    }
 
     private int deleteOldProfile(String token, String id){
         DefaultHttpClient httpClient = new DefaultHttpClient();
