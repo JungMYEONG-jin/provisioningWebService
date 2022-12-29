@@ -43,7 +43,7 @@ ProfileDevice, ProfileCertificate, ProfileBundle로 나타냈습니다.
 2. 프로비저닝 수정 페이지: 프로비저닝 수정 페이지에 사용될 데이터를 제공합니다.
 >curl --location --request GET 'http://52.78.85.10:8080/resources/profiles/edit/${프로비저닝ID}'
 3. 프로비저닝 수정 요청: 프로비저닝 수정 요청을 하여 재발급을 진행합니다.
->curl --location --request POST 'http://52.78.85.10:8080/resources/profiles/edit/SKCNMVR7WG' \
+>curl --location --request POST 'http://52.78.85.10:8080/resources/profiles/edit/${프로비저닝ID}' \
 --header 'Content-Type: application/json' \
 --data-raw 생략....
 
