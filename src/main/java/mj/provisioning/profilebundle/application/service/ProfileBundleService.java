@@ -81,7 +81,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
 
     @Override
     public List<ProfileBundleShowDto> getBundleForEdit(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         List<Bundle> all = bundleRepositoryPort.findAll();
 
         return all.stream().map(bundle -> ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile))).collect(Collectors.toList());
@@ -106,7 +106,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
     @Override
     public JsonObject getProfileBundleForUpdate(List<ProfileBundleShowDto> bundle) {
         JsonObject object = new JsonObject();
-        ProfileBundleShowDto matchedBundle = bundle.stream().filter(profileBundleShowDto -> profileBundleShowDto.isChosen()).findFirst().orElseThrow(() -> new RuntimeException("번들이 존재하지 않습니다."));
+        ProfileBundleShowDto matchedBundle = bundle.stream().filter(profileBundleShowDto -> profileBundleShowDto.isChosen()).findFirst().orElseThrow(() -> new CustomException(ErrorCode.BUNDLE_NOT_EXIST.getMessage(), ErrorCode.BUNDLE_NOT_EXIST));
         object.addProperty("id", matchedBundle.getBundleId());
         object.addProperty("type",matchedBundle.getType());
         JsonObject param = new JsonObject();
