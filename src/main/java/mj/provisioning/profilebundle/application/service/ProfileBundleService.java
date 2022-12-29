@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import mj.provisioning.bundle.application.port.out.BundleRepositoryPort;
 import mj.provisioning.bundle.domain.Bundle;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
+import mj.provisioning.exception.CustomException;
+import mj.provisioning.exception.ErrorCode;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
@@ -38,7 +40,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
 
     @Override
     public void saveProfileBundles(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         // 기존 삭제
         profileBundleRepositoryPort.deleteByProfileId(profileId);
         String response = appleApi.getBundleIdFromProfile(profileId);
@@ -71,12 +73,10 @@ public class ProfileBundleService implements ProfileBundleUseCase {
 
     @Override
     public ProfileBundleShowListDto getBundleList(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         List<Bundle> all = bundleRepositoryPort.findAll();
 
-        return ProfileBundleShowListDto.builder().bundleData(all.stream().map(bundle -> {
-            return ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile));
-        }).collect(Collectors.toList())).build();
+        return ProfileBundleShowListDto.builder().bundleData(all.stream().map(bundle -> ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile))).collect(Collectors.toList())).build();
     }
 
     @Override
@@ -84,9 +84,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
         List<Bundle> all = bundleRepositoryPort.findAll();
 
-        return all.stream().map(bundle -> {
-            return ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile));
-        }).collect(Collectors.toList());
+        return all.stream().map(bundle -> ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile))).collect(Collectors.toList());
     }
 
     @Override
