@@ -34,9 +34,7 @@ public class RegularPatch {
         certificateUseCase.saveCertificates();
         bundleUseCase.saveBundles();
 
-        List<Profile> all = profileUseCase.findAll();
-
-        all.forEach(profile -> {
+        profileUseCase.findAll().forEach(profile -> {
             profileDeviceUseCase.saveProfileDevice(profile.getProfileId());
             profileCertificateUseCase.saveProfileCertificate(profile.getProfileId());
             profileBundleUseCase.saveProfileBundles(profile.getProfileId());
