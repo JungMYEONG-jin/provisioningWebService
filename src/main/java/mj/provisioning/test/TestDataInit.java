@@ -15,10 +15,14 @@ import mj.provisioning.svn.domain.SvnRepoInfo;
 import mj.provisioning.svn.repository.SvnRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +39,7 @@ public class TestDataInit {
 
     @Transactional
     @EventListener(ApplicationReadyEvent.class)
-    public void init(){
+    public void init() throws InterruptedException {
         List<SvnRepoInfo> res = new ArrayList<>();
         for (ProvisioningRepository value : ProvisioningRepository.values()) {
             res.add(SvnRepoInfo.builder()
@@ -44,9 +48,9 @@ public class TestDataInit {
                     .build());
         }
         svnRepository.saveAll(res);
-        profileUseCase.saveProfiles(); // 모든 profiles 업데이트
-        deviceUseCase.saveDevices(); // 모든 device 업데이트
-        certificateUseCase.saveCertificates(); // 모든 certificate 업데이트
+        profileUseCase.saveProfiles();
+        deviceUseCase.saveDevices();
+        certificateUseCase.saveCertificates();
         bundleUseCase.saveBundles();
 
         List<Profile> all = profileUseCase.findAll();
@@ -58,6 +62,4 @@ public class TestDataInit {
         });
 
     }
-
-
 }
