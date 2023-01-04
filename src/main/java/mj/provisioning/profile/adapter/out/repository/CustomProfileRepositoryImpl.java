@@ -76,8 +76,8 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
                         profile.expirationDate))
                 .from(profile)
                 .where(nameLike(condition.getName()),
-                        platformEq,
-                        typeEq)
+                        profileTypeEq(ProfileType.get(condition.getProfileType())),
+                        profilePlatformEq(ProfilePlatform.get(condition.getProfilePlatform())))
                 .fetch();
     }
 
