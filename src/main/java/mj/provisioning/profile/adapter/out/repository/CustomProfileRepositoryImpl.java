@@ -35,7 +35,14 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
     }
 
     private BooleanExpression profileTypeEq(ProfileType profileType){
-        return profileType!=null?profile.profileType.eq(profileType):null;
+        if (profileType!=null){
+            if (profileType.equals(ProfileType.IOS_APP_DEVELOPMENT)) {
+                return profile.profileType.eq(profileType);
+            } else {
+                return profile.profileType.eq(ProfileType.IOS_APP_ADHOC).or(profile.profileType.eq(ProfileType.IOS_APP_STORE));
+            }
+        }
+        return null;
     }
 
     /**
