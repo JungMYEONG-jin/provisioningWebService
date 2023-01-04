@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mj.provisioning.common.exception.CustomException;
+import mj.provisioning.common.exception.ErrorCode;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.profile.application.port.in.*;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
@@ -121,7 +123,6 @@ public class ProfileService implements ProfileUseCase {
         // 프로파일 제거
         profileRepositoryPort.deleteProfile(profileId);
     }
-
     /**
      * @param editRequestDto
      * @return new Profile
@@ -217,12 +218,12 @@ public class ProfileService implements ProfileUseCase {
 
     @Override
     public Profile getProfile(String profileId) {
-        return profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
+        return profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(() -> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
     }
 
     @Override
     public ProfileEditShowDto getEditShow(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(() -> new RuntimeException("해당 조건에 맞는 프로비저닝이 존재하지 않습니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(() -> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         List<SvnRepoInfo> svnRepoInfos = svnRepository.findAll();
         List<ProfileBundleShowDto> bundleList = profileBundleUseCase.getBundleForEdit(profileId);
         List<DeviceShowDto> deviceShowList = new ArrayList<>();

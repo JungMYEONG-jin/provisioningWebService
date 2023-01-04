@@ -11,6 +11,7 @@ public enum ErrorCode {
     PATH_NOT_MULTI(400, "PATH-ERROR-1", "경로는 한개만 선택가능합니다."),
     UPLOAD_FAILED(400, "UPLOAD-ERROR-1", "SVN 업로드에 실패하였습니다."),
     URL_ERROR(404, "URL-ERROR", "잘못된 URL 요청입니다."),
+    DOWNLOAD_FAILED(500, "DOWNLOAD-ERROR", "다운로드중 에러가 발생했습니다. 관리자에게 문의바랍니다."),
     API_ERROR(500, "NETWORK-ERROR",    "현재 네트워크 통신이 불안정합니다.")
     ;
 
