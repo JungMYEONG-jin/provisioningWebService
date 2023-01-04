@@ -111,7 +111,14 @@ public class ProfileService implements ProfileUseCase {
      */
     @Override
     public void deleteProfile(String profileId) {
+        Profile profile = getProfile(profileId);
+        // apple 에서 제거
         appleApi.deleteProfile(profileId);
+        // 먼저 연관관계 제거
+        profileDeviceUseCase.deleteByProfile(profile);
+        profileCertificateUseCase.deleteByProfile(profile);
+        profileBundleUseCase.deleteByProfile(profile);
+        // 프로파일 제거
         profileRepositoryPort.deleteProfile(profileId);
     }
 

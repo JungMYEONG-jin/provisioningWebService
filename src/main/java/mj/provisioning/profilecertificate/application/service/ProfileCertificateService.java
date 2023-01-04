@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import mj.provisioning.certificate.application.port.out.CertificateRepositoryPort;
 import mj.provisioning.certificate.domain.Certificate;
 import mj.provisioning.certificate.domain.CertificateType;
-import mj.provisioning.exception.CustomException;
-import mj.provisioning.exception.ErrorCode;
+import mj.provisioning.common.exception.CustomException;
+import mj.provisioning.common.exception.ErrorCode;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
@@ -17,9 +17,7 @@ import mj.provisioning.profilecertificate.application.port.in.ProfileCertificate
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateRepositoryPort;
 import mj.provisioning.profilecertificate.domain.ProfileCertificate;
-import mj.provisioning.util.RegexParsing;
 import mj.provisioning.util.apple.AppleApi;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

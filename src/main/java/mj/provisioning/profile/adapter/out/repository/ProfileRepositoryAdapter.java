@@ -61,6 +61,11 @@ public class ProfileRepositoryAdapter implements ProfileRepositoryPort {
         profileRepository.deleteAllByProfileId(profileId);
     }
 
+    @Override
+    public void deleteProfileByAPI(String profileId) {
+        profileRepository.deleteByProfileId(profileId);
+    }
+
     /**
      * cascade까지 날려야 해서 deleteAll이 최선인듯...
      */

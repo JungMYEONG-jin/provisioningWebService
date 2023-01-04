@@ -1,4 +1,4 @@
-package mj.provisioning.exception;
+package mj.provisioning.common.exception;
 
 public class AppleAPIException extends RuntimeException{
 

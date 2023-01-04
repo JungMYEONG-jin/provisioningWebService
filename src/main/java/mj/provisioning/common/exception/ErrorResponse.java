@@ -1,4 +1,4 @@
-package mj.provisioning.exception;
+package mj.provisioning.common.exception;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
