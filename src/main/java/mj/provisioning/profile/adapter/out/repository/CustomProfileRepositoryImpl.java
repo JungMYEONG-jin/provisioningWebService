@@ -38,7 +38,7 @@ public class CustomProfileRepositoryImpl implements CustomProfileRepository{
         if (profileType!=null){
             if (profileType.equals(ProfileType.IOS_APP_DEVELOPMENT)) {
                 return profile.profileType.eq(profileType);
-            } else {
+            } else if(profileType.equals(ProfileType.IOS_APP_STORE) || profileType.equals(ProfileType.IOS_APP_ADHOC)) {
                 return profile.profileType.eq(ProfileType.IOS_APP_ADHOC).or(profile.profileType.eq(ProfileType.IOS_APP_STORE));
             }
         }

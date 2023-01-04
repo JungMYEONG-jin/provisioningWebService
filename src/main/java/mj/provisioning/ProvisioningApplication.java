@@ -23,7 +23,7 @@ public class ProvisioningApplication {
 		SpringApplication.run(ProvisioningApplication.class, args);
 	}
 
-	@Profile("aws")
+	@Profile("test2")
 	@Bean
 	public TestDataInit testDataInit(ProfileUseCase profileUseCase, DeviceUseCase deviceUseCase, CertificateUseCase certificateUseCase, BundleUseCase bundleUseCase,
 									 ProfileDeviceUseCase profileDeviceUseCase,
