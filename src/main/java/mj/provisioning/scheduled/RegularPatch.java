@@ -27,7 +27,7 @@ public class RegularPatch {
     private final BundleUseCase bundleUseCase;
 
     // 매월 매일 새벽 1시에 정보 동기화를 진행한다.
-    @Scheduled(cron = "0 57 14 * * *")
+    @Scheduled(cron = "0 0 1 * * *")
     void initRegularPatch(){
         profileUseCase.saveProfiles();
         deviceUseCase.saveDevices();
