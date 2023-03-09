@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import mj.provisioning.common.exception.AppleAPIException;
 import mj.provisioning.common.exception.CustomException;
 import mj.provisioning.common.exception.ErrorCode;
+import mj.provisioning.device.application.data.DeviceCreateDto;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -496,11 +497,10 @@ public class AppleApi{
     }
 
     // Register DEVICE
-    // info is consist of name - 등록할 이름, udid - 기기번호,  platform - 플랫폼 종류 IOS, MAC_OS
     // 예상 계획 기존 디바이스 전부 삭제후
     // excel 읽어서 차례로 등록
     // 그리고 기기 전부 등록해서 프로비전이 파일 업데이트 하면 됨.
-    public String registerDevice(String token, JsonObject info) {
+    public String registerDevice(String token, DeviceCreateDto info) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         SSLContext sslContext = null;
         try {
@@ -557,9 +557,9 @@ public class AppleApi{
             JsonObject param = new JsonObject();
             param.addProperty("type", "devices");
             JsonObject attributes = new JsonObject();
-            attributes.addProperty("name", info.get("name").toString());
-            attributes.addProperty("platform", info.get("platform").toString());
-            attributes.addProperty("udid", info.get("udid").toString());
+            attributes.addProperty("name", info.getName());
+            attributes.addProperty("platform", info.getPlatform());
+            attributes.addProperty("udid", info.getUdid());
             param.add("attributes", attributes);
             JsonObject deviceCreateRequest = new JsonObject();
             deviceCreateRequest.add("data", param);
