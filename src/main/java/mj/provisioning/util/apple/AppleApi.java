@@ -495,4 +495,84 @@ public class AppleApi{
         return result;
     }
 
+    // Register DEVICE
+    // info is consist of name - 등록할 이름, udid - 기기번호,  platform - 플랫폼 종류 IOS, MAC_OS
+    // 예상 계획 기존 디바이스 전부 삭제후
+    // excel 읽어서 차례로 등록
+    // 그리고 기기 전부 등록해서 프로비전이 파일 업데이트 하면 됨.
+    public String registerDevice(String token, JsonObject info) {
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        SSLContext sslContext = null;
+        try {
+            sslContext = SSLContext.getInstance("SSL");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        try {
+            X509TrustManager trustManager = new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+
+                }
+
+                @Override
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+                }
+
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+
+                    return null;
+                }
+            };
+
+            sslContext.init(null, new TrustManager[] { trustManager },
+                    new SecureRandom());
+            SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext,
+                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            Scheme sch = new Scheme("https", 443, socketFactory);
+            httpClient.getConnectionManager().getSchemeRegistry().register(sch);
+
+            HttpParams httpParam = httpClient.getParams();
+            org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
+            org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
+
+            HttpPost http = null;
+            URL url = null;
+            try {
+                url = new URL("https://api.appstoreconnect.apple.com/v1/profiles");
+                http = new HttpPost(url.toURI());
+                http.setHeader("Authorization", "Bearer "+ token);
+                // post by json
+                http.setHeader("Content-Type", "application/json");
+                http.setHeader("Accept", "application/json");
+            } catch (Exception e) {
+                http = new HttpPost(url.toURI());
+            }
+            JsonObject param = new JsonObject();
+            param.addProperty("type", "devices");
+            JsonObject attributes = new JsonObject();
+            attributes.addProperty("name", info.get("name").toString());
+            attributes.addProperty("platform", info.get("platform").toString());
+            attributes.addProperty("udid", info.get("udid").toString());
+            param.add("attributes", attributes);
+            JsonObject deviceCreateRequest = new JsonObject();
+            deviceCreateRequest.add("data", param);
+            StringEntity entity = new StringEntity(deviceCreateRequest.toString());
+            http.setEntity(entity);
+            HttpResponse response = httpClient.execute(http);
+            String s = new BasicResponseHandler().handleResponse(response);
+            return s;
+        } catch (Exception e) {
+            throw new AppleAPIException(e);
+        } finally {
+            httpClient.getConnectionManager().shutdown();
+        }
+    }
+
 }
