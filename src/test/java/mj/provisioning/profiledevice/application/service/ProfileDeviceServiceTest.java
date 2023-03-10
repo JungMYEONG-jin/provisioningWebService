@@ -57,7 +57,7 @@ class ProfileDeviceServiceTest {
         int cnt = 0;
         for (DeviceShowDto deviceDatum : deviceData) {
             System.out.println("deviceDatum = " + deviceDatum);
-            if (deviceDatum.isSelected())
+            if (deviceDatum.isChosen())
                 cnt++;
         }
         System.out.println("cnt = " + cnt);

@@ -9,12 +9,10 @@ import mj.provisioning.common.exception.AppleAPIException;
 import mj.provisioning.common.exception.CustomException;
 import mj.provisioning.common.exception.ErrorCode;
 import mj.provisioning.device.application.data.DeviceCreateDto;
+import mj.provisioning.device.domain.Device;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
@@ -545,7 +543,7 @@ public class AppleApi{
             HttpPost http = null;
             URL url = null;
             try {
-                url = new URL("https://api.appstoreconnect.apple.com/v1/profiles");
+                url = new URL("https://api.appstoreconnect.apple.com/v1/devices");
                 http = new HttpPost(url.toURI());
                 http.setHeader("Authorization", "Bearer "+ token);
                 // post by json
@@ -564,6 +562,91 @@ public class AppleApi{
             JsonObject deviceCreateRequest = new JsonObject();
             deviceCreateRequest.add("data", param);
             StringEntity entity = new StringEntity(deviceCreateRequest.toString());
+            http.setEntity(entity);
+            HttpResponse response = httpClient.execute(http);
+            String s = new BasicResponseHandler().handleResponse(response);
+            return s;
+        } catch (Exception e) {
+            throw new AppleAPIException(e);
+        } finally {
+            httpClient.getConnectionManager().shutdown();
+        }
+    }
+
+    public void disableUserDevice(Device device){
+        String jwt = createJWT();
+        String s = disableDevice(jwt, device);
+        System.out.println("disable device  " + s);
+    }
+
+    // EDIT DEVICE
+    // 예상 계획 기존 디바이스 전부 삭제후
+    // excel 읽어서 차례로 등록
+    // 그리고 기기 전부 등록해서 프로비전이 파일 업데이트 하면 됨.
+    private String disableDevice(String token, Device device) {
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        SSLContext sslContext = null;
+        try {
+            sslContext = SSLContext.getInstance("SSL");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        try {
+            X509TrustManager trustManager = new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+
+                }
+
+                @Override
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+                }
+
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+
+                    return null;
+                }
+            };
+
+            sslContext.init(null, new TrustManager[] { trustManager },
+                    new SecureRandom());
+            SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext,
+                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            Scheme sch = new Scheme("https", 443, socketFactory);
+            httpClient.getConnectionManager().getSchemeRegistry().register(sch);
+
+            HttpParams httpParam = httpClient.getParams();
+            org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
+            org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
+
+            HttpPatch http = null;
+            URL url = null;
+            try {
+                url = new URL("https://api.appstoreconnect.apple.com/v1/devices/"+device.getDeviceId());
+                http = new HttpPatch(url.toURI());
+                http.setHeader("Authorization", "Bearer "+ token);
+                // post by json
+                http.setHeader("Content-Type", "application/json");
+                http.setHeader("Accept", "application/json");
+            } catch (Exception e) {
+                http = new HttpPatch(url.toURI());
+            }
+            JsonObject param = new JsonObject();
+            param.addProperty("type", "devices");
+            param.addProperty("id", device.getDeviceId());
+            JsonObject attributes = new JsonObject();
+            attributes.addProperty("name", device.getName());
+            attributes.addProperty("status", "DISABLED");
+            param.add("attributes", attributes);
+            JsonObject deviceDisableRequest = new JsonObject();
+            deviceDisableRequest.add("data", param);
+            StringEntity entity = new StringEntity(deviceDisableRequest.toString());
             http.setEntity(entity);
             HttpResponse response = httpClient.execute(http);
             String s = new BasicResponseHandler().handleResponse(response);

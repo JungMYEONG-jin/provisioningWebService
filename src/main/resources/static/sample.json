@@ -1,0 +1,172 @@
+{
+ "devices": [
+  {
+   "NAME": "byu012",
+   "IDENTIFIER": "8f029c6ead9c755b63481a433eb4e6ca05d289b1"
+  },
+  {
+   "NAME": "iPhone",
+   "IDENTIFIER": "00008030-0010559E2621802E"
+  },
+  {
+   "NAME": "iPhone",
+   "IDENTIFIER": "00008110-001201AA0EE9801E"
+  },
+  {
+   "NAME": "iPhone 7+",
+   "IDENTIFIER": "94eee0ebe7defd2a46a2b3c0659e24a578036c6f"
+  },
+  {
+   "NAME": "Jongho의 iPhone",
+   "IDENTIFIER": "00008030-001614E40212802E"
+  },
+  {
+   "NAME": "NewApp_개인_김승하_iPHONE11",
+   "IDENTIFIER": "00008030-000E29882E09802E"
+  },
+  {
+   "NAME": "NewApp_개인_김승하_iPHONE6S",
+   "IDENTIFIER": "5a7d7cc9697115af53db214fac529fe2a8993bc2"
+  },
+  {
+   "NAME": "PROJECT_FINGER_NEXT_iPhoneXS",
+   "IDENTIFIER": "00008020-001971220E9A002E"
+  },
+  {
+   "NAME": "PROJECT_개인_이정민_헤이영_iPhone8",
+   "IDENTIFIER": "5f82dd3f3c35a4dc45cf38fc74447f6dc2d49f36"
+  },
+  {
+   "NAME": "Project_은행_이정민_헤이영_iPhone8",
+   "IDENTIFIER": "5f82dd3f3c35a4dc45cf38fc74447f6dc2d49f36"
+  },
+  {
+   "NAME": "SHB_은행_김낙진_iPhone12Mini",
+   "IDENTIFIER": "00008101-001C11880190001E"
+  },
+  {
+   "NAME": "SHB_은행_김낙진_iPhone12Pro",
+   "IDENTIFIER": "00008101-000E652136F8001E"
+  },
+  {
+   "NAME": "SHB_은행_김낙진_iPhone13ProMax",
+   "IDENTIFIER": "00008110-000118363ADA801E"
+  },
+  {
+   "NAME": "SHB_은행_김낙진_iPhoneSE",
+   "IDENTIFIER": "00008030-001015C80CE3802E"
+  },
+  {
+   "NAME": "SHB_은행_박건우_iPhoneXSMax",
+   "IDENTIFIER": "00008020-000D19E622F8002E"
+  },
+  {
+   "NAME": "SHB_은행_박창균_iPhone11ProMax",
+   "IDENTIFIER": "00008030-001D349E2621802E"
+  },
+  {
+   "NAME": "SHB_은행_송연근_iPhone13Mini",
+   "IDENTIFIER": "00008110-001108AA0EE9801E"
+  },
+  {
+   "NAME": "SHB_은행_이가영_iPhone11ProMax",
+   "IDENTIFIER": "00008030-0003695A14E1802E"
+  },
+  {
+   "NAME": "SHB_은행_전지연_iPhone11Pro",
+   "IDENTIFIER": "00008030-000E50321498802E"
+  },
+  {
+   "NAME": "SHB_은행_전지연_iPhone7",
+   "IDENTIFIER": "b78da799c0b3fde47d7e32c21bc339801260921f"
+  },
+  {
+   "NAME": "SHB_은행_정현아_iPhone12Mini",
+   "IDENTIFIER": "00008101-00027D3E22F1003A"
+  },
+  {
+   "NAME": "SHB_은행_최리나_iPhone12",
+   "IDENTIFIER": "00008101-0013491E36A0001E"
+  },
+  {
+   "NAME": "SHB_은행_최영도_iPhone11ProMax",
+   "IDENTIFIER": "00008030-000269612161802E"
+  },
+  {
+   "NAME": "SMART_DS_이호준_iPhone5S",
+   "IDENTIFIER": "85dacdae7ddba4467bb00d23dbdcb931cca8c566"
+  },
+  {
+   "NAME": "SMART_DS_이호준_iPhone8Plus",
+   "IDENTIFIER": "1b6d294d67391b922b6daa588f9bdc92de046d3f"
+  },
+  {
+   "NAME": "SMART_개인_김영준_iPhone11Pro",
+   "IDENTIFIER": "00008030-001E64292E02802E"
+  },
+  {
+   "NAME": "SMART_개인_김용섭_iPhone8",
+   "IDENTIFIER": "fd672086292da9133b3443ca5560deab8569482c"
+  },
+  {
+   "NAME": "SMART_개인_박영진_iPhone11ProMax",
+   "IDENTIFIER": "00008030-001E34C90A82802E"
+  },
+  {
+   "NAME": "SMART_개인_이상진_iPhone11",
+   "IDENTIFIER": "00008030-001E482101C2802E"
+  },
+  {
+   "NAME": "SMART_개인_임동수iPhone12",
+   "IDENTIFIER": "00008101-00011C391181001E"
+  },
+  {
+   "NAME": "SMART_개인_장하영_iPhone12mini",
+   "IDENTIFIER": "00008101-000A289614EA001E"
+  },
+  {
+   "NAME": "SMART_은행_정현아_iPhone12Pro",
+   "IDENTIFIER": "00008101-001664842138001E"
+  },
+  {
+   "NAME": "SMART_은행_정현아_iPhoneX",
+   "IDENTIFIER": "125b16b4e4c4e2fb1dea266656ff94ce02e3f0b4"
+  },
+  {
+   "NAME": "SMART_핑거_정현아_iPhone11",
+   "IDENTIFIER": "00008030-000A29800E85802E"
+  },
+  {
+   "NAME": "SMART_핑거_정현아_iPhoneSE",
+   "IDENTIFIER": "00008030-00155458340B802E"
+  },
+  {
+   "NAME": "Sung-won의 iPhone",
+   "IDENTIFIER": "00008110-001E55320179801E"
+  },
+  {
+   "NAME": "SutieCurie",
+   "IDENTIFIER": "00008030-000E11163C84802E"
+  },
+  {
+   "NAME": "갱",
+   "IDENTIFIER": "00008110-000249803632801E"
+  },
+  {
+   "NAME": "스토리뱅크_은행_김진욱_iPhone12Pro",
+   "IDENTIFIER": "00008101-001445593E86001E"
+  },
+  {
+   "NAME": "스토리뱅크_은행_김진욱_iPhone13",
+   "IDENTIFIER": "00008110-0016688C362A801E"
+  },
+  {
+   "NAME": "스토리뱅크_은행_김진욱_iPhone13",
+   "IDENTIFIER": "00008110-0001353A3E82801E"
+  },
+  {
+   "NAME": "음성뱅킹_신한은행_iPhone11",
+   "IDENTIFIER": "00008030-001A4916349A802E"
+  }
+ ]
+}

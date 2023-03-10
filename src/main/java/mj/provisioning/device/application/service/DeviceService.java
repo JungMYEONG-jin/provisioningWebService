@@ -1,11 +1,11 @@
 package mj.provisioning.device.application.service;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import lombok.RequiredArgsConstructor;
+import mj.provisioning.device.application.data.DeviceEditDto;
+import mj.provisioning.device.application.data.DeviceJsonDto;
 import mj.provisioning.device.application.port.in.DeviceDto;
+import mj.provisioning.device.application.port.in.DeviceEditCase;
 import mj.provisioning.device.application.port.in.DeviceUseCase;
 import mj.provisioning.device.application.port.out.DeviceRepositoryPort;
 import mj.provisioning.device.domain.Device;
@@ -13,6 +13,9 @@ import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DeviceService implements DeviceUseCase{
+public class DeviceService implements DeviceUseCase, DeviceEditCase {
 
     private final DeviceRepositoryPort deviceRepositoryPort;
     private final AppleApi appleApi;
@@ -57,4 +60,35 @@ public class DeviceService implements DeviceUseCase{
         List<Device> all = deviceRepositoryPort.findAll().orElseThrow(()->new RuntimeException("No Devices..."));
         return all.stream().map(DeviceDto::to).collect(Collectors.toList());
     }
+
+    @Override
+    public void disableDevice(Device device) {
+        appleApi.disableUserDevice(device);
+    }
+
+    @Override
+    public void disableDevicesFromExcel(String jsonPath) {
+        Reader reader = null;
+        try {
+            reader = new FileReader(jsonPath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // Json 파일 읽어서, Lecture 객체로 변환
+        // 해당 파일은 disable 할 대상임
+        Gson gson = new Gson();
+        DeviceJsonDto result = gson.fromJson(reader, DeviceJsonDto.class);
+        List<String> toDeleteIdentifiers = result.getDevices().stream().map(DeviceEditDto::getIDENTIFIER).collect(Collectors.toList());
+        List<Device> toDeleteDevices = deviceRepositoryPort.findByUdIds(toDeleteIdentifiers);
+        for (Device toDeleteDevice : toDeleteDevices) {
+            System.out.println("toDeleteDevice = " + toDeleteDevice);
+            appleApi.disableUserDevice(toDeleteDevice);
+        }
+        System.out.println("toDeleteDevices = " + toDeleteDevices.size());
+
+
+    }
+
+
 }

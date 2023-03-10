@@ -9,6 +9,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString
 public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

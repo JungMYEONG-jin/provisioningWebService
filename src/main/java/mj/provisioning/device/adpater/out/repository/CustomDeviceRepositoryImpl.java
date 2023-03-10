@@ -36,4 +36,11 @@ public class CustomDeviceRepositoryImpl implements CustomDeviceRepository{
                 .fetch();
     }
 
+    @Override
+    public List<Device> findByUdIds(List<String> udIds) {
+        return jpaQueryFactory.selectFrom(device)
+                .where(device.udId.in(udIds))
+                .fetch();
+    }
+
 }
