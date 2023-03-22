@@ -1,6 +1,9 @@
 package mj.provisioning.profiledevice.application.service;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.device.application.port.in.DeviceShowListDto;
@@ -14,7 +17,6 @@ import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import mj.provisioning.profiledevice.application.port.out.ProfileDeviceRepositoryPort;
 import mj.provisioning.profiledevice.domain.ProfileDevice;
 import mj.provisioning.util.apple.AppleApi;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -152,6 +154,16 @@ public class ProfileDeviceService implements ProfileDeviceUseCase {
         final long[] idx = {0};
         return all.stream().map(device -> {
             return DeviceShowDto.of(device, profileDeviceRepositoryPort.isExist(device.getDeviceId(), profile) ,idx[0]++);
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DeviceShowDto> getAllDeviceForEdit(String profileId) {
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        List<Device> all = deviceRepositoryPort.findByClass(DeviceClass.IPHONE.name());
+        final long[] idx = {0};
+        return all.stream().map(device -> {
+            return DeviceShowDto.of(device,true ,idx[0]++);
         }).collect(Collectors.toList());
     }
 

@@ -1,25 +1,37 @@
 package mj.provisioning.profile.application.service;
 
 import com.google.gson.JsonObject;
+import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.profile.adapter.out.repository.ProfileRepository;
 import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
 import mj.provisioning.profile.application.port.in.ProfileEditShowDto;
 import mj.provisioning.profile.application.port.in.ProfileSearchCondition;
 import mj.provisioning.profile.application.port.in.ProfileShowDto;
 import mj.provisioning.profile.domain.Profile;
+import mj.provisioning.profile.domain.ProfileType;
+import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
 import mj.provisioning.profilebundle.application.service.ProfileBundleService;
+import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
 import mj.provisioning.profilecertificate.application.service.ProfileCertificateService;
 import mj.provisioning.profiledevice.application.service.ProfileDeviceService;
 import mj.provisioning.util.FileUploadUtils;
 import mj.provisioning.util.apple.AppleApi;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
+import org.springframework.core.io.ByteArrayResource;
 import org.tmatesoft.svn.core.SVNException;
 
+import javax.lang.model.SourceVersion;
+import javax.xml.bind.DatatypeConverter;
+import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -153,5 +165,45 @@ class ProfileServiceTest {
         System.out.println("newProfile = " + newProfile.getProfileId());
         System.out.println("newProfile = " + newProfile.getProfileContent());
         fileUploadUtils.uploadToSVN("svntest", newProfile.getName(), newProfile.getProfileContent());
+    }
+
+
+    @Test
+    void updateAllProfile() {
+        // 운영은 안해도됨.
+        LocalDateTime now = LocalDateTime.now().plusYears(1).minusDays(1);
+        String yyyyMMdd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        List<Profile> profiles = profileRepository.findAll().stream().filter(profile -> profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)).collect(Collectors.toList());
+        for (Profile profile : profiles) {
+            // 이름 현재 날짜로
+            String name = profile.getName().replaceAll("[0-9]", "");
+            String newName = name + yyyyMMdd;
+            // device dto
+            List<DeviceShowDto> allDeviceForEdit = profileDeviceService.getAllDeviceForEdit(profile.getProfileId());
+            List<ProfileBundleShowDto> bundleList = profileBundleService.getBundleForEdit(profile.getProfileId());
+            List<ProfileCertificateShowDto> profileCertificateList = profileCertificateService.getProfileCertificateForEdit(profile.getProfileId());
+            profileCertificateList.stream().forEach(profileCertificateShowDto -> profileCertificateShowDto.setChosen(true));
+            ProfileEditRequestDto editRequestDto = ProfileEditRequestDto.builder()
+                    .profileId(profile.getProfileId())
+                    .name(newName)
+                    .type(profile.getProfileType().name())
+                    .bundles(bundleList)
+                    .certificates(profileCertificateList)
+                    .devices(allDeviceForEdit)
+                    .build();
+            profileService.editProvisioning(editRequestDto);
+        }
+    }
+
+    @Test
+    void downloadProfileToLocal() throws IOException {
+        List<Profile> profiles = profileRepository.findAll().stream().filter(profile -> profile.getProfileType().equals(ProfileType.IOS_APP_DEVELOPMENT)).collect(Collectors.toList());
+
+        for (Profile profile : profiles) {
+            String fileName = "/Users/a60156077/Downloads/localProfile/" + profile.getName() + ".mobileprovision";
+            byte[] contents = DatatypeConverter.parseBase64Binary(profile.getProfileContent());
+            FileUtils.writeByteArrayToFile(new File(fileName), contents);
+        }
     }
 }

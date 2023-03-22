@@ -26,5 +26,6 @@ public class ProfileEditRequestDto {
     private List<ProfileCertificateShowDto> certificates = new ArrayList<>();
     @Builder.Default
     private List<DeviceShowDto> devices = new ArrayList<>();
+    @Builder.Default
     private List<ProvisioningRepositoryDto> svnRepos = new ArrayList<>();
 }

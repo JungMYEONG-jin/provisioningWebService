@@ -18,4 +18,5 @@ public interface ProfileDeviceUseCase {
     JsonObject getDeviceForUpdateProfile(List<DeviceShowDto> deviceData);
     DeviceShowListDto getDeviceShowList(String profileId);
     List<DeviceShowDto> getDeviceForEdit(String profileId);
+    List<DeviceShowDto> getAllDeviceForEdit(String profileId);
 }

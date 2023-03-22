@@ -397,7 +397,7 @@ public class AppleApi{
                 http = new HttpPost(url.toURI());
             }
 
-            StringEntity entity = new StringEntity(toPostData.toString());
+            StringEntity entity = new StringEntity(toPostData.toString(), "UTF-8");
             http.setEntity(entity);
             HttpResponse response = httpClient.execute(http);
             int statusCode = response.getStatusLine().getStatusCode();
@@ -646,7 +646,7 @@ public class AppleApi{
             param.add("attributes", attributes);
             JsonObject deviceDisableRequest = new JsonObject();
             deviceDisableRequest.add("data", param);
-            StringEntity entity = new StringEntity(deviceDisableRequest.toString());
+            StringEntity entity = new StringEntity(deviceDisableRequest.toString(), "UTF-8");
             http.setEntity(entity);
             HttpResponse response = httpClient.execute(http);
             String s = new BasicResponseHandler().handleResponse(response);
