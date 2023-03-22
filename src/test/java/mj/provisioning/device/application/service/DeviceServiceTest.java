@@ -21,4 +21,11 @@ class DeviceServiceTest {
     void getDeviceForDeleteTest() {
         deviceService.disableDevicesFromExcel("src/main/resources/static/sample.json");
     }
+
+    @Test
+    void registerDeviceTest() {
+        deviceService.registerDevicesFromJson("src/main/resources/static/register.json");
+    }
+
+
 }

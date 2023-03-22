@@ -555,13 +555,13 @@ public class AppleApi{
             JsonObject param = new JsonObject();
             param.addProperty("type", "devices");
             JsonObject attributes = new JsonObject();
-            attributes.addProperty("name", info.getName());
-            attributes.addProperty("platform", info.getPlatform());
-            attributes.addProperty("udid", info.getUdid());
+            attributes.addProperty("name", info.getNAME());
+            attributes.addProperty("platform", info.getPLATFORM());
+            attributes.addProperty("udid", info.getIDENTIFIER());
             param.add("attributes", attributes);
             JsonObject deviceCreateRequest = new JsonObject();
             deviceCreateRequest.add("data", param);
-            StringEntity entity = new StringEntity(deviceCreateRequest.toString());
+            StringEntity entity = new StringEntity(deviceCreateRequest.toString(), "UTF-8");
             http.setEntity(entity);
             HttpResponse response = httpClient.execute(http);
             String s = new BasicResponseHandler().handleResponse(response);

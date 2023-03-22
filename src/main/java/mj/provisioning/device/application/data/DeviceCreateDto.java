@@ -10,14 +10,14 @@ import lombok.Data;
  */
 @Data
 public class DeviceCreateDto {
-    private String name;
-    private String udid;
-    private String platform;
+    private String NAME;
+    private String IDENTIFIER;
+    private String PLATFORM;
 
     @Builder
-    public DeviceCreateDto(String name, String udid, String platform) {
-        this.name = name;
-        this.udid = udid;
-        this.platform = platform;
+    public DeviceCreateDto(String NAME, String IDENTIFIER, String PLATFORM) {
+        this.NAME = NAME;
+        this.IDENTIFIER = IDENTIFIER;
+        this.PLATFORM = PLATFORM;
     }
 }

@@ -2,10 +2,13 @@ package mj.provisioning.device.application.service;
 
 import com.google.gson.*;
 import lombok.RequiredArgsConstructor;
+import mj.provisioning.device.application.data.DeviceCreateDto;
 import mj.provisioning.device.application.data.DeviceEditDto;
 import mj.provisioning.device.application.data.DeviceJsonDto;
+import mj.provisioning.device.application.data.DeviceRegisterJsonDto;
 import mj.provisioning.device.application.port.in.DeviceDto;
 import mj.provisioning.device.application.port.in.DeviceEditCase;
+import mj.provisioning.device.application.port.in.DeviceRegisterUseCase;
 import mj.provisioning.device.application.port.in.DeviceUseCase;
 import mj.provisioning.device.application.port.out.DeviceRepositoryPort;
 import mj.provisioning.device.domain.Device;
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DeviceService implements DeviceUseCase, DeviceEditCase {
+public class DeviceService implements DeviceUseCase, DeviceEditCase, DeviceRegisterUseCase {
 
     private final DeviceRepositoryPort deviceRepositoryPort;
     private final AppleApi appleApi;
@@ -91,4 +94,25 @@ public class DeviceService implements DeviceUseCase, DeviceEditCase {
     }
 
 
+    @Override
+    public void registerDevicesFromJson(String path) {
+        Reader reader = null;
+        try {
+            reader = new FileReader(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // Json 파일 읽어서, Lecture 객체로 변환
+        // 해당 파일은 disable 할 대상임
+        Gson gson = new Gson();
+        DeviceRegisterJsonDto result = gson.fromJson(reader, DeviceRegisterJsonDto.class);
+        List<DeviceCreateDto> devices = result.getDevices();
+        System.out.println("devices = " + devices.size());
+        String jwt = appleApi.createJWT();
+        for (DeviceCreateDto device : devices) {
+            appleApi.registerDevice(jwt, device);
+        }
+
+    }
 }

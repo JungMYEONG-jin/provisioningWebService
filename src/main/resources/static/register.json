@@ -1,0 +1,88 @@
+{"devices": [
+{
+  "NAME": "SHB_은행_남보라_iPhone7Plus",
+  "IDENTIFIER": "94eee0ebe7defd2a46a2b3c0659e24a578036c6f",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SHB_은행_송연근_iPhone14Plus",
+"IDENTIFIER": "00008110-00114D8E3E09401E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SHB_은행_이가영_iPhone8",
+"IDENTIFIER": "3f16d6647abb5df509a44181fd8442c95a08a596",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SHB_은행_이가영_iPhone14Pro",
+"IDENTIFIER": "00008120-0002048A1403C01E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SHB_은행_이혁준_iPhone12Pro",
+"IDENTIFIER": "00008101-0009755E2E21001E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SHB_은행_최병민_iPhone13mini",
+"IDENTIFIER": "00008110-001201AA0EE9801E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SHB_은행_최수연_iPhone14",
+"IDENTIFIER": "00008110-00066C1121F1401E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SMART_개인_김영준_iPhone14ProMax",
+"IDENTIFIER": "00008120-000C58C43644C01E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SMART_개인_김용섭_iPhone14Pro",
+"IDENTIFIER": "00008120-001220891A03C01E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SMART_개인_박영진_iPhone14ProMax",
+"IDENTIFIER": "00008120-00100C5E3A68C01E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "SMART_개인_이신애_iPhone12mini",
+"IDENTIFIER": "00008101-001A512400E1401E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "땡겨요_은행_오명화_iPhone12ProMax",
+"IDENTIFIER": "00008101-000479CA2610001E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "땡겨요_은행_오명화_iPhoneXSMax",
+"IDENTIFIER": "00008020-001211441192002E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "땡겨요_은행_오명화_iPhone12Pro",
+"IDENTIFIER": "00008101-000E053E21E3003A",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "땡겨요_은행_오명화_iPhone8Plus",
+"IDENTIFIER": "ff8444355762c1ce535d1626a9b38edba01a50ee",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "땡겨요_은행_오명화_iPhone14Pro",
+"IDENTIFIER": "00008120-001E3D0E21E0C01E",
+  "PLATFORM": "IOS"
+},
+{
+"NAME": "땡겨요_은행_오명화_iPhone14ProMax",
+"IDENTIFIER": "00008120-000C4DD13EF8C01E",
+  "PLATFORM": "IOS"
+}
+  ]
+}
