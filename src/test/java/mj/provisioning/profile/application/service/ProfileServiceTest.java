@@ -192,7 +192,8 @@ class ProfileServiceTest {
                     .certificates(profileCertificateList)
                     .devices(allDeviceForEdit)
                     .build();
-            profileService.editProvisioning(editRequestDto);
+            if (newName.contains("vn"))
+                profileService.editProvisioning(editRequestDto);
         }
     }
 
@@ -203,7 +204,8 @@ class ProfileServiceTest {
         for (Profile profile : profiles) {
             String fileName = "/Users/a60156077/Downloads/localProfile/" + profile.getName() + ".mobileprovision";
             byte[] contents = DatatypeConverter.parseBase64Binary(profile.getProfileContent());
-            FileUtils.writeByteArrayToFile(new File(fileName), contents);
+            if (profile.getName().contains("vn"))
+                FileUtils.writeByteArrayToFile(new File(fileName), contents);
         }
     }
 }

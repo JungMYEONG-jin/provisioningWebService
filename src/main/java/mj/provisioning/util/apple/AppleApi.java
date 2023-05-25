@@ -562,6 +562,7 @@ public class AppleApi{
             JsonObject deviceCreateRequest = new JsonObject();
             deviceCreateRequest.add("data", param);
             StringEntity entity = new StringEntity(deviceCreateRequest.toString(), "UTF-8");
+            System.out.println("entity = " + entity);
             http.setEntity(entity);
             HttpResponse response = httpClient.execute(http);
             String s = new BasicResponseHandler().handleResponse(response);
