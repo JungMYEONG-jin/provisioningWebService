@@ -31,6 +31,4 @@ public enum ProfilePlatform {
     public static ProfilePlatform get(String name){
         return hasText(name)?PROFILE_PLATFORM_MAP.get(name):null;
     }
-
-
 }

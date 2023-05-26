@@ -5,7 +5,6 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import mj.provisioning.common.exception.AppleAPIException;
 import mj.provisioning.common.exception.CustomException;
 import mj.provisioning.common.exception.ErrorCode;
 import mj.provisioning.device.application.data.DeviceCreateDto;
@@ -33,7 +32,9 @@ import sun.security.ec.ECPrivateKeyImpl;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.InvalidKeyException;
@@ -49,6 +50,7 @@ public class AppleApi{
     private static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
     private static final String keyId = "7JL62P566N";
     private static final String keyPath = "classpath:static/apple/AuthKey_7JL62P566N.p8";
+    private static final String Prefix = "Bearer ";
 
     @Autowired
     ResourceLoader resourceLoader;
@@ -62,22 +64,23 @@ public class AppleApi{
      */
     public String getAllRegisteredDevices(){
         String jwt = createJWT();
-        return getAllDevices(jwt);
+        URL url = getUrl("https://api.appstoreconnect.apple.com/v1/devices?limit=200");
+        return transferToTargetURL(jwt,  url);
     }
 
-    private String getAllDevices(String jwt) {
+    /**
+     * url 변환
+     * @param param
+     * @return
+     */
+    private URL getUrl(String param) {
         URL url = null;
         try {
-            url = new URL("https://api.appstoreconnect.apple.com/v1/devices?limit=200");
+            url = new URL(param);
         } catch (MalformedURLException e) {
             throw new CustomException(ErrorCode.URL_ERROR.getMessage(), ErrorCode.URL_ERROR);
         }
-        try {
-            return getConnectResultByX509(jwt,  url);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return url;
     }
 
     /**
@@ -91,19 +94,9 @@ public class AppleApi{
      * @throws MalformedURLException
      */
     public String getProfileInfo(){
-        URL url = null;
+        URL url = getUrl("https://api.appstoreconnect.apple.com/v1/profiles?limit=200");
         String jwt = createJWT();
-        try {
-            url = new URL("https://api.appstoreconnect.apple.com/v1/profiles?limit=200");
-        } catch (MalformedURLException e) {
-            throw new CustomException(ErrorCode.URL_ERROR.getMessage(), ErrorCode.URL_ERROR);
-        }
-        try {
-            return getConnectResultByX509(jwt,  url);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return transferToTargetURL(jwt,  url);
     }
 
     /**
@@ -113,11 +106,11 @@ public class AppleApi{
      * @return
      * @throws NoSuchAlgorithmException
      */
-    private String getConnectResultByX509(String jwt, URL url) throws NoSuchAlgorithmException {
+    private String transferToTargetURL(String jwt, URL url) {
 
         String result = "";
         DefaultHttpClient httpClient = new DefaultHttpClient();
-        SSLContext sslContext = SSLContext.getInstance("SSL");
+        SSLContext sslContext = getSslContext();
 
         try {
             X509TrustManager trustManager = new X509TrustManager() {
@@ -155,7 +148,7 @@ public class AppleApi{
             HttpRequestBase http = null;
             try {
                 http = new HttpGet(url.toURI());
-                http.setHeader("Authorization", "Bearer "+ jwt);
+                http.setHeader("Authorization", Prefix + jwt);
             } catch (Exception e) {
                 http = new HttpPost(url.toURI());
             }
@@ -173,7 +166,7 @@ public class AppleApi{
             result = responseBody; // json 형식
 
         } catch (Exception e) {
-            throw new AppleAPIException(e);
+            throw new CustomException(ErrorCode.API_ERROR.getMessage(), ErrorCode.API_ERROR);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
@@ -181,7 +174,7 @@ public class AppleApi{
     }
 
     /**
-     * jwt 인증 토큰 생성
+     * apple 인증을 위한 jwt 인증 토큰 생성
      * @return
      */
     public String createJWT( )
@@ -194,7 +187,6 @@ public class AppleApi{
         claimsSet.setIssueTime(now);
         claimsSet.setExpirationTime(new Date(now.getTime()+900000)); // exp 15 minutes
         claimsSet.setAudience("appstoreconnect-v1");
-//        claimsSet.setClaim("scope", "GET /v1/apps/"+appId+"/appInfos");
 
         SignedJWT jwt = new SignedJWT(header,claimsSet);
 
@@ -205,20 +197,19 @@ public class AppleApi{
 
         } catch (JOSEException e)
         {
-            throw new RuntimeException("JWT Transformation failed! "+e);
+            throw new CustomException(ErrorCode.JWT_TRANSFORM_FAILED.getMessage(), ErrorCode.JWT_TRANSFORM_FAILED);
         } catch (InvalidKeyException e) {
-            throw new RuntimeException("InvalidKeyException "+e);
+            throw new CustomException(ErrorCode.INVALID_KEY.getMessage(), ErrorCode.INVALID_KEY);
         }
 
         return jwt.serialize();
-
     }
 
     private byte[] readPrivateKey(String keyPath)
     {
         InputStream inputStream = null;
         try {
-            inputStream = resourceLoader.getResource(keyPath).getInputStream(); // in native read without spring core
+            inputStream = resourceLoader.getResource(keyPath).getInputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -231,14 +222,16 @@ public class AppleApi{
 
         }catch(IOException e)
         {
-            throw new RuntimeException("Private Key read Failed... " + e);
+            throw new CustomException(ErrorCode.IO_FAILED.getMessage(), ErrorCode.IO_FAILED);
         }
         return content;
     }
 
 
     /**
-     * 한번에 가져올수있는 리스트는 200가 최대임, link에 next가 있는지 체크해서 계속 돌리기 위해 체크하는 함수
+     * 한번에 가져올수있는 리스트는 200 최대
+     * link에 next token 체크 필요.
+     * 리뷰 수집할때 아니면 쓸일없음...
      * @param reviewDetails
      * @return
      */
@@ -248,7 +241,7 @@ public class AppleApi{
         try {
             obj = (JSONObject) parser.parse(reviewDetails);
         } catch (ParseException e) {
-            e.printStackTrace();
+            throw new CustomException(ErrorCode.PARSE_FAILED.getMessage(), ErrorCode.PARSE_FAILED);
         }
         JSONObject data = (JSONObject)obj.get("links");
         if(data.containsKey("next") && data.get("next")!=null)
@@ -262,47 +255,19 @@ public class AppleApi{
 
 
     private String getDeviceInfo(String jwt, String id) {
-        URL url = null;
-        try {
-            url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/devices?limit=100");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Wrong URL!! Visit Appstore Connect API...");
-        }
-        try {
-            return getConnectResultByX509(jwt, url);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
+        URL url = getUrl("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/devices?limit=100");
+        return transferToTargetURL(jwt, url);
     }
 
     public String getAllBundleId(){
-        URL url = null;
-        try {
-            url = new URL("https://api.appstoreconnect.apple.com/v1/bundleIds?limit=200");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("잘못된 url 입니다 : " + url.toString());
-        }
-        try {
-            return getConnectResultByX509(createJWT(), url);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("해당 요청을 처리 할 수 없습니다...");
-        }
+        URL url = getUrl("https://api.appstoreconnect.apple.com/v1/bundleIds?limit=200");
+        return transferToTargetURL(createJWT(), url);
     }
 
 
     public String getBundleIdFromProfile(String id) {
-        URL url = null;
-        try {
-            url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/bundleId");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("잘못된 URL 형식입니다.");
-        }
-        try {
-            return getConnectResultByX509(createJWT(), url);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("통신 실패입니다..");
-        }
+        URL url = getUrl("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/bundleId");
+        return transferToTargetURL(createJWT(), url);
     }
 
     /**
@@ -312,44 +277,20 @@ public class AppleApi{
      * @throws NoSuchAlgorithmException
      */
     public String getAllCertificates(){
-        try {
-            URL url = new URL("https://api.appstoreconnect.apple.com/v1/certificates");
-            return getConnectResultByX509(createJWT(),  url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
+        URL url = getUrl("https://api.appstoreconnect.apple.com/v1/certificates");
+        return transferToTargetURL(createJWT(),  url);
     }
 
 
-    public String getProfileCertificate(String profileId){
-        try {
-            return getCertificateFromProfile(createJWT(), profileId);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-
-    private String getCertificateFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/certificates");
-        String response = getConnectResultByX509(jwt, url);
-        return response;
+    public String getProfileCertificate(String id){
+        String jwt = createJWT();
+        URL url = getUrl("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/certificates");
+        return transferToTargetURL(jwt, url);
     }
 
     public String createProfileNew(String token, JsonObject toPostData) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
-        SSLContext sslContext = null;
-        try {
-            sslContext = SSLContext.getInstance("SSL");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        SSLContext sslContext = getSslContext();
 
         try {
             X509TrustManager trustManager = new X509TrustManager() {
@@ -357,7 +298,6 @@ public class AppleApi{
                 public void checkClientTrusted(
                         java.security.cert.X509Certificate[] arg0, String arg1)
                         throws CertificateException {
-
                 }
 
                 @Override
@@ -368,7 +308,6 @@ public class AppleApi{
 
                 @Override
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-
                     return null;
                 }
             };
@@ -385,11 +324,10 @@ public class AppleApi{
             org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
 
             HttpPost http = null;
-            URL url = null;
+            URL url = getUrl("https://api.appstoreconnect.apple.com/v1/profiles");
             try {
-                url = new URL("https://api.appstoreconnect.apple.com/v1/profiles");
                 http = new HttpPost(url.toURI());
-                http.setHeader("Authorization", "Bearer "+ token);
+                http.setHeader("Authorization", Prefix + token);
                 // post by json
                 http.setHeader("Content-Type", "application/json");
                 http.setHeader("Accept", "application/json");
@@ -400,16 +338,22 @@ public class AppleApi{
             StringEntity entity = new StringEntity(toPostData.toString(), "UTF-8");
             http.setEntity(entity);
             HttpResponse response = httpClient.execute(http);
-            int statusCode = response.getStatusLine().getStatusCode();
-            System.out.println("statusCode = " + statusCode);
-            String s = new BasicResponseHandler().handleResponse(response);
-            return s;
-
+            return new BasicResponseHandler().handleResponse(response);
         } catch (Exception e) {
-            throw new AppleAPIException(e);
+            throw new CustomException(ErrorCode.API_ERROR.getMessage(), ErrorCode.API_ERROR);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
+    }
+
+    private SSLContext getSslContext() {
+        SSLContext sslContext = null;
+        try {
+            sslContext = SSLContext.getInstance("SSL");
+        } catch (NoSuchAlgorithmException e) {
+            throw new CustomException(ErrorCode.ALGORITHM_NOT_EXIST.getMessage(), ErrorCode.ALGORITHM_NOT_EXIST);
+        }
+        return sslContext;
     }
 
     /**
@@ -420,19 +364,11 @@ public class AppleApi{
      * 404 Not Found Resource not found.
      * 409 Conflict The provided resource data is not valid.
      */
-    public int deleteProfile(String profileId){
-        return deleteOldProfile(createJWT(), profileId);
-    }
-
-    private int deleteOldProfile(String token, String id){
+    public int deleteProfile(String id){
+        String token = createJWT();
         DefaultHttpClient httpClient = new DefaultHttpClient();
-        SSLContext sslContext = null;
+        SSLContext sslContext = getSslContext();
         int result;
-        try {
-            sslContext = SSLContext.getInstance("SSL");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
-        }
 
         try {
             X509TrustManager trustManager = new X509TrustManager() {
@@ -440,7 +376,6 @@ public class AppleApi{
                 public void checkClientTrusted(
                         java.security.cert.X509Certificate[] arg0, String arg1)
                         throws CertificateException {
-
                 }
 
                 @Override
@@ -451,7 +386,6 @@ public class AppleApi{
 
                 @Override
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-
                     return null;
                 }
             };
@@ -468,11 +402,10 @@ public class AppleApi{
             org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
 
             HttpRequestBase http = null;
-            URL url = null;
+            URL url = getUrl("https://api.appstoreconnect.apple.com/v1/profiles/"+id);
             try {
-                url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id);
                 http = new HttpDelete(url.toURI());
-                http.setHeader("Authorization", "Bearer "+ token);
+                http.setHeader("Authorization", Prefix + token);
                 // post by json
                 http.setHeader("Content-Type", "application/json");
                 http.setHeader("Accept", "application/json");
@@ -484,10 +417,8 @@ public class AppleApi{
             response = httpClient.execute(http);
             int statusCode = response.getStatusLine().getStatusCode();
             result = statusCode;
-            System.out.println("statusCode = " + statusCode);
-
         } catch (Exception e) {
-            throw new AppleAPIException(e);
+            throw new CustomException(ErrorCode.API_ERROR.getMessage(), ErrorCode.API_ERROR);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
@@ -500,12 +431,7 @@ public class AppleApi{
     // 그리고 기기 전부 등록해서 프로비전이 파일 업데이트 하면 됨.
     public String registerDevice(String token, DeviceCreateDto info) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
-        SSLContext sslContext = null;
-        try {
-            sslContext = SSLContext.getInstance("SSL");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        SSLContext sslContext = getSslContext();
 
         try {
             X509TrustManager trustManager = new X509TrustManager() {
@@ -513,7 +439,6 @@ public class AppleApi{
                 public void checkClientTrusted(
                         java.security.cert.X509Certificate[] arg0, String arg1)
                         throws CertificateException {
-
                 }
 
                 @Override
@@ -524,7 +449,6 @@ public class AppleApi{
 
                 @Override
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-
                     return null;
                 }
             };
@@ -545,7 +469,7 @@ public class AppleApi{
             try {
                 url = new URL("https://api.appstoreconnect.apple.com/v1/devices");
                 http = new HttpPost(url.toURI());
-                http.setHeader("Authorization", "Bearer "+ token);
+                http.setHeader("Authorization", Prefix + token);
                 // post by json
                 http.setHeader("Content-Type", "application/json");
                 http.setHeader("Accept", "application/json");
@@ -562,13 +486,11 @@ public class AppleApi{
             JsonObject deviceCreateRequest = new JsonObject();
             deviceCreateRequest.add("data", param);
             StringEntity entity = new StringEntity(deviceCreateRequest.toString(), "UTF-8");
-            System.out.println("entity = " + entity);
             http.setEntity(entity);
             HttpResponse response = httpClient.execute(http);
-            String s = new BasicResponseHandler().handleResponse(response);
-            return s;
+            return new BasicResponseHandler().handleResponse(response);
         } catch (Exception e) {
-            throw new AppleAPIException(e);
+            throw new CustomException(ErrorCode.API_ERROR.getMessage(), ErrorCode.API_ERROR);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
@@ -576,8 +498,7 @@ public class AppleApi{
 
     public void disableUserDevice(Device device){
         String jwt = createJWT();
-        String s = disableDevice(jwt, device);
-        System.out.println("disable device  " + s);
+        disableDevice(jwt, device);
     }
 
     // EDIT DEVICE
@@ -586,12 +507,7 @@ public class AppleApi{
     // 그리고 기기 전부 등록해서 프로비전이 파일 업데이트 하면 됨.
     private String disableDevice(String token, Device device) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
-        SSLContext sslContext = null;
-        try {
-            sslContext = SSLContext.getInstance("SSL");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        SSLContext sslContext = getSslContext();
 
         try {
             X509TrustManager trustManager = new X509TrustManager() {
@@ -599,7 +515,6 @@ public class AppleApi{
                 public void checkClientTrusted(
                         java.security.cert.X509Certificate[] arg0, String arg1)
                         throws CertificateException {
-
                 }
 
                 @Override
@@ -610,7 +525,6 @@ public class AppleApi{
 
                 @Override
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-
                     return null;
                 }
             };
@@ -627,11 +541,10 @@ public class AppleApi{
             org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
 
             HttpPatch http = null;
-            URL url = null;
+            URL url = getUrl("https://api.appstoreconnect.apple.com/v1/devices/"+device.getDeviceId());
             try {
-                url = new URL("https://api.appstoreconnect.apple.com/v1/devices/"+device.getDeviceId());
                 http = new HttpPatch(url.toURI());
-                http.setHeader("Authorization", "Bearer "+ token);
+                http.setHeader("Authorization", Prefix + token);
                 // post by json
                 http.setHeader("Content-Type", "application/json");
                 http.setHeader("Accept", "application/json");
@@ -650,10 +563,9 @@ public class AppleApi{
             StringEntity entity = new StringEntity(deviceDisableRequest.toString(), "UTF-8");
             http.setEntity(entity);
             HttpResponse response = httpClient.execute(http);
-            String s = new BasicResponseHandler().handleResponse(response);
-            return s;
+            return new BasicResponseHandler().handleResponse(response);
         } catch (Exception e) {
-            throw new AppleAPIException(e);
+            throw new CustomException(ErrorCode.API_ERROR.getMessage(), ErrorCode.API_ERROR);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
