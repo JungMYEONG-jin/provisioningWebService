@@ -31,7 +31,6 @@ import static mj.provisioning.util.RegexParsing.*;
 @Transactional
 @RequiredArgsConstructor
 public class ProfileCertificateService implements ProfileCertificateUseCase {
-
     private final AppleApi appleApi;
     private final ProfileCertificateRepositoryPort profileCertificateRepositoryPort;
     private final ProfileRepositoryPort profileRepositoryPort;
@@ -43,7 +42,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
      */
     @Override
     public void saveProfileCertificate(String profileId) {
-        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new RuntimeException("존재하지 않는 프로비저닝입니다."));
+        Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException( ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         // 기존 삭제
         profileCertificateRepositoryPort.deleteByProfileId(profile);
         List<ProfileCertificate> profileCertificates = new ArrayList<>();
@@ -53,14 +52,14 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
         JsonObject parse = parser.parse(response).getAsJsonObject();
         JsonArray data = parse.getAsJsonArray("data");
         if (data!=null) {
-            for (JsonElement datum : data) {
-                JsonObject dd = datum.getAsJsonObject();
-                String certificateId = parseQuotations(dd.get("id").toString());
-                String type = parseQuotations(dd.get("type").toString());
-                JsonObject attributes = dd.getAsJsonObject("attributes");
-                String displayName = parseQuotations(attributes.get("displayName").toString());
-                String certificateType = parseQuotations(attributes.get("certificateType").toString());
-                String expirationDate = parseDateFormat(attributes.get("expirationDate").toString());
+            for (JsonElement element : data) {
+                JsonObject elementAsJsonObject = element.getAsJsonObject();
+                String certificateId = parseQuotations(elementAsJsonObject.get("id").getAsString());
+                String type = parseQuotations(elementAsJsonObject.get("type").getAsString());
+                JsonObject attributes = elementAsJsonObject.getAsJsonObject("attributes");
+                String displayName = parseQuotations(attributes.get("displayName").getAsString());
+                String certificateType = parseQuotations(attributes.get("certificateType").getAsString());
+                String expirationDate = parseDateFormat(attributes.get("expirationDate").getAsString());
 
                 ProfileCertificate profileCertificate = ProfileCertificate.builder().certificateId(certificateId)
                         .type(type)
