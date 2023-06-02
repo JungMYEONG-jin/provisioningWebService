@@ -15,7 +15,5 @@ public interface ProfileDeviceRepository extends JpaRepository<ProfileDevice, Lo
     @Query("DELETE FROM ProfileDevice pd WHERE pd.profile = :profile")
     void deleteByProfile(@Param("profile") Profile profile);
     List<ProfileDevice> findByProfile(Profile profile);
-//    Long deleteByProfile_ProfileId(Profile profile);
-//    List<ProfileDevice> findByProfile(Profile profile);
 }
 

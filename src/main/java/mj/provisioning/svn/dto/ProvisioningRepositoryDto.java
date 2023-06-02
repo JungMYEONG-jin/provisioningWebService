@@ -6,7 +6,7 @@ import mj.provisioning.svn.domain.SvnRepoInfo;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ProvisioningRepositoryDto {
     private Long id;

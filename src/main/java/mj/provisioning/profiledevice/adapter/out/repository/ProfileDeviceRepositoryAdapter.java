@@ -2,16 +2,17 @@ package mj.provisioning.profiledevice.adapter.out.repository;
 
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.profile.domain.Profile;
-import mj.provisioning.profiledevice.application.port.out.ProfileDeviceRepositoryPort;
+import mj.provisioning.profiledevice.application.port.out.ProfileDeviceDeletePort;
+import mj.provisioning.profiledevice.application.port.out.ProfileDeviceFindPort;
+import mj.provisioning.profiledevice.application.port.out.ProfileDeviceSavePort;
 import mj.provisioning.profiledevice.domain.ProfileDevice;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
-public class ProfileDeviceRepositoryAdapter implements ProfileDeviceRepositoryPort {
+public class ProfileDeviceRepositoryAdapter implements ProfileDeviceDeletePort, ProfileDeviceSavePort, ProfileDeviceFindPort {
 
     private final ProfileDeviceRepository profileDeviceRepository;
 

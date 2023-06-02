@@ -1,6 +1,5 @@
 package mj.provisioning.profiledevice.application.service;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import mj.provisioning.device.application.port.in.DeviceShowDto;
 import mj.provisioning.device.application.port.in.DeviceShowListDto;
@@ -9,12 +8,9 @@ import mj.provisioning.profile.domain.Profile;
 import mj.provisioning.profiledevice.application.port.in.ProfileDeviceUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ProfileDeviceServiceTest {
@@ -32,14 +28,6 @@ class ProfileDeviceServiceTest {
     @Test
     void saveTest() {
         profileDeviceUseCase.saveProfileDevice("CVKHMHSU56");
-    }
-
-    @Test
-    void getDeviceInfo() {
-        String profile = "2BV6CUSYMK";
-        JsonArray deviceJson = profileDeviceUseCase.getDeviceJson(profile);
-        System.out.println("deviceJson = " + deviceJson);
-        System.out.println("deviceJson = " + deviceJson.size());
     }
 
     @Test
