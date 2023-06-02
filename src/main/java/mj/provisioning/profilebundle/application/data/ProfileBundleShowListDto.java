@@ -1,4 +1,4 @@
-package mj.provisioning.profilebundle.application.port.in;
+package mj.provisioning.profilebundle.application.data;
 
 import lombok.*;
 

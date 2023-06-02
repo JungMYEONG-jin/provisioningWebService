@@ -3,18 +3,15 @@ package mj.provisioning.profilebundle.application.service;
 import com.google.gson.JsonObject;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
-import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
-import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
+import mj.provisioning.profilebundle.application.data.ProfileBundleShowDto;
+import mj.provisioning.profilebundle.application.data.ProfileBundleShowListDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ProfileBundleServiceTest {

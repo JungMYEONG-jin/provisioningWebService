@@ -2,9 +2,9 @@ package mj.provisioning.profilecertificate.application.port.in;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import mj.provisioning.profile.application.port.in.ProfileEditRequestDto;
 import mj.provisioning.profile.domain.Profile;
-import org.springframework.scheduling.annotation.Async;
+import mj.provisioning.profilecertificate.application.data.ProfileCertificateShowDto;
+import mj.provisioning.profilecertificate.application.data.ProfileCertificateShowListDto;
 
 import java.util.List;
 

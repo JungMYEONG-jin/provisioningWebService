@@ -12,10 +12,12 @@ import mj.provisioning.common.exception.CustomException;
 import mj.provisioning.common.exception.ErrorCode;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
-import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
-import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
+import mj.provisioning.profilecertificate.application.data.ProfileCertificateShowDto;
+import mj.provisioning.profilecertificate.application.data.ProfileCertificateShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
-import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateRepositoryPort;
+import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateDeletePort;
+import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateFindPort;
+import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateSavePort;
 import mj.provisioning.profilecertificate.domain.ProfileCertificate;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,9 @@ import static mj.provisioning.util.RegexParsing.*;
 @RequiredArgsConstructor
 public class ProfileCertificateService implements ProfileCertificateUseCase {
     private final AppleApi appleApi;
-    private final ProfileCertificateRepositoryPort profileCertificateRepositoryPort;
+    private final ProfileCertificateFindPort profileCertificateFindPort;
+    private final ProfileCertificateSavePort profileCertificateSavePort;
+    private final ProfileCertificateDeletePort profileCertificateDeletePort;
     private final ProfileRepositoryPort profileRepositoryPort;
     private final CertificateRepositoryPort certificateRepositoryPort;
 
@@ -44,7 +48,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
     public void saveProfileCertificate(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException( ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         // 기존 삭제
-        profileCertificateRepositoryPort.deleteByProfileId(profile);
+        profileCertificateDeletePort.deleteByProfileId(profile);
         List<ProfileCertificate> profileCertificates = new ArrayList<>();
         String response = appleApi.getProfileCertificate(profileId);
 
@@ -70,13 +74,13 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
                 profileCertificates.add(profileCertificate);
             }
             profile.insertAllCertificate(profileCertificates);
-            profileCertificateRepositoryPort.saveAll(profileCertificates);
+            profileCertificateSavePort.saveAll(profileCertificates);
         }
     }
 
     @Override
     public void deleteByProfile(Profile profile) {
-        profileCertificateRepositoryPort.deleteByProfileId(profile);
+        profileCertificateDeletePort.deleteByProfileId(profile);
     }
 
     /**
@@ -89,7 +93,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
     public void saveUpdatedResult(Profile profile, List<String> certificateIds) {
         List<ProfileCertificate> profileCertificates = certificateRepositoryPort.findByCertificateIds(certificateIds).stream().map(ProfileCertificate::of).collect(Collectors.toList());
         profile.insertAllCertificate(profileCertificates);
-        profileCertificateRepositoryPort.saveAll(profileCertificates);
+        profileCertificateSavePort.saveAll(profileCertificates);
     }
 
     /**
@@ -105,7 +109,7 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
         List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new CustomException(ErrorCode.CERTIFICATE_NOT_EXIST.getMessage(), ErrorCode.CERTIFICATE_NOT_EXIST));
         // select 여부 체크해서 return
         final long[] idx = {0};
-        return ProfileCertificateShowListDto.builder().certificateData(byCertificateType.stream().map(certificate -> ProfileCertificateShowDto.of(certificate, profileCertificateRepositoryPort.isExist(certificate.getCertificateId(), profile), idx[0]++)).collect(Collectors.toList())).build();
+        return ProfileCertificateShowListDto.builder().certificateData(byCertificateType.stream().map(certificate -> ProfileCertificateShowDto.of(certificate, profileCertificateFindPort.isExist(certificate.getCertificateId(), profile), idx[0]++)).collect(Collectors.toList())).build();
     }
 
     @Override
@@ -115,13 +119,13 @@ public class ProfileCertificateService implements ProfileCertificateUseCase {
         String certificateType = profile.getProfileType().getValue();
         List<Certificate> byCertificateType = certificateRepositoryPort.findByCertificateType(CertificateType.get(certificateType)).orElseThrow(()->new CustomException(ErrorCode.CERTIFICATE_NOT_EXIST.getMessage(), ErrorCode.CERTIFICATE_NOT_EXIST));
         final long[] idx = {0};
-        return byCertificateType.stream().map(certificate -> ProfileCertificateShowDto.of(certificate, profileCertificateRepositoryPort.isExist(certificate.getCertificateId(), profile), idx[0]++)).collect(Collectors.toList());
+        return byCertificateType.stream().map(certificate -> ProfileCertificateShowDto.of(certificate, profileCertificateFindPort.isExist(certificate.getCertificateId(), profile), idx[0]++)).collect(Collectors.toList());
     }
 
     @Override
     public JsonArray getProfileCertificates(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
-        List<ProfileCertificate> byProfileId = profileCertificateRepositoryPort.findByProfileId(profile);
+        List<ProfileCertificate> byProfileId = profileCertificateFindPort.findByProfileId(profile);
         JsonArray certificates = new JsonArray();
         byProfileId.stream().forEach(profileCertificate -> {
             JsonObject object = new JsonObject();

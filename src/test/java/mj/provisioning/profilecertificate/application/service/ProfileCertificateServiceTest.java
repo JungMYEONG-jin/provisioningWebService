@@ -3,16 +3,14 @@ package mj.provisioning.profilecertificate.application.service;
 import com.google.gson.JsonObject;
 import mj.provisioning.profile.application.port.in.ProfileUseCase;
 import mj.provisioning.profile.domain.Profile;
-import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowDto;
-import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateShowListDto;
+import mj.provisioning.profilecertificate.application.data.ProfileCertificateShowDto;
+import mj.provisioning.profilecertificate.application.data.ProfileCertificateShowListDto;
 import mj.provisioning.profilecertificate.application.port.in.ProfileCertificateUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ProfileCertificateServiceTest {

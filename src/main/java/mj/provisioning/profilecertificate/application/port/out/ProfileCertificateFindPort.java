@@ -5,9 +5,7 @@ import mj.provisioning.profilecertificate.domain.ProfileCertificate;
 
 import java.util.List;
 
-public interface ProfileCertificateRepositoryPort {
-    List<ProfileCertificate> saveAll(List<ProfileCertificate> profileCertificates);
-    Long deleteByProfileId(Profile profile);
+public interface ProfileCertificateFindPort {
     List<ProfileCertificate> findByProfileId(Profile profile);
     boolean isExist(String certificateId, Profile profile);
 }

@@ -2,16 +2,15 @@ package mj.provisioning.profilebundle.adapter.out.repository;
 
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.profile.domain.Profile;
-import mj.provisioning.profilebundle.application.port.out.ProfileBundleRepositoryPort;
+import mj.provisioning.profilebundle.application.port.out.ProfileBundleDeletePort;
+import mj.provisioning.profilebundle.application.port.out.ProfileBundleFindPort;
+import mj.provisioning.profilebundle.application.port.out.ProfileBundleSavePort;
 import mj.provisioning.profilebundle.domain.ProfileBundle;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class ProfileBundleRepositoryAdapter implements ProfileBundleRepositoryPort {
+public class ProfileBundleFindAdapter implements ProfileBundleFindPort, ProfileBundleSavePort, ProfileBundleDeletePort {
     private final ProfileBundleRepository profileBundleRepository;
 
     @Override

@@ -10,10 +10,12 @@ import mj.provisioning.common.exception.CustomException;
 import mj.provisioning.common.exception.ErrorCode;
 import mj.provisioning.profile.application.port.out.ProfileRepositoryPort;
 import mj.provisioning.profile.domain.Profile;
-import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowDto;
-import mj.provisioning.profilebundle.application.port.in.ProfileBundleShowListDto;
+import mj.provisioning.profilebundle.application.data.ProfileBundleShowDto;
+import mj.provisioning.profilebundle.application.data.ProfileBundleShowListDto;
 import mj.provisioning.profilebundle.application.port.in.ProfileBundleUseCase;
-import mj.provisioning.profilebundle.application.port.out.ProfileBundleRepositoryPort;
+import mj.provisioning.profilebundle.application.port.out.ProfileBundleDeletePort;
+import mj.provisioning.profilebundle.application.port.out.ProfileBundleFindPort;
+import mj.provisioning.profilebundle.application.port.out.ProfileBundleSavePort;
 import mj.provisioning.profilebundle.domain.ProfileBundle;
 import mj.provisioning.util.apple.AppleApi;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,9 @@ import static mj.provisioning.util.RegexParsing.*;
 @Slf4j
 public class ProfileBundleService implements ProfileBundleUseCase {
 
-    private final ProfileBundleRepositoryPort profileBundleRepositoryPort;
+    private final ProfileBundleFindPort profileBundleFindPort;
+    private final ProfileBundleSavePort profileBundleSavePort;
+    private final ProfileBundleDeletePort profileBundleDeletePort;
     private final AppleApi appleApi;
     private final ProfileRepositoryPort profileRepositoryPort;
     private final BundleRepositoryPort bundleRepositoryPort;
@@ -39,7 +43,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
     public void saveProfileBundles(String profileId) {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         // 기존 삭제
-        profileBundleRepositoryPort.deleteByProfileId(profileId);
+        profileBundleDeletePort.deleteByProfileId(profileId);
         String response = appleApi.getBundleIdFromProfile(profileId);
         // 1 to 1 mapping
         JsonParser parser = new JsonParser();
@@ -60,12 +64,12 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         // 오히려 프로비저닝은 번들 id가 한개고
         // 번들은 여러개의 프로비저닝을 가질수있음
         profile.insertBundle(profileBundle); // profile 삭제시 전부 날리기 위해
-        profileBundleRepositoryPort.save(profileBundle);
+        profileBundleSavePort.save(profileBundle);
     }
 
     @Override
     public void deleteByProfile(Profile profile) {
-        profileBundleRepositoryPort.deleteByProfile(profile);
+        profileBundleDeletePort.deleteByProfile(profile);
     }
 
     @Override
@@ -73,7 +77,7 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         List<Bundle> all = bundleRepositoryPort.findAll();
 
-        return ProfileBundleShowListDto.builder().bundleData(all.stream().map(bundle -> ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile))).collect(Collectors.toList())).build();
+        return ProfileBundleShowListDto.builder().bundleData(all.stream().map(bundle -> ProfileBundleShowDto.of(bundle, profileBundleFindPort.isExist(bundle.getBundleId(), profile))).collect(Collectors.toList())).build();
     }
 
     @Override
@@ -81,12 +85,12 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         Profile profile = profileRepositoryPort.findByProfileIdFetchJoin(profileId).orElseThrow(()-> new CustomException(ErrorCode.PROFILE_NOT_EXIST.getMessage(), ErrorCode.PROFILE_NOT_EXIST));
         List<Bundle> all = bundleRepositoryPort.findAll();
 
-        return all.stream().map(bundle -> ProfileBundleShowDto.of(bundle, profileBundleRepositoryPort.isExist(bundle.getBundleId(), profile))).collect(Collectors.toList());
+        return all.stream().map(bundle -> ProfileBundleShowDto.of(bundle, profileBundleFindPort.isExist(bundle.getBundleId(), profile))).collect(Collectors.toList());
     }
 
     @Override
     public JsonObject getProfileBundleForUpdate(String profileId) {
-        ProfileBundle byProfileId = profileBundleRepositoryPort.findByProfileId(profileId);
+        ProfileBundle byProfileId = profileBundleFindPort.findByProfileId(profileId);
         JsonObject object = new JsonObject();
         object.addProperty("type", byProfileId.getType());
         object.addProperty("id", byProfileId.getBundleId());
@@ -117,8 +121,6 @@ public class ProfileBundleService implements ProfileBundleUseCase {
         ProfileBundle update = ProfileBundle.update(profile, byBundle);
         // 오히려 프로비저닝은 번들 id가 한개고
         // 번들은 여러개의 프로비저닝을 가질수있음
-        profileBundleRepositoryPort.save(update);
+        profileBundleSavePort.save(update);
     }
-
-
 }

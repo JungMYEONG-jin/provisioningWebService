@@ -2,7 +2,9 @@ package mj.provisioning.profilecertificate.adapter.out.repository;
 
 import lombok.RequiredArgsConstructor;
 import mj.provisioning.profile.domain.Profile;
-import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateRepositoryPort;
+import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateDeletePort;
+import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateFindPort;
+import mj.provisioning.profilecertificate.application.port.out.ProfileCertificateSavePort;
 import mj.provisioning.profilecertificate.domain.ProfileCertificate;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-public class ProfileCertificateRepositoryAdapter implements ProfileCertificateRepositoryPort {
+public class ProfileCertificateFindAdapter implements ProfileCertificateFindPort, ProfileCertificateSavePort, ProfileCertificateDeletePort {
 
     private final ProfileCertificateRepository profileCertificateRepository;
 
